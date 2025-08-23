@@ -1,12 +1,10 @@
-# Frontend Set up
+# TO RUN
 
-```bash
-cd frontend
-npm install
-```
-
-# To Run
-
-```bash
 npm run dev
-```
+
+
+# Dependancies
+
+npm install tailwindcss @tailwindcss/vite
+npm install -D @types/node
+npx shadcn@latest init
