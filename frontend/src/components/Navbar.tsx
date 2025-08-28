@@ -31,6 +31,12 @@ export function Navbar() {
           >
             About
           </Link>
+          <Link
+            to="/friend"
+            className="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+            TEMP FRIENDS
+          </Link>
         </nav>
       </div>
     </header>
