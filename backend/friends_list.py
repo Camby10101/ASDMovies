@@ -20,3 +20,5 @@ class FriendsList:
 
     def get_friends(self):
         return self.friends
+
+#Need to link with the user system and database

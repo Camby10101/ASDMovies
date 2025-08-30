@@ -24,7 +24,7 @@ python -m pip install --upgrade pip
 python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
 
 # Activate and run
-source .venv/bin/activate
+source .venv/bin/activate                                    OR (PowerShell: .venv\Scripts\Activate.ps1)
 python -m uvicorn main:app --reload --port 8000
 
 # If fastapi/uvicorn imports cannot be resolved
