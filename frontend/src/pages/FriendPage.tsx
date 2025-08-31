@@ -7,7 +7,7 @@ interface Friend {
   avatar: string;
 }
 
-const friends: Friend[] = [
+const friends: Friend[] = [ //Sample data until backend is ready
   {
     id: 1,
     name: "Alice",
