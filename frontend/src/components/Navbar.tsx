@@ -37,6 +37,12 @@ export function Navbar() {
           >
             TEMP FRIENDS
           </Link>
+          <Link
+            to="/profile"
+            className="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+            My Profile
+          </Link>
         </nav>
       </div>
     </header>
