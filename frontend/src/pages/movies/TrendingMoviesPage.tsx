@@ -1,39 +1,43 @@
 import { useEffect, useState } from "react"
 import MovieCard from "@/components/ui/movieCard"
-import { fetchMovies, type Movie } from "@/lib/tmdb-api-helper"
-import { Input } from "@/components/ui/input"
+import { fetchTrending, type Movie } from "@/lib/tmdb-api-helper"
+import { Button } from "@/components/ui/button"
 
-export default function MovieGridPage() {
-  const [q, setQ] = useState("")
+export default function TrendingMoviesPage() {
+  const [period, setPeriod] = useState<"day" | "week">("day")
   const [movies, setMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState<string | null>(null)
 
   useEffect(() => {
     const ctrl = new AbortController()
-    setLoading(true)
-    setErr(null)
-    fetchMovies(q, ctrl.signal)
+    setLoading(true); setErr(null)
+    fetchTrending(period, ctrl.signal)
       .then(setMovies)
-      .catch((e) => {
-        if (e.name !== "AbortError") setErr(e.message ?? "Failed to load")
-      })
+      .catch((e) => { if (e.name !== "AbortError") setErr(e.message ?? "Failed to load") })
       .finally(() => setLoading(false))
-
     return () => ctrl.abort()
-  }, [q])
+  }, [period])
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-3xl font-bold">Movies</h1>
-        <Input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search movies…"
-          className="w-full max-w-md"
-        />
-      </header>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Trending Movies</h1>
+        <div className="flex gap-2">
+          <Button
+            variant={period === "day" ? "default" : "secondary"}
+            onClick={() => setPeriod("day")}
+          >
+            Today
+          </Button>
+          <Button
+            variant={period === "week" ? "default" : "secondary"}
+            onClick={() => setPeriod("week")}
+          >
+            This Week
+          </Button>
+        </div>
+      </div>
 
       {loading && <p className="text-muted-foreground">Loading…</p>}
       {err && <p className="text-red-600">Error: {err}</p>}
@@ -58,4 +62,3 @@ export default function MovieGridPage() {
     </div>
   )
 }
-

@@ -24,6 +24,12 @@ export function Navbar() {
             className="transition-colors hover:text-foreground/80 text-foreground/60"
           >
             Movies
+          </Link>          
+          <Link
+            to="/trendingMovies"
+            className="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+            Trending Movies 
           </Link>
           <Link
             to="/about"

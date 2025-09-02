@@ -26,3 +26,62 @@ __pycache__
 *.njsproj
 *.sln
 *.sw?
+
+# -----------------
+# Python / FastAPI
+# -----------------
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+.env
+.env.*
+!env.example        # keep an example template if you want
+
+# pip + build outputs
+*.egg-info/
+dist/
+build/
+
+# Coverage / testing
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# -----------------
+# Node / Vite / React
+# -----------------
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vite cache
+.vite/
+vite.config.ts.timestamp-*
+
+# Editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# -----------------
+# macOS junk
+# -----------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# -----------------
+# Misc
+# -----------------
+*.local
+*.bak
