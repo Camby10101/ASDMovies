@@ -20,14 +20,12 @@ export default function MovieCard({
 }: MovieCardProps) {
   return (
     <Card className="w-64 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
-      {/* Poster */}
       <img
         src={poster}
         alt={`${title} poster`}
         className="w-full h-80 object-cover"
       />
 
-      {/* Header */}
       <CardHeader className="p-4 pb-0">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold truncate">{title}</h3>
@@ -36,7 +34,6 @@ export default function MovieCard({
         <p className="text-sm text-gray-600">{genre}</p>
       </CardHeader>
 
-      {/* Content */}
       <CardContent className="p-4 space-y-2">
         <p className="text-sm text-gray-700 line-clamp-3">{description}</p>
         <div className="flex items-center justify-between pt-2">
