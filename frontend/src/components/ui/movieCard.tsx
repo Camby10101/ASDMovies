@@ -15,8 +15,8 @@ interface MovieCardProps {
 export default function MovieCard(props: MovieCardProps) {
   const { id, title, year, poster, genre, rating, description } = props
   return (
-    <Link to={`/movies/${id}`} className="block">  {/* clickable card */}
-      <Card className="w-full max-w-xs rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
+    <Link to={`/movies/${id}`} className="block">
+      <Card className="w-full max-w-sm rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-200">
         <img src={poster} alt={`${title} poster`} className="w-full h-80 object-cover" />
         <CardHeader className="p-4 pb-0">
           <div className="flex items-center justify-between">
