@@ -1,0 +1,5 @@
+export interface Movie {
+  id: string;
+  name: string;
+  poster: string;
+}
