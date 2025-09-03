@@ -1,6 +1,5 @@
 
 // src/pages/movies/MovieDetailsPage.tsx
-import * as React from "react"
 import { useEffect, useState } from "react"
 import { useParams, Link } from "react-router"
 import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper"
