@@ -6,6 +6,7 @@ import FriendPage from './pages/FriendPage.tsx';
 import MovieListPage from './pages/movies/MovieListPage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx';
 import TrendingMoviesPage from './pages/movies/TrendingMoviesPage.tsx';
+import IndividualMoviePage from './pages/movies/IndividualMoviePage.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
       {
         path: "movies",
         element: <MovieListPage />,
+      },
+      {
+        path: "movies/:id",
+        element: <IndividualMoviePage />,
       },
       {
         path: "trendingMovies",
