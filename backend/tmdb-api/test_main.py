@@ -18,6 +18,8 @@ def test_root_endpoint():
     assert r.status_code == 200
     body = r.json()
     assert body.get("API IS WORKING BABY") is True
+
+
 def test_poster_url_with_path():
     assert poster_url("/abc123.jpg") == "https://image.tmdb.org/t/p/w500/abc123.jpg"
 

@@ -23,14 +23,16 @@ export default function TrendingMoviesPage() {
     <div className="mx-auto max-w-7xl p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Trending Movies</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 ">
           <Button
+            className="cursor-pointer"
             variant={period === "day" ? "default" : "secondary"}
             onClick={() => setPeriod("day")}
           >
             Today
           </Button>
           <Button
+            className="cursor-pointer"
             variant={period === "week" ? "default" : "secondary"}
             onClick={() => setPeriod("week")}
           >
@@ -39,7 +41,7 @@ export default function TrendingMoviesPage() {
         </div>
       </div>
 
-      {loading && <p className="text-muted-foreground">Loading…</p>}
+      {loading && <p className="text-muted-foreground ">Loading…</p>}
       {err && <p className="text-red-600">Error: {err}</p>}
 
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
