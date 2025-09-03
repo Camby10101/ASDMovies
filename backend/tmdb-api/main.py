@@ -70,6 +70,7 @@ class MovieOut(BaseModel):
     Pydantic model for defining the structure of movie data returned by the API
     BaseModel provides automatic JSON serialization and deserialization + validation
     """
+    id: int
     title: str
     year: str
     poster: str # URL to movie poster
@@ -206,6 +207,7 @@ def simplify(m: dict) -> MovieOut:
 
     # Return new MovieOut instance with preocessed data
     return MovieOut(
+        id=m["id"],
         title=m.get("title") or m.get("name") or "Untitled", # Try multiple fields; fallback to untitled
         year=year,
         poster=poster_url(m.get("poster_path")), # Convert poster path to full URL
@@ -259,3 +261,23 @@ async def trending(period: Literal["day", "week"] = "day"):
 
     results = data.get("results", [])[:24] # limit to first 24 results
     return [simplify(m) for m in results] # transofrm and return movie objects
+
+"""
+    Function for fetting a individual movie
+"""
+
+@app.get("/movies/{movie_id}", response_model=MovieOut)
+async def movie_details(movie_id: int):
+    # Full details for a single movie
+    data = await tmdb_get(f"/movie/{movie_id}", params={"language": "en-US"})
+    # genres are objects
+    genre = ", ".join([g.get("name", "") for g in data.get("genres", [])]) or "—"
+    return MovieOut(
+        id=data["id"],
+        title=data.get("title", "Untitled"),
+        year=(data.get("release_date") or "")[:4] or "—",
+        poster=poster_url(data.get("poster_path")),
+        genre=genre,
+        rating=f'{(data.get("vote_average") or 0):.1f}',
+        description=data.get("overview") or "",
+    )

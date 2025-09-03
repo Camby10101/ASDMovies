@@ -46,7 +46,8 @@ export default function TrendingMoviesPage() {
         {!loading && !err && movies.length > 0 ? (
           movies.map((m) => (
             <MovieCard
-              key={m.title + m.year}
+              key={m.id}
+              id={m.id} 
               title={m.title}
               year={m.year}
               poster={m.poster}
@@ -56,8 +57,8 @@ export default function TrendingMoviesPage() {
             />
           ))
         ) : (
-          !loading && !err && <p className="text-muted-foreground">No movies found.</p>
-        )}
+            !loading && !err && <p className="text-muted-foreground">No movies found.</p>
+          )}
       </div>
     </div>
   )

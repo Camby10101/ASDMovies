@@ -1,4 +1,5 @@
 export type Movie = {
+  id: number;
   title: string;
   year: string;
   poster: string;
@@ -25,6 +26,12 @@ export async function fetchTrending(
   const url = new URL(`${API_BASE}/trending`);
   url.searchParams.set("period", period);
   const res = await fetch(url.toString(), { signal });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function fetchMovieDetails(id: number, signal?: AbortSignal): Promise<Movie> {
+  const res = await fetch(`${API_BASE}/movies/${id}`, { signal });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }

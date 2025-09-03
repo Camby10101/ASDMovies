@@ -140,6 +140,7 @@ export default function MovieGridPage() {
             // Transforms each array element (returns JSX:)
             <MovieCard
               key={m.title + m.year} // React key prop for list irem identification
+              id={m.id}
               title={m.title}
               year={m.year}
               poster={m.poster}
