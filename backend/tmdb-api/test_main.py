@@ -18,8 +18,8 @@ def test_health_endpoint():
 def test_root_endpoint():
     r = client.get("/")
     assert r.status_code == 200
-    assert r.json().get("message") == "API IS WORKING BABY"
-
+    body = r.json()
+    assert body.get("API IS WORKING BABY") is True
 def test_poster_url_with_path():
     assert poster_url("/abc123.jpg") == "https://image.tmdb.org/t/p/w500/abc123.jpg"
 
