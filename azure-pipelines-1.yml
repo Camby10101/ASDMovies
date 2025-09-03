@@ -9,22 +9,23 @@ variables:
   nodeVersion: '24.7.0'
 
 jobs:
-- job: TestBackendTMDB
-  displayName: 'Tests for TMDB api'
+- job: TestBackend
+  displayName: 'Test FastAPI Backend'
   steps:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(pythonVersion)'
     displayName: 'Use Python $(pythonVersion)'
-  
+
   - script: |
       python -m pip install --upgrade pip
-      pip install -r requirements.txt # todo
-    displayName: 'Run backend tests'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
-  
+      pip install -r requirements.txt
+      pip install pytest pytest-asyncio httpx
+    displayName: 'Install Python dependencies'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/backend/tmdb-api'
+
   - script: |
-      python -m pytest  # or your preferred test command
+      python -m pytest -v
     displayName: 'Run backend tests'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/backend/tmdb-api'
     condition: succeededOrFailed()
