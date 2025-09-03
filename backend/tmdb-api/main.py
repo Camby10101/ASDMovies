@@ -1,5 +1,3 @@
-
-
 # IMPORTS NEEDED FOR API
 
 # Standard library module: used here for OS inteface
@@ -259,3 +257,8 @@ async def trending(period: Literal["day", "week"] = "day"):
 
     results = data.get("results", [])[:24] # limit to first 24 results
     return [simplify(m) for m in results] # transofrm and return movie objects
+
+
+frontend_dist = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+if os.path.isdir(frontend_dist):
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="static")
