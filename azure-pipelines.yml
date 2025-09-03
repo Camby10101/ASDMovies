@@ -2,16 +2,37 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 steps:
+#Front
 - task: NodeTool@0
   inputs:
     versionSpec: '20.x'
   displayName: 'Install Node.js'
 
 - script: |
+    cd frontend
     npm install
+    npm install tailwindcss @tailwindcss/vite
+    npm install -D @types/node
+    npm install react-router
+    npx shadcn@latest init -y
+    npx shadcn@latest add navigation-menu
     npm run build
-  displayName: 'npm install and build'
+  displayName: 'Install frontend deps & build'
+
+#Back
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.11'
+  displayName: 'Set up Python'
+
+- script: |
+    cd backend
+    python -m venv .venv
+    source .venv/bin/activate
+    python -m pip install --upgrade pip
+    python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
+  displayName: 'Install backend deps'
 
