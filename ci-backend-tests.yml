@@ -25,7 +25,7 @@ jobs:
     workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
   
   - script: |
-      python -m pytest  # or your preferred test command
+      python -m pytest   
     displayName: 'Run backend tests'
     workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
     condition: succeededOrFailed()
