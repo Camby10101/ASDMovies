@@ -4,16 +4,17 @@ import { Button } from "@/components/ui/button";
 
 interface InfoBoxProps {
     text: string;
+    maxLength?: number;
+    size?: "large" | "small";
     onChange: (newValue: string) => void;
     isEditable?: boolean;
 }
 
-export function InfoBox({text, onChange, isEditable = false}: InfoBoxProps) {
+export function InfoBox({text, maxLength = 200, size = "large", onChange, isEditable = false}: InfoBoxProps) {
     const [mode, setMode] = useState<"view" | "edit">("view");
 
     const handleSave = () => {
         setMode("view");
-        // persist text somewhere
     };
 
     const handleEdit = () => {
@@ -24,23 +25,36 @@ export function InfoBox({text, onChange, isEditable = false}: InfoBoxProps) {
     return (
         <>
             {mode === "edit" ? (
-                <div className="w-full h-full border border-gray-400 rounded flex p-2">
+                <div className={`w-full border border-gray-400 rounded flex p-2 ${
+                    size === "large" ? "min-h-40" : "h-full"
+                }`}
+                >
                     <textarea
                     className="w-full h-full text-left resize-none border-none outline-none"
                     value={text}
+                    maxLength={maxLength}
                     onChange={(e) => onChange(e.target.value)}
                     />
-                    <Button onClick={handleSave}>Save</Button>
+                    <div className="flex flex-col border-none outline-none justify-between border">
+                        <Button onClick={handleSave}>Save</Button>
+                        <Typography align="center">
+                            {text.length + "/" + maxLength}
+                        </Typography>
+                    </div>
+                    
                 </div>
             ) : (
-                <div className="w-full min-h-40 p-2 relative flex flex-col">
+                <div className={`w-full p-2 relative flex flex-col ${
+                    size === "large" ? "min-h-40" : "h-full"
+                }`}
+                >
                     <div className="flex flex-1 items-center justify-center">
                         <Typography size="body" align="center">
                         {text}
                         </Typography>
                     </div>
                     {isEditable ? (
-                        <div className="absolute bottom-2 right-2">
+                        <div className="absolute top-2 right-2">
                             <Button onClick={handleEdit}>Edit</Button>
                         </div>
                     ) : null}

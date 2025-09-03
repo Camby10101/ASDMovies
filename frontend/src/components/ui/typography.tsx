@@ -23,35 +23,45 @@ const typographyVariants = cva("text-black leading-tight", {
             center: "text-center",
             right: "text-right",
         },
-        },
-        defaultVariants: {
-            size: "body",
-            weight: "normal",
-            align: "left",
-        },
+        color: {
+            black: "text-black",
+            gray: "text-gray-500",
+            red: "text-red-500",
+            blue: "text-blue-500",
+            green: "text-green-500",
+            white: "text-white"
+        }
+    },
+    defaultVariants: {
+        size: "body",
+        weight: "normal",
+        align: "left",
+        color: "black",
+    },
 });
 
-export interface TypographyProps extends React.HTMLAttributes<HTMLParagraphElement>, VariantProps<typeof typographyVariants> {
+export interface TypographyProps extends Omit<React.HTMLAttributes<HTMLParagraphElement>, keyof VariantProps<typeof typographyVariants>>, VariantProps<typeof typographyVariants> {
     children: React.ReactNode;
     className?: string;
 }
 
 export const Typography: React.FC<TypographyProps> = ({
-  size,
-  weight,
-  align,
-  className,
-  children,
-  ...props
-}) => {
-  return (
-    <p
-      className={`${typographyVariants({ size, weight, align })} ${
-        className || ""
-      }`}
-      {...props}
-    >
-      {children}
-    </p>
-  );
-};
+    size,
+    weight,
+    align,
+    color,
+    className,
+    children,
+    ...props
+  }) => {
+    return (
+      <p
+        className={`${typographyVariants({ size, weight, align, color })} ${
+          className || ""
+        }`}
+        {...props}
+      >
+        {children}
+      </p>
+    );
+  };
