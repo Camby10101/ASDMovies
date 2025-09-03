@@ -1,6 +1,4 @@
-import React from 'react';
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
 import { InfoBox } from "@/components/ui/info-box";
 
