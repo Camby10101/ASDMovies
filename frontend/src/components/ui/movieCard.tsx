@@ -28,7 +28,7 @@ export default function MovieCard(props: MovieCardProps) {
         <CardContent className="p-4 space-y-2">
           <p className="text-sm text-gray-700 line-clamp-3">{description}</p>
           <div className="flex items-center justify-between pt-2">
-            <span className="text-yellow-500 font-bold">⭐ {rating}</span>
+            <span className="text-yellow-500 font-bold">⭐ {rating} TMDB</span>
             <Button size="sm" variant="secondary">Add</Button>
           </div>
         </CardContent>

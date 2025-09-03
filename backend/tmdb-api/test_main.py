@@ -11,8 +11,6 @@ def test_health_endpoint():
     assert r.status_code == 200
     assert r.json() == {"ok": True}
 
-# EITHER keep this and add a root endpoint in main.py, OR delete this test.
-# If you want to keep it, add to main.py:
 # @app.get("/")
 # def root(): return {"message": "API IS WORKING BABY"}
 def test_root_endpoint():
@@ -28,7 +26,7 @@ def test_poster_url_without_path():
 
 def test_simplify_movie_data():
     mock_movie = {
-        "id": 123,  # <-- REQUIRED now
+        "id": 123,          
         "title": "Test Movie",
         "release_date": "2023-01-01",
         "poster_path": "/test.jpg",
@@ -42,12 +40,12 @@ def test_simplify_movie_data():
     assert result.year == "2023"
     assert result.rating == "7.5"
 
-@patch("main.tmdb_get", new_callable=AsyncMock)  # <-- async now
+@patch("main.tmdb_get", new_callable=AsyncMock)  
 def test_search_movies_endpoint(mock_tmdb_get: AsyncMock):
     mock_tmdb_get.return_value = {
         "results": [
             {
-                "id": 42,  # <-- REQUIRED now
+                "id": 42,  
                 "title": "Mock Movie",
                 "release_date": "2023-01-01",
                 "poster_path": "/mock.jpg",
@@ -63,7 +61,7 @@ def test_search_movies_endpoint(mock_tmdb_get: AsyncMock):
     assert isinstance(data, list)
     assert len(data) == 1
     item = data[0]
-    # Ensure the shape your frontend expects
+
     for key in ("id", "title", "year", "poster", "genre", "rating", "description"):
         assert key in item
     assert item["id"] == 42
