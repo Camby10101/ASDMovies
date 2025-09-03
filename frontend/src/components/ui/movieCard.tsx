@@ -19,7 +19,7 @@ export default function MovieCard({
   description,
 }: MovieCardProps) {
   return (
-    <Card className="w-64 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
+    <Card className="w-full rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition cursor-pointer">
       <img
         src={poster}
         alt={`${title} poster`}
