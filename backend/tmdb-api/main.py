@@ -236,11 +236,26 @@ async def search_movies(q: str = Query("", description="Empty => popular")):
         # else we just get the popular movies
     )
     # note: the parantheses allow for multi-line conditional statements
-    results = data.get("results", [])[:24]
-    return [simplify(m) for m in results]
 
-@app.get("/trending", response_model=List[MovieOut])
-async def trending(period: Literal["day", "week"] = "day"):
-    data = await tmdb_get(f"/trending/movie/{period}", params={"language": "en-US"})
     results = data.get("results", [])[:24]
-    return [simplify(m) for m in results]
+
+    # List comprehension: [expression for item in iterable]
+    return [simplify(m) for m in results] # transform each raw movie dict into MovieOut object
+
+"""
+    Async endpoint for getting trending movies
+
+    PARAMETERS:
+    - period: Literal["day", "week"] - time period for trending, restricted to 'day' or 'week'
+
+    RETURNS:
+    - List[MovieOut] - list of trending movie objects
+"""
+@app.get("/trending", response_model=List[MovieOut]) # GET endpoint for trending movies
+async def trending(period: Literal["day", "week"] = "day"):
+
+    # Make API call with dynamic period parameter
+    data = await tmdb_get(f"/trending/movie/{period}", params={"language": "en-US"})
+
+    results = data.get("results", [])[:24] # limit to first 24 results
+    return [simplify(m) for m in results] # transofrm and return movie objects
