@@ -2,58 +2,78 @@ trigger:
   branches:
     include:
       - main
+      - dev
       # - dev --maybe later
 
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-#Frontend
-- task: NodeTool@0
-  inputs:
-    versionSpec: '20.x'
-  displayName: 'Set up Node.js'
+variables:
+  pythonVersion: '3.11.9'
+  nodeVersion: '24.7.0'
 
-- script: |
-    cd frontend
-    npm install
-    npm install tailwindcss @tailwindcss/vite
-    npm install -D @types/node
-    npm install react-router
-    npx shadcn@latest init -y
-    npx shadcn@latest add navigation-menu
-    npm run build
-  displayName: 'Install Frontend and Build'
+jobs:
+  - job: TestBackend
+    displayName: 'Backend Tests and Setup'
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '$(pythonVersion)'
+        displayName: 'Use Python $(pythonVersion)'
+      
+      - script: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        displayName: 'Install Backend Dependencies'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
+      
+      - script: |
+          python -m pytest
+        displayName: 'Run Backend Tests'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
+        condition: succeededOrFailed()
 
-#Backend
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.11'
-  displayName: 'Set up Python'
-
-- script: |
-    cd backend
-    python -m venv .venv
-    source .venv/bin/activate
-    python -m pip install --upgrade pip
-    python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
-  displayName: 'Install Backend (No Build)'
-
-  #Eventually will need to look into also running the backend once we figure that out
->>>>>>> search-and-view-movies
-
-#Backend
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.11'
-  displayName: 'Set up Python'
-
-- script: |
-    cd backend
-    python -m venv .venv
-    source .venv/bin/activate
-    python -m pip install --upgrade pip
-    python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
-  displayName: 'Install Backend (No Build)'
-
-  #Eventually will need to look into also running the backend once we figure that out
+  - job: BuildFrontend
+    displayName: 'Frontend Build and Setup'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '$(nodeVersion)'
+        displayName: 'Set up Node.js $(nodeVersion)'
+      
+      - script: |
+          npm install
+          npm install tailwindcss @tailwindcss/vite
+          npm install -D @types/node
+          npm install react-router-dom
+        displayName: 'Install Frontend Dependencies'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/frontend'
+      
+      - script: |
+          npx shadcn@latest init -y
+          npx shadcn@latest add navigation-menu
+        displayName: 'Setup Shadcn/UI Components'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/frontend'
+      
+      - script: |
+          npm run build
+        displayName: 'Build Frontend'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/frontend'
+    
+  - job: SetupBackendRuntime
+    displayName: 'Backend Runtime Setup'
+    dependsOn: TestBackend
+    condition: succeeded()
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '$(pythonVersion)'
+        displayName: 'Set up Python $(pythonVersion)'
+      
+      - script: |
+          python -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
+        displayName: 'Setup Backend Runtime Environment'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
