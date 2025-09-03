@@ -27,7 +27,7 @@ export default function MovieDetailsPage() {
 
   if (loading) return <div className="p-6">Loading…</div>
   if (err) return <div className="p-6 text-red-600">Error: {err}</div>
-  if (!movie) return <div className="p-6">Not found.</div>
+  if (!movie) return <div className="p-6">Loading...</div>
 
   return (
     <div className="mx-auto max-w-5xl p-6">
@@ -50,7 +50,7 @@ export default function MovieDetailsPage() {
         <Card>
           <CardContent className="p-6 space-y-4">
             <div className="text-sm text-muted-foreground">{movie.genre}</div>
-            <div className="text-lg">⭐ {movie.rating}</div>
+            <div className="text-lg">⭐ {movie.rating} (TMDB)</div>
             <p className="text-base leading-relaxed">{movie.description}</p>
           </CardContent>
         </Card>
