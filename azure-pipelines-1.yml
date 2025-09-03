@@ -1,5 +1,6 @@
 trigger:
-- search-and-view-movies # The branch I want to test
+  - search-and-view-movies
+  - dev
 
 pool:
   vmImage: 'ubuntu-latest'
