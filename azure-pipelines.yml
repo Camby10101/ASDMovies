@@ -5,11 +5,11 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-#Front
+#Frontend
 - task: NodeTool@0
   inputs:
     versionSpec: '20.x'
-  displayName: 'Install Node.js'
+  displayName: 'Set up Node.js'
 
 - script: |
     cd frontend
@@ -20,9 +20,9 @@ steps:
     npx shadcn@latest init -y
     npx shadcn@latest add navigation-menu
     npm run build
-  displayName: 'Install frontend deps & build'
+  displayName: 'Install Frontend and Build'
 
-#Back
+#Backend
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.11'
@@ -34,5 +34,7 @@ steps:
     source .venv/bin/activate
     python -m pip install --upgrade pip
     python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
-  displayName: 'Install backend deps'
+  displayName: 'Install Backend (No Build)'
+
+  #Eventually will need to look into also running the backend once we figure that out
 
