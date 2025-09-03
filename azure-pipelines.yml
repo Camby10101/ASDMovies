@@ -40,3 +40,20 @@ steps:
   displayName: 'Install Backend (No Build)'
 
   #Eventually will need to look into also running the backend once we figure that out
+>>>>>>> search-and-view-movies
+
+#Backend
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.11'
+  displayName: 'Set up Python'
+
+- script: |
+    cd backend
+    python -m venv .venv
+    source .venv/bin/activate
+    python -m pip install --upgrade pip
+    python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
+  displayName: 'Install Backend (No Build)'
+
+  #Eventually will need to look into also running the backend once we figure that out
