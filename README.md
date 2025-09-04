@@ -43,3 +43,19 @@ which python (mac)
 # In your IDE (e.g. VSCode -> CTRL/CMD + SHIFT + P)
 Python: Select Interpreter
 Paste address
+
+
+# API Keys
+Ask Team lead for key values
+create frontend/.env.development
+```
+VITE_SUPABASE_URL=https://mcpzbvznxmkbvaeajwua.supabase.co
+VITE_SUPABASE_ANON_KEY=ASK TEAM LEAD
+```
+create backend/.env
+```
+SUPABASE_URL=https://mcpzbvznxmkbvaeajwua.supabase.co
+SUPABASE_ANON_KEY=ASK TEAM LEAD
+SUPABASE_SERVICE_ROLE_KEY= ASK TEAM LEAD
+```
+Add respective keys to this file
