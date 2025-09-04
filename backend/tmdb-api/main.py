@@ -43,7 +43,6 @@ TMDB_BASE = "https://api.themoviedb.org/3" # The base URL for TMBD API v3
 # returns none or " " if the variable cannot be found
 TMDB_BEARER = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYjI5ZTI5NGUzMTFiYTMzZWU4Yjc2NzRiNTMxNDE3ZiIsIm5iZiI6MTc1NDk1OTc3MS45MjgsInN1YiI6IjY4OWE4ZjliNjViMzFlMzdjZjhlYjNmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-3kAUYHK5lUok0WYc8OF8h-k4Capvk6_PC_6DPS0vcc"
 
-# String constant : base URL for the TMDB poster service
 POSTER_BASE = "https://image.tmdb.org/t/p"
 
 # APPLICATION SETUP

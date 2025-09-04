@@ -3,7 +3,6 @@ trigger:
     include:
       - main
       - dev
-      # - dev --maybe later
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -25,9 +24,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
         displayName: 'Install Backend Dependencies'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/backend' # this installs dependencies
       
-      - script: |
+      # runs the tests in /backend/tmbd-api/test_main.py
+      - script: | 
           python -m pytest
         displayName: 'Run Backend Tests'
         workingDirectory: '$(System.DefaultWorkingDirectory)/backend'

@@ -19,6 +19,7 @@ npx shadcn@latest add navigation-menu
 # Setup
 
 cd backend
+pip install supabase
 python3 -m venv .venv
 pip install supabase
 (source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1)

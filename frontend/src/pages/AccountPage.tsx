@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import type { Session, User, UserIdentity } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase.ts';
+import type { /*Session,*/ User, UserIdentity } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 
 type UserSafe = Pick<User, 'id' | 'email' | 'created_at' | 'aud' | 'app_metadata' | 'user_metadata' | 'phone' | 'role' | 'updated_at' | 'confirmed_at' | 'email_confirmed_at' | 'phone_confirmed_at' | 'last_sign_in_at'> & {
   identities?: UserIdentity[] | null;
 };
 
 export default function AccountPage() {
-  const [session, setSession] = useState<Session | null>(null);
+  // const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<UserSafe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export default function AccountPage() {
         if (error) {
           setError(error.message);
         }
-        setSession(data.session ?? null);
+        //setSession(data.session ?? null);
         setUser(data.session?.user ?? null);
       })
       .finally(() => {
@@ -28,7 +28,7 @@ export default function AccountPage() {
         setLoading(false);
       });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
+      //setSession(newSession);
       setUser(newSession?.user ?? null);
     });
     return () => {
@@ -49,9 +49,10 @@ export default function AccountPage() {
         <InfoRow label="Email" value={user.email ?? '—'} />
         <InfoRow label="Role" value={user.role ?? '—'} />
         <InfoRow label="Created" value={formatDate(user.created_at)} />
+{/* 
         <InfoRow label="Updated" value={formatDate(user.updated_at)} />
         <InfoRow label="Last sign-in" value={formatDate(user.last_sign_in_at)} />
-
+*/}
       </div>
     </div>
   );
@@ -66,6 +67,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+/*
 function Section({ title, json }: { title: string; json: unknown }) {
   return (
     <div>
@@ -76,6 +78,7 @@ function Section({ title, json }: { title: string; json: unknown }) {
     </div>
   );
 }
+*/
 
 function formatDate(value: string | null): string {
   if (!value) return '—';
