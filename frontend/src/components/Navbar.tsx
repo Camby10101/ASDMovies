@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,28 @@ export function Navbar() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isSyncingProfileRef = useRef(false);
+
+  const syncProfile = async (session: Session | null) => {
+    if (!session) return;
+    if (isSyncingProfileRef.current) return;
+    isSyncingProfileRef.current = true;
+    try {
+      const token = session.access_token;
+      const apiBase = import.meta.env.VITE_API_BASE_URL || '';
+      await fetch(`${apiBase}/api/profile`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      // Non-blocking: log to console but do not surface to UI here
+      console.error('Failed to sync/get profile', error);
+    } finally {
+      isSyncingProfileRef.current = false;
+    }
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,12 +66,20 @@ export function Navbar() {
     supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       if (!isMounted) return;
       setIsAuthenticated(Boolean(data.session));
+      if (data.session) {
+        // Ensure profile exists/created on initial load if already authenticated
+        syncProfile(data.session);
+      }
     });
     const { data: subscription } = supabase.auth.onAuthStateChange((
       _event: AuthChangeEvent,
       session: Session | null
     ) => {
       setIsAuthenticated(Boolean(session));
+      if (session) {
+        // Ensure profile exists/created after sign-in/sign-up
+        syncProfile(session);
+      }
     });
     return () => {
       isMounted = false;

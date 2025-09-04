@@ -12,7 +12,6 @@ router = APIRouter()
 async def get_profile(current_user=Depends(get_current_user)):
     """
     Get the user's profile from the database. If a profile doesn't exist,
-    create one with a default 'inactive' subscription status.
     """
     try:
         user_id_str = str(current_user.id)
@@ -30,7 +29,6 @@ async def get_profile(current_user=Depends(get_current_user)):
         new_profile = {
             "user_id": user_id_str,
             "email": current_user.email,
-            "subscription_status": "inactive"
         }
         insert_result = supabase_admin.table("profiles").insert(new_profile).execute()
         
