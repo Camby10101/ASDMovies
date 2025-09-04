@@ -3,7 +3,6 @@ trigger:
     include:
       - main
       - dev
-      # - dev --maybe later
 
 pool:
   vmImage: 'ubuntu-latest'
