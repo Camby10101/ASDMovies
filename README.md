@@ -8,7 +8,7 @@ npm run dev
 cd frontend
 npm install tailwindcss @tailwindcss/vite
 npm install -D @types/node
-pip install supabase
+npm install @supabase/supabase-js
 
 npm install react-router
 
@@ -21,13 +21,14 @@ npx shadcn@latest add navigation-menu
 cd backend
 pip install supabase
 python3 -m venv .venv
-source .venv/bin/activate
+pip install supabase
+(source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1)
 python -m pip install --upgrade pip
 python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
 
 # Activate and run
 
-source .venv/bin/activate                                    OR (PowerShell: .venv\Scripts\Activate.ps1)
+(source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1)
 cd tmbd-api
 python -m uvicorn main:app --reload --port 8000
 
@@ -42,3 +43,19 @@ which python (mac)
 # In your IDE (e.g. VSCode -> CTRL/CMD + SHIFT + P)
 Python: Select Interpreter
 Paste address
+
+
+# API Keys
+Ask Team lead for key values
+create frontend/.env.development
+```
+VITE_SUPABASE_URL=https://mcpzbvznxmkbvaeajwua.supabase.co
+VITE_SUPABASE_ANON_KEY=ASK TEAM LEAD
+```
+create backend/.env
+```
+SUPABASE_URL=https://mcpzbvznxmkbvaeajwua.supabase.co
+SUPABASE_ANON_KEY=ASK TEAM LEAD
+SUPABASE_SERVICE_ROLE_KEY= ASK TEAM LEAD
+```
+Add respective keys to this file
