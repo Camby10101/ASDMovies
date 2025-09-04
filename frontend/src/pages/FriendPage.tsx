@@ -1,13 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import type { Friend } from "../types/friend";
 
-interface Friend {
-  id: number;
-  name: string;
-  favoriteMovie: string;
-  avatar: string;
-}
 
-const friends: Friend[] = [ //Sample data until backend is ready
+const holderFriends: Friend[] = [ //Sample data until backend is ready
   {
     id: 1,
     name: "Alice",
@@ -29,6 +24,12 @@ const friends: Friend[] = [ //Sample data until backend is ready
 ];
 
 const Friends: React.FC = () => {
+  const [friends, setFriends] = useState<Friend[]>(holderFriends);
+
+  const removeFriend = (id: number) => {
+    setFriends((prev) => prev.filter((friend) => friend.id !== id));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <h1 className="text-3xl font-bold mb-6">Friends</h1>
@@ -48,9 +49,12 @@ const Friends: React.FC = () => {
             <p className="text-gray-600 text-sm mt-2">
               Favorite Movie: <span className="font-medium">{friend.favoriteMovie}</span>
             </p>
-            <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              View Profile
-            </button>
+              <button
+                onClick={() => removeFriend(friend.id)}
+                className="mt-3 bg-red-400 text-white px-3 py-1.5 rounded-md text-sm hover:bg-red-500 transition"
+              >
+                Remove Friend
+              </button>
           </div>
         ))}
       </div>
