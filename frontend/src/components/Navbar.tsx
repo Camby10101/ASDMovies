@@ -145,6 +145,9 @@ export function Navbar() {
           >
             Account
           </Link>
+          <Link to="/privacy" className="transition-colors hover:text-foreground/80 text-foreground/60">
+            Privacy & Controls
+          </Link>
         </nav>
 
         <div className="ml-auto flex items-center">
