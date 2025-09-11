@@ -35,7 +35,11 @@ const Friends: React.FC = () => {
       <h1 className="text-3xl font-bold mb-6">Friends</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {friends.map((friend) => (
+        {friends.length === 0 ? (
+          <p className="text-gray-500 text-center col-span-full">
+            Add some friends to your account!
+          </p>
+        ) : friends.map((friend) => (
           <div
             key={friend.id}
             className="bg-white shadow-md rounded-2xl p-4 flex flex-col items-center text-center hover:shadow-lg transition"
