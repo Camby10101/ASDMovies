@@ -9,6 +9,9 @@ import TrendingMoviesPage from './pages/movies/TrendingMoviesPage.tsx';
 import IndividualMoviePage from './pages/movies/IndividualMoviePage.tsx';
 import AccountPage from './pages/AccountPage.tsx';
 
+// NOVO: página de Privacidade
+import PrivacyPage from './pages/PrivacyPage.tsx';
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -45,6 +48,11 @@ export const router = createBrowserRouter([
       {
         path: "account",
         element: <AccountPage />,
+      },
+      // NOVO: rota /privacy
+      {
+        path: "privacy",
+        element: <PrivacyPage />,
       },
     ],
   },

@@ -133,10 +133,10 @@ export function Navbar() {
           >
             Account
           </Link>
-          <Link
-            to="/about"
-            className="transition-colors hover:text-foreground/80 text-foreground/60"
-          >
+          <Link to="/privacy" className="transition-colors hover:text-foreground/80 text-foreground/60">
+            Privacy & Controls
+          </Link>
+          <Link to="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">
             About
           </Link>
         </nav>
