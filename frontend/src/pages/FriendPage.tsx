@@ -19,7 +19,7 @@ const holderFriends: Friend[] = [ //Sample data until backend is ready
     id: 3,
     name: "Charlie",
     favoriteMovie: "The Dark Knight",
-    avatar: "https://i.pravatar.cc/100?img=3",
+    avatar: "https://i.pinimg.com/736x/05/8a/71/058a71d92cefa339b732ab19787ce8da.jpg",
   },
 ];
 
