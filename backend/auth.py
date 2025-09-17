@@ -1,28 +1,30 @@
+# auth.py
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from config import supabase # Import the initialized Supabase client
+from config import supabase  # client já inicializado/validado
 
-# Simple auth dependency using HTTP Bearer tokens
-security = HTTPBearer()
+security = HTTPBearer()  # retorna 403 se não houver Authorization
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """
-    Validates the JWT from the Authorization header and returns the Supabase user.
-    This function is used as a dependency in protected routes.
+    Valida o JWT (Authorization: Bearer <token>) no Supabase e retorna o usuário.
     """
     try:
-        print(f"Validating token: {credentials.credentials[:20]}...")
-        # Use the imported supabase client to validate the token
-        user_response = supabase.auth.get_user(credentials.credentials)
-        print(f"Auth response: {user_response}")
-        
-        if user_response.user is None:
-            print("No user found in auth response")
-            raise HTTPException(status_code=401, detail="Invalid token: User not found.")
-        
-        print(f"User authenticated: {user_response.user.id}")
-        return user_response.user
+        token = credentials.credentials
+        print(f"Validating token: {token[:20]}...")
+
+        resp = supabase.auth.get_user(token)  # UserResponse
+        user = getattr(resp, "user", None)
+
+        if user is None:
+            err = getattr(resp, "error", None)
+            print("Auth failed. SDK response:", err or resp)
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        print(f"User authenticated: {user.id}")
+        return user
+    except HTTPException:
+        raise
     except Exception as e:
-        # Catch any exception during token validation
-        print(f"Auth error: {str(e)}")
-        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
+        print("Auth error:", repr(e))
+        raise HTTPException(status_code=401, detail="Invalid token")

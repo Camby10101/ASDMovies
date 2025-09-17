@@ -1,7 +1,7 @@
 // src/lib/api.ts
 import { supabase } from "@/lib/supabase"
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000"
+export const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000"
 
 export async function api(path: string, init: RequestInit = {}) {
   const { data } = await supabase.auth.getSession()
