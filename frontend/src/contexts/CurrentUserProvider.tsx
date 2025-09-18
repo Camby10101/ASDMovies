@@ -8,20 +8,20 @@ export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-			const fetchCurrentUser = async () => {
-				try {
-					const { data: { user: supUser }, error } = await supabase.auth.getUser();
-					if (error) throw error;
-					setCurrentUser(supUser ?? null);
-				} catch (err) {
-					console.error(err);
-					setCurrentUser(null);
-				} finally {
-					setLoading(false);
-				}
-			};
+		const fetchCurrentUser = async () => {
+			try {
+				const { data: { user: supUser }, error } = await supabase.auth.getUser();
+				if (error) throw error;
+				setCurrentUser(supUser ?? null);
+			} catch (err) {
+				console.error(err);
+				setCurrentUser(null);
+			} finally {
+				setLoading(false);
+			}
+		};
 
-			fetchCurrentUser();
+		fetchCurrentUser();
 	}, []);
 
 	return (
