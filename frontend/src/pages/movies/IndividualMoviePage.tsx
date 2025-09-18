@@ -94,7 +94,7 @@ export default function MovieDetailsPage() {
         </div>
       </div>
 
-      <div className="p-6 mx-auto max-w-5xl">
+      <div className="p-8 mx-auto max-w-5xl">
         <StarRating value={rating} onChange={setRating} />
         <p className="mt-2 text-sm text-muted-foreground">
           You rated: {rating} / 5
