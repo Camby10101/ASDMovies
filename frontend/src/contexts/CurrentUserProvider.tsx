@@ -2,16 +2,14 @@ import { useState, useEffect, type ReactNode } from "react";
 import { CurrentUserContext } from "./CurrentUserContext";
 import type { User } from "@/types/user";
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
+export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
   	const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 		const fetchCurrentUser = async () => {
 			try {
-				const res = await fetch("/api/profile", {
-				credentials: "include" // if using cookies/sessions
-			});
+				const res = await fetch("/api/profile", { credentials: "include" });
 				if (!res.ok) throw new Error("Failed to fetch user");
 					const data = await res.json();
 					setUser(data);
