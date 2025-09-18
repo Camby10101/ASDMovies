@@ -1,9 +1,5 @@
-# Frontend
-# TO RUN
-
-npm run dev
-
-# Dependencies
+## Dependencies Setup
+# Frontend Setup
 
 cd frontend
 npm install tailwindcss @tailwindcss/vite
@@ -15,8 +11,7 @@ npm install react-router
 npx shadcn@latest init
 npx shadcn@latest add navigation-menu
 
-# Backend
-# Setup
+# Backend Setup
 
 cd backend
 pip install supabase
@@ -26,46 +21,31 @@ pip install supabase
 python -m pip install --upgrade pip
 python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
 
-# Activate and run
+# Movie Comonents Setup
 
-(source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1)
+cd backend/tmdb-api
+python -m venv .venv
 
-python -m uvicorn main:app --reload --port 8000
-
-# If fastapi/uvicorn imports cannot be resolved
-# In terminal...
-where python (windows) OR
-which python (mac)
-
-# Copy address, e.g.
-/Users/User/.../ASDMovies/backend/.venv/bin/python
-
-# In your IDE (e.g. VSCode -> CTRL/CMD + SHIFT + P)
-Python: Select Interpreter
-Paste address
-
-# Running Movie Comonents
-`cd backend/tmdb-api`
-
-`pyenv local 3.11.9`
-
-`python -m venv .venv`
-
-`source .venv/bin/activate`
-
-`uvicorn main:app --reload --port 8000`
-
-# API Keys
+# API Keys Setup
 Ask Team lead for key values
 create frontend/.env.development
-```
+---
 VITE_SUPABASE_URL=https://mcpzbvznxmkbvaeajwua.supabase.co
 VITE_SUPABASE_ANON_KEY=ASK TEAM LEAD
-```
+---
 create backend/.env
-```
+---
 SUPABASE_URL=https://mcpzbvznxmkbvaeajwua.supabase.co
 SUPABASE_ANON_KEY=ASK TEAM LEAD
 SUPABASE_SERVICE_ROLE_KEY= ASK TEAM LEAD
-```
-Add respective keys to this file
+---
+
+## Activate and run
+# TO RUN Frontend
+
+npm run dev
+
+# TO RUN Backend
+
+(source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1)
+python -m uvicorn main:app --reload --port 8000
