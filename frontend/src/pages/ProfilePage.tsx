@@ -5,6 +5,8 @@ import { InfoBox } from "@/components/ui/info-box";
 import type { User } from "@/types/user";
 import type { Movie } from "@/types/movie";
 
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+
 const user: User = {
     id: "1",
     name: "BobMovieGuy123",
@@ -36,6 +38,11 @@ const movies: Movie[] = [
 
 
 const ProfilePage = () => {
+    const { currentUser, loading } = useCurrentUser();
+
+    if (loading) console.log ("Loading signed in user");
+    if (currentUser) console.log(currentUser.id + " signed in.");
+
     const [bio, setBio] = useState(user.bio);
     const [email, setEmail] = useState(user.email);
     const [phone, setPhone] = useState(user.phone);

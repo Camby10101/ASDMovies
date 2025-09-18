@@ -44,6 +44,16 @@ which python (mac)
 Python: Select Interpreter
 Paste address
 
+# Running Movie Comonents
+`cd backend/tmdb-api`
+
+`pyenv local 3.11.9`
+
+`python -m venv .venv`
+
+`source .venv/bin/activate`
+
+`uvicorn main:app --reload --port 8000`
 
 # API Keys
 Ask Team lead for key values

@@ -20,6 +20,7 @@ import httpx
 # - HTTPException: exception class for returning HTTP error responses
 # - Query: dependency for defining query parameters with validation and documentation
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 
 # Criss-Origin Resource Sharing middleware
 # Allows the API to be accessed from web browsers running on different domains/ ports
