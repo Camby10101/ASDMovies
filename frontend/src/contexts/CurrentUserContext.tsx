@@ -1,9 +1,10 @@
+// CurrentUserContext.tsx
 import { createContext } from "react";
-import type { User } from "@/types/user";
+import type { User as SupabaseUser } from "@supabase/auth-js";
 
 export interface UserContextType {
-	user: User | null;
-	setUser: (user: User | null) => void;
+	currentUser: SupabaseUser | null;
+	setCurrentUser: (user: SupabaseUser | null) => void;
 	loading: boolean;
 }
 
