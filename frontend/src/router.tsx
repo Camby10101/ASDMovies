@@ -1,15 +1,13 @@
 import { createBrowserRouter } from 'react-router';
+import TrendingMoviesPage from './pages/movies/TrendingMoviesPage.tsx';
 import App from './App.tsx';
 import HomePage from './pages/HomePage.tsx';
 import AboutPage from './pages/AboutPage.tsx';
 import FriendPage from './pages/FriendPage.tsx';
 import MovieListPage from './pages/movies/MovieListPage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx';
-import TrendingMoviesPage from './pages/movies/TrendingMoviesPage.tsx';
 import IndividualMoviePage from './pages/movies/IndividualMoviePage.tsx';
 import AccountPage from './pages/AccountPage.tsx';
-
-// NOVO: página de Privacidade
 import PrivacyPage from './pages/PrivacyPage.tsx';
 
 export const router = createBrowserRouter([
@@ -23,7 +21,7 @@ export const router = createBrowserRouter([
       },
       {
         index: true,
-        element: <HomePage />,
+        element: <TrendingMoviesPage />,
       },
       {
         path: "movies",

@@ -70,6 +70,7 @@ async def add_friend(friend_user_id: str, current_user=Depends(get_current_user)
             friend_list_id = friend_list_result.data[0]["id"]
 
         # Verify the friend profile exists
+        print(f"[friends] add -> owner={owner_user_id} friend_user_id={friend_user_id}")
         profile_check = (
             supabase_admin
             .table("profiles")
@@ -77,6 +78,7 @@ async def add_friend(friend_user_id: str, current_user=Depends(get_current_user)
             .eq("user_id", friend_user_id)
             .execute()
         )
+        print(f"[friends] profile_check rows={len(profile_check.data or [])} data={profile_check.data}")
         if not profile_check.data:
             raise HTTPException(status_code=404, detail="Friend profile not found")
 
@@ -91,6 +93,9 @@ async def add_friend(friend_user_id: str, current_user=Depends(get_current_user)
         )
 
         return {"friend_list_id": friend_list_id, "added": insert_result.data}
+    except HTTPException:
+        # Preserve intended HTTP status codes like 404
+        raise
     except Exception as e:
         print(f"Error in add_friend: {str(e)}")
         print(traceback.format_exc())

@@ -1,7 +1,7 @@
 # auth.py
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from config import supabase  # client já inicializado/validado
+from config import supabase, supabase_admin  # client já inicializado/validado
 
 security = HTTPBearer()  # retorna 403 se não houver Authorization
 
@@ -22,6 +22,31 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             raise HTTPException(status_code=401, detail="Invalid token")
 
         print(f"User authenticated: {user.id}")
+
+        # Ensure a profile exists for this authenticated user (idempotent)
+        try:
+            if supabase_admin is not None:
+                user_id_str = str(user.id)
+                found = (
+                    supabase_admin
+                    .table("profiles")
+                    .select("user_id")
+                    .eq("user_id", user_id_str)
+                    .execute()
+                )
+                if not found.data:
+                    # Create minimal profile record
+                    supabase_admin.table("profiles").insert({
+                        "user_id": user_id_str,
+                        "email": getattr(user, "email", None),
+                    }).execute()
+            else:
+                # Service role is not configured; skip auto-creation but keep auth working
+                print("[auth] supabase_admin not configured; skipping profile auto-create.")
+        except Exception as create_err:
+            # Do not block the request if profile creation fails; just log
+            print(f"[auth] Failed to ensure profile exists: {create_err}")
+
         return user
     except HTTPException:
         raise
