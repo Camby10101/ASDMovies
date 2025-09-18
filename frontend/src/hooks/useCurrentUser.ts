@@ -1,8 +1,12 @@
-import { useContext } from "react";
-import { CurrentUserContext } from "@/contexts/CurrentUserContext";
+import { supabase } from "@/lib/supabase";
 
-export const useCurrentUser = () => {
-    const context = useContext(CurrentUserContext);
-    if (!context) throw new Error("useUser must be used within a UserProvider");
-    return context;
-};
+export async function getCurrentUser() {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+
+  return user;
+}

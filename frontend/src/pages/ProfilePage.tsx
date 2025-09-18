@@ -2,20 +2,10 @@ import { useState } from "react";
 import { Typography } from "@/components/ui/typography";
 import { InfoBox } from "@/components/ui/info-box";
 
-import type { User } from "@/types/user";
+import type { User } from "@supabase/auth-js";
 import type { Movie } from "@/types/movie";
 
-import { useCurrentUser } from "@/hooks/useCurrentUser";
-
-const user: User = {
-    id: "1",
-    name: "BobMovieGuy123",
-    bio: "Hi, I'm Bob and I love movies!",
-    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVVzFIs00C1WVmivQSlqsGgRu2ouRc4slMmQ&s",
-    email: "bob@user.com",
-    phone: "412 345 678",
-    favouriteMovies: ["1", "2", "3"]
-};
+import { getCurrentUser } from "@/hooks/useCurrentUser";
 
 const movies: Movie[] = [
     {
@@ -38,12 +28,13 @@ const movies: Movie[] = [
 
 
 const ProfilePage = () => {
-    const { currentUser, loading } = useCurrentUser();
+    let currentUser: User | null = null;
 
-    if (loading) console.log ("Loading signed in user");
-    if (currentUser) console.log(currentUser.id + " signed in.");
-
-    const [bio, setBio] = useState(user.bio);
+    getCurrentUser().then((user) => {
+        currentUser = user;
+        console.log(currentUser);
+    });
+    
     const [email, setEmail] = useState(user.email);
     const [phone, setPhone] = useState(user.phone);
     
@@ -56,12 +47,10 @@ const ProfilePage = () => {
                             Edit Profile
                         </Typography>
                         <img className="w-1/5 h-1/5 rounded-full mb-4"
-                            src={user.avatar}
-                            alt={user.name}
                         />
                         <div className="w-full bg-gray-900 flex items-center justify-center p-2">
                             <Typography size="h1" align="center" color="white">
-                                @{user.name}
+                                Name
                             </Typography>
                         </div>
                         

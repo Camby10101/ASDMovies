@@ -1,9 +1,5 @@
 export interface User {
   id: string;
-  name: string;
-  bio: string;
-  avatar: string;
-  email: string;
+  email: string | undefined;
   phone: string;
-  favouriteMovies: string[];
 }
