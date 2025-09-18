@@ -9,11 +9,18 @@ import TrendingMoviesPage from './pages/movies/TrendingMoviesPage.tsx';
 import IndividualMoviePage from './pages/movies/IndividualMoviePage.tsx';
 import AccountPage from './pages/AccountPage.tsx';
 
+// NOVO: página de Privacidade
+import PrivacyPage from './pages/PrivacyPage.tsx';
+
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      {
+        path: "trendingMovies",
+        element: <TrendingMoviesPage/>
+      },
       {
         index: true,
         element: <HomePage />,
@@ -25,10 +32,6 @@ export const router = createBrowserRouter([
       {
         path: "movies/:id",
         element: <IndividualMoviePage />,
-      },
-      {
-        path: "trendingMovies",
-        element: <TrendingMoviesPage/>
       },
       {
         path: "about",
@@ -45,6 +48,11 @@ export const router = createBrowserRouter([
       {
         path: "account",
         element: <AccountPage />,
+      },
+      // NOVO: rota /privacy
+      {
+        path: "privacy",
+        element: <PrivacyPage />,
       },
     ],
   },

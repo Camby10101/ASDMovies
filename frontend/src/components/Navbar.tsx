@@ -104,10 +104,10 @@ export function Navbar() {
 
         <nav className="flex items-center space-x-6 text-sm font-medium">
           <Link
-            to="/"
+            to="/trendingMovies"
             className="transition-colors hover:text-foreground/80 text-foreground/60"
           >
-            Home
+            Trending
           </Link>
           <Link
             to="/movies"
@@ -116,22 +116,10 @@ export function Navbar() {
             Movies
           </Link>          
           <Link
-            to="/trendingMovies"
-            className="transition-colors hover:text-foreground/80 text-foreground/60"
-          >
-            Trending Movies 
-          </Link>
-          <Link
-            to="/about"
-            className="transition-colors hover:text-foreground/80 text-foreground/60"
-          >
-            About
-          </Link>
-          <Link
             to="/friend"
             className="transition-colors hover:text-foreground/80 text-foreground/60"
           >
-            TEMP FRIENDS
+            Friends
           </Link>
           <Link
             to="/profile"
@@ -144,6 +132,12 @@ export function Navbar() {
             className="transition-colors hover:text-foreground/80 text-foreground/60"
           >
             Account
+          </Link>
+          <Link to="/privacy" className="transition-colors hover:text-foreground/80 text-foreground/60">
+            Privacy & Controls
+          </Link>
+          <Link to="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">
+            About
           </Link>
         </nav>
 
