@@ -40,7 +40,8 @@ const movies: Movie[] = [
 const ProfilePage = () => {
     const { currentUser, loading } = useCurrentUser();
 
-    currentUser ? console.log("Signed in user: " + currentUser.id, "Loading: " + loading) : console.log("No user signed in");
+    if (loading) console.log ("Loading signed in user");
+    if (currentUser) console.log(currentUser.id + " signed in.");
 
     const [bio, setBio] = useState(user.bio);
     const [email, setEmail] = useState(user.email);
