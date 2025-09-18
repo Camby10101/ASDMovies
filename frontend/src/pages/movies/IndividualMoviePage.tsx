@@ -9,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StarRating } from "@/components/ui/ratings"
 import { Star } from "lucide-react"
-import { Heart } from "lucide-react"
 import { HeartRating } from "@/components/ui/heart"
 
 export default function MovieDetailsPage() {

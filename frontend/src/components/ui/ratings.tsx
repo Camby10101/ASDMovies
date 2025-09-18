@@ -28,7 +28,7 @@ export function StarRating({ max = 5, value, onChange }: {
             <Star
               className={cn(
                 "h-6 w-6 transition-colors",
-                (hover ?? value) >= ratingValue
+                ((hover ?? value ?? 0) >= ratingValue)
                   ? "fill-yellow-400 text-yellow-400"
                   : "text-gray-400"
               )}
