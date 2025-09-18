@@ -28,15 +28,16 @@ const movies: Movie[] = [
 
 
 const ProfilePage = () => {
-    let currentUser: User | null = null;
-
-    getCurrentUser().then((user) => {
-        currentUser = user;
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    
+    
+    getCurrentUser().then((currentUser) => {
+        setCurrentUser = currentUser;
         console.log(currentUser);
     });
     
-    const [email, setEmail] = useState(user.email);
-    const [phone, setPhone] = useState(user.phone);
+    const [email, setEmail] = useState<string>(currentUser?.email ?? null);
+
     
     return(
         <>
@@ -57,12 +58,6 @@ const ProfilePage = () => {
                         <Typography size="h2" align="center">
                             Bio
                         </Typography>
-
-                        <InfoBox 
-                            text={bio}
-                            onChange={setBio}
-                            isEditable={true}
-                        />
                     </div>  
 
                     <hr></hr>
