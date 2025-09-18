@@ -1,4 +1,3 @@
-// CurrentUserContext.tsx
 import { createContext } from "react";
 import type { User as SupabaseUser } from "@supabase/auth-js";
 

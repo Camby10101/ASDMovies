@@ -4,30 +4,29 @@ import type { User as SupabaseUser } from "@supabase/auth-js";
 import { supabase } from "@/lib/supabase";
 
 export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
+	const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
+	const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const { data: { user: supUser }, error } = await supabase.auth.getUser();
-        if (error) throw error;
+	useEffect(() => {
+			const fetchCurrentUser = async () => {
+				try {
+					const { data: { user: supUser }, error } = await supabase.auth.getUser();
+					if (error) throw error;
+					setCurrentUser(supUser ?? null);
+				} catch (err) {
+					console.error(err);
+					setCurrentUser(null);
+				} finally {
+					setLoading(false);
+				}
+			};
 
-        setCurrentUser(supUser ?? null); // store the full Supabase user object
-      } catch (err) {
-        console.error(err);
-        setCurrentUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+			fetchCurrentUser();
+	}, []);
 
-    fetchCurrentUser();
-  }, []);
-
-  return (
-    <CurrentUserContext.Provider value={{ currentUser, setCurrentUser, loading }}>
-      {children}
-    </CurrentUserContext.Provider>
-  );
+	return (
+		<CurrentUserContext.Provider value={{ currentUser, setCurrentUser, loading }}>
+			{children}
+		</CurrentUserContext.Provider>
+	);
 };
