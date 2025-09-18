@@ -23,7 +23,7 @@ export function StarRating({ max = 5, value, onChange }: {
             onClick={() => onChange?.(ratingValue)}
             onMouseEnter={() => setHover(ratingValue)}
             onMouseLeave={() => setHover(null)}
-            className="focus:outline-none"
+            className="focus:outline-none cursor-pointer"
           >
             <Star
               className={cn(
