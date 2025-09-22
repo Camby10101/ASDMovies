@@ -42,10 +42,30 @@ export const UserProvider = ({ children }: Props) => {
 		} finally {
 			setLoading(false);
 		}
-	}, []);
+	}, [API_BASE]);
 
 	useEffect(() => {
-		refreshUser();
+		let mounted = true;
+
+		const init = async () => {
+			const { data: { session } } = await supabase.auth.getSession();
+			if (!mounted) return;
+			if (session) refreshUser();
+			else setUser(null);
+		};
+
+		init();
+
+		const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+			if (!mounted) return;
+			if (session) refreshUser();
+			else setUser(null);
+		});
+
+		return () => {
+			mounted = false;
+			listener.subscription.unsubscribe();
+		};
 	}, [refreshUser]);
 
 	return (
