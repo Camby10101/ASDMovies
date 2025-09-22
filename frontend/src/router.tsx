@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
         element: <FriendPage />,
       },
       {
-        path: "profile/",
+        path: "profile/:id",
         element: <ProfilePage />,
       },
       {
