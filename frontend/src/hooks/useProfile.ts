@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Profile } from "@/types/profile";
-import { fetchProfile } from "@/lib/fetch-profile-info";
+import { fetchProfile } from "@/lib/profile-api";
 
 export const useProfile = (id: string) => {
     const [profile, setProfile] = useState<Profile | null>(null);

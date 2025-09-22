@@ -1,83 +1,61 @@
-// import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Typography } from "@/components/ui/typography";
-// import { InfoBox } from "@/components/ui/info-box";
+import { InfoBox } from "@/components/ui/info-box";
+import { Button } from "@/components/ui/button";
 
 import { useUser } from "@/hooks/useUser";
 import { useProfile } from "@/hooks/useProfile";
+import { useParams } from "react-router-dom";
+
+import { updateBio } from "@/lib/profile-api";
 
 const ProfilePage = () => {
+    const { id } = useParams<{ id: string }>(); // The page ID
+    const { user, loading } = useUser(); // The user (logged in)
+    const { profile, profileLoading } = useProfile(id!); // The profile (of user)
 
-    const { user, loading } = useUser();
-    const userId = user?.user_id ?? ""; // empty string if user is null
-    const { profile, profileLoading } = useProfile(userId);
+    const isCurrentUser = !loading && !profileLoading && profile?.user_id === user?.user_id;
+    // const isCurrentUser = false; // testing
 
-    if (loading) console.log("Loading user");
-    if (!user) console.log("User not found");
-    else console.log("User ID:", user.user_id);
+    const [bio, setBio] = useState("");
 
-    if (profileLoading) console.log("Loading profile");
-    if (!profile) console.log("Profile not found");
-    else console.log("Profile ID:", profile.user_id);
+    useEffect(() => {
+        if (profile) {
+            setBio(profile.bio);
+        }
+    }, [profile]);
 
-    return(
-        <>
-            <div className="flex justify-center">
-                <div className="w-1/2 min-h-screen">
-                    <div className="flex flex-col items-center p-4 space-y-4">
-                        <Typography size="h1" align="center">
-                            Edit Profile
-                        </Typography>
-                        <img className="w-1/5 h-1/5 rounded-full mb-4"
-                        />
-                        <div className="w-full bg-gray-900 flex items-center justify-center p-2">
-                            <Typography size="h1" align="center" color="white">
-                                Name
-                            </Typography>
-                        </div>
-                        
-                        <Typography size="h2" align="center">
-                            Bio
-                        </Typography>
-                    </div>  
-
+    return (
+        <div className="mx-auto max-w-3xl p-6 space-y-8">
+            {!loading && !profileLoading ? (
+                profile ? (
+                    <>
+                    <Typography size="h1">{profile.email}</Typography>
                     <hr></hr>
-
-                    <div className="flex flex-col items-center p-4 space-y-4">
-                        <Typography size="h2" align="center">
-                            Details
-                        </Typography>
-                        <Typography size="h3" align="center">
-                            Email
-                        </Typography>
-                        {/* <InfoBox 
-                            text={email}
-                            maxLength={50}
-                            size="small"
-                            onChange={setEmail}
-                            isEditable={true}
-                        /> */}
-                        <Typography size="h3" align="center">
-                            Phone
-                        </Typography>
-                        {/* <InfoBox 
-                            text={phone}
-                            maxLength={9}
-                            size="small"
-                            onChange={setPhone}
-                            isEditable={true}
-                        /> */}
-                    </div>
-
+                    <section className="rounded-2xl border p-4 space-y-4">
+                        <Typography size="h2">Bio</Typography>
+                        <InfoBox text={bio} onChange={setBio} isEditable={isCurrentUser} maxLength={500}></InfoBox>
+                    </section>
+                    {isCurrentUser && (
+                    <>
                     <hr></hr>
-                    
-                    
-                </div>
-            </div>
-            
-
-            
-            
-        </>
+                    <Button
+                        onClick={async () => {
+                            await updateBio(profile.user_id, bio);
+                        }}
+                    >
+                        Save changes
+                    </Button>
+                    </>
+                    )}
+                    </>
+                ) : (
+                    <p>Error: profile does not exist</p>
+                )
+            ) : (
+                <p>Loading...</p>
+            )}
+        </div>
     );
 }
 
