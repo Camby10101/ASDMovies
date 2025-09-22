@@ -100,7 +100,10 @@ export function Navbar() {
         <div className="ml-auto flex items-center">
           {isAuthenticated ? (
             <>
-            <Button size="sm" variant="secondary" onClick={() => navigate(`/profile/${user!.user_id}`)}>{user!.email}</Button>
+            {user && (
+              <Button size="sm" variant="secondary" onClick={() => navigate(`/profile/${user.user_id}`)}>{user.email}</Button>
+            )}
+
             <Button size="sm" variant="secondary" onClick={handleSignOut}>Sign Out</Button>
             </>
           ) : (
