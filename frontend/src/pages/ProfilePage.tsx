@@ -11,10 +11,10 @@ import { updateBio } from "@/lib/profile-api";
 
 const ProfilePage = () => {
     const { id } = useParams<{ id: string }>(); // The page ID
-    const { user, loading } = useUser(); // The user (logged in)
+    const { user, userLoading } = useUser(); // The user (logged in)
     const { profile, profileLoading } = useProfile(id!); // The profile (of user)
 
-    const isCurrentUser = !loading && !profileLoading && profile?.user_id === user?.user_id;
+    const isCurrentUser = !userLoading && !profileLoading && profile?.user_id === user?.user_id;
     // const isCurrentUser = false; // testing
 
     const [bio, setBio] = useState("");
@@ -27,7 +27,7 @@ const ProfilePage = () => {
 
     return (
         <div className="mx-auto max-w-3xl p-6 space-y-8">
-            {!loading && !profileLoading ? (
+            {!userLoading && !profileLoading ? (
                 profile ? (
                     <>
                     <Typography size="h1">{profile.email}</Typography>

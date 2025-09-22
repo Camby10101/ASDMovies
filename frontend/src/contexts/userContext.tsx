@@ -3,7 +3,7 @@ import type { Profile } from "@/types/profile";
 
 export interface UserContextType {
     user: Profile | null;
-    loading: boolean;
+    userLoading: boolean;
     refreshUser: () => Promise<void>;
 }
 
