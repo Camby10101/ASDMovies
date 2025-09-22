@@ -1,44 +1,20 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { Typography } from "@/components/ui/typography";
-import { InfoBox } from "@/components/ui/info-box";
-
-import type { User } from "@supabase/auth-js";
-import type { Movie } from "@/types/movie";
-
-import { getCurrentUser } from "@/hooks/useCurrentUser";
-
-const movies: Movie[] = [
-    {
-        id: "1",
-        name: "The Departed",
-        poster: "https://image.tmdb.org/t/p/original/f1JUHBq8JoXBz2NVNWeUpL2eVZs.jpg"
-    },
-    {
-        id: "2",
-        name: "Django Unchained",
-        poster: "https://image.tmdb.org/t/p/original/vmUqhTP6NjkuchJbOzC2q20v5pT.jpg"
-    },
-    {
-        id: "3",
-        name: "Shutter Island",
-        poster: "https://image.tmdb.org/t/p/original/4GDy0PHYX3VRXUtwK5ysFbg3kEx.jpg"
-    },
-];
+// import { InfoBox } from "@/components/ui/info-box";
 
 
+// import type { User } from "@supabase/auth-js";
+
+import { useUser } from "@/hooks/useUser";
 
 const ProfilePage = () => {
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
-    
-    
-    getCurrentUser().then((currentUser) => {
-        setCurrentUser = currentUser;
-        console.log(currentUser);
-    });
-    
-    const [email, setEmail] = useState<string>(currentUser?.email ?? null);
 
-    
+    const { user, loading } = useUser();
+
+    if (loading) console.log("Loading");
+    if (!user) console.log("User not found");
+    else console.log("User ID:", user.user_id);
+
     return(
         <>
             <div className="flex justify-center">
@@ -69,44 +45,26 @@ const ProfilePage = () => {
                         <Typography size="h3" align="center">
                             Email
                         </Typography>
-                        <InfoBox 
+                        {/* <InfoBox 
                             text={email}
                             maxLength={50}
                             size="small"
                             onChange={setEmail}
                             isEditable={true}
-                        />
+                        /> */}
                         <Typography size="h3" align="center">
                             Phone
                         </Typography>
-                        <InfoBox 
+                        {/* <InfoBox 
                             text={phone}
                             maxLength={9}
                             size="small"
                             onChange={setPhone}
                             isEditable={true}
-                        />
+                        /> */}
                     </div>
 
                     <hr></hr>
-
-                    <div className="flex flex-col items-center p-4 space-y-4">
-                        <Typography size="h2" align="center">
-                            Favourites
-                        </Typography>
-                        <div className="grid grid-cols-3 gap-1">
-                            {movies
-                                .filter((movie) => user.favouriteMovies.includes(movie.id))
-                                .map((movie) => (
-                                <div key={movie.id}>
-                                    <img className=""
-                                        src={movie.poster}
-                                        alt={movie.name} 
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                     
                     
                 </div>

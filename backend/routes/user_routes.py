@@ -51,6 +51,9 @@ async def get_profile(current_user=Depends(get_current_user)):
             status_code=500,
             detail={"error": str(e), "message": "An error occurred while fetching or creating the profile."}
         )
+    
+# @router.get("/api/profile")
+
 
 @router.get("/api/debug-auth")
 async def debug_auth(current_user=Depends(get_current_user)):
