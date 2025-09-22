@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { UserContext } from "@/contexts/userContext";
 import type { Profile } from "@/types/profile";
 import { supabase } from "@/lib/supabase";
@@ -14,7 +14,7 @@ export const UserProvider = ({ children }: Props) => {
 	const [loading, setLoading] = useState(true);
 	
 
-	const refreshUser = async () => {
+	const refreshUser = useCallback(async () => {
 		const { data: { session } } = await supabase.auth.getSession();
 
 		if (!session) {
@@ -42,11 +42,11 @@ export const UserProvider = ({ children }: Props) => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		refreshUser();
-	}, []);
+	}, [refreshUser]);
 
 	return (
 		<UserContext value={{ user, loading, refreshUser }}>

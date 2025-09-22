@@ -2,18 +2,22 @@
 import { Typography } from "@/components/ui/typography";
 // import { InfoBox } from "@/components/ui/info-box";
 
-
-// import type { User } from "@supabase/auth-js";
-
 import { useUser } from "@/hooks/useUser";
+import { useProfile } from "@/hooks/useProfile";
 
 const ProfilePage = () => {
 
     const { user, loading } = useUser();
+    const userId = user?.user_id ?? ""; // empty string if user is null
+    const { profile, profileLoading } = useProfile(userId);
 
-    if (loading) console.log("Loading");
+    if (loading) console.log("Loading user");
     if (!user) console.log("User not found");
     else console.log("User ID:", user.user_id);
+
+    if (profileLoading) console.log("Loading profile");
+    if (!profile) console.log("Profile not found");
+    else console.log("Profile ID:", profile.user_id);
 
     return(
         <>

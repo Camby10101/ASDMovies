@@ -48,12 +48,29 @@ async def get_profile(current_user=Depends(get_current_user)):
         print(f"Error in get_profile: {str(e)}")
         print(f"Full traceback: {traceback.format_exc()}")
         raise HTTPException(
-            status_code=500,
+            status_code=404,
             detail={"error": str(e), "message": "An error occurred while fetching or creating the profile."}
         )
     
-# @router.get("/api/profile")
+@router.get("/api/profile/{id}")
+async def get_profile_by_id(id: str):
+    """
+    Get the user's profile from the database using a specific id
+    """
+    try:
+        result = supabase_admin.table("profiles").select("*").eq("user_id", id).execute()
 
+        if result.data:
+            return result.data[0]
+        
+        raise Exception("No profile found with given id")
+    except Exception as e:
+        print(f"Error in get_profile/id: {str(e)}")
+        print(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=404,
+            detail={"error": str(e), "message": "An error occurred while fetching a profile."}
+        )
 
 @router.get("/api/debug-auth")
 async def debug_auth(current_user=Depends(get_current_user)):
