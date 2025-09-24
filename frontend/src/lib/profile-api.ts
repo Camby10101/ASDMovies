@@ -18,7 +18,7 @@ export async function fetchProfile(id: string): Promise<Profile> {
 // --------
 export async function updateBio(userId: string, bio: string) {
 	const res = await fetch(`/api/profile/${userId}/bio`, {
-		method: "POST", // or PATCH
+		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ bio }),
 	});

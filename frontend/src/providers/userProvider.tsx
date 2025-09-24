@@ -11,7 +11,7 @@ interface Props {
 export const UserProvider = ({ children }: Props) => {
 	const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 	const [user, setUser] = useState<Profile | null>(null);
-	const [loading, setLoading] = useState(true);
+	const [userLoading, setUserLoading] = useState(true);
 	
 
 	const refreshUser = useCallback(async () => {
@@ -23,7 +23,7 @@ export const UserProvider = ({ children }: Props) => {
 			return;
 		}
 
-		setLoading(true);
+		setUserLoading(true);
 		
 		try {
 			const res = await fetch(`${API_BASE}/api/profile`, {
@@ -40,7 +40,7 @@ export const UserProvider = ({ children }: Props) => {
 			console.error(err);
 			setUser(null);
 		} finally {
-			setLoading(false);
+			setUserLoading(false);
 		}
 	}, [API_BASE]);
 
@@ -69,7 +69,7 @@ export const UserProvider = ({ children }: Props) => {
 	}, [refreshUser]);
 
 	return (
-		<UserContext value={{ user, loading, refreshUser }}>
+		<UserContext value={{ user, userLoading, refreshUser }}>
 		{children}
 		</UserContext>
 	);
