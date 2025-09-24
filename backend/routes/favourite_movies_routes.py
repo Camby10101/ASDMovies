@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from config import supabase_admin
 import traceback
 
-router = APIRouter()
+router = APIRouter(tags=["favourite_movies"])
 
 @router.get("/api/favourite_movies/{user_id}")
 async def get_favourite_movies_by_user_id(user_id: str):
