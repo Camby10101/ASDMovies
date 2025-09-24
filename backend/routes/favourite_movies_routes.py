@@ -48,7 +48,7 @@ async def add_favourite_movie(user_id: str, movie_id: str):
 @router.delete("/api/favourite_movies/{user_id}/{movie_id}")
 async def remove_favourite_movie(user_id: str, movie_id: str):
     """
-    Remove a movie to the user's favourite movies list
+    Remove a movie from the user's favourite movies list
     """
     try:
         result = supabase_admin.table("favourite_movies")\
