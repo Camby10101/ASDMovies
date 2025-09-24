@@ -1,0 +1,74 @@
+from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException
+from config import supabase_admin
+import traceback
+
+
+class FavouriteMovieIn(BaseModel):
+    movie_id: str
+
+router = APIRouter()
+
+@router.get("/api/favourite_movies/{user_id}")
+async def get_favourite_movies_by_user_id(user_id: str):
+    """
+    Get a user's favourite movies using their user id
+    """
+    try:
+        result = supabase_admin.table("favourite_movies").select("movie_id").eq("user_id", user_id).execute()
+        
+        if result.data:
+            return result
+    
+    except Exception as e:
+        print(f"Error in get_favourite_movies_by_user_id/id: {str(e)}")
+        print(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=404,
+            detail={"error": str(e), "message": "An error occurred while fetching a user's favourite movies."}
+        )
+
+@router.post("/api/favourite_movies/{user_id}/{movie_id}")
+async def add_favourite_movie(user_id: str, movie_id: str):
+    """
+    Add a new movie to the user's favourite movies list
+    """
+    try:
+        result = supabase_admin.table("favourite_movies").insert({
+            "user_id": user_id,
+            "movie_id": movie_id
+        }).execute()
+
+        if result.data:
+            return {"message": "New favourite movie added successfully", "user": result.data[0], "movie": result.data[1]}
+    except Exception as e:
+        print(f"Error in add_favourite_movie: {str(e)}")
+        print(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=404,
+            detail={"error": str(e), "message": "An error occurred while add a favourite movie."}
+        )
+
+@router.delete("/api/favourite_movies/{user_id}/{movie_id}")
+async def remove_favourite_movie(user_id: str, movie_id: str):
+    """
+    Remove a movie to the user's favourite movies list
+    """
+    try:
+        result = supabase_admin.table("favourite_movies")\
+            .delete()\
+            .eq("user_id", user_id)\
+            .eq("movie_id", movie_id)\
+            .execute()
+
+        if result.data:
+            return {"message": "Favourite movie removed successfully", "user": user_id, "movie": movie_id}
+        else:
+            return {"message": "No matching movie found", "user": user_id, "movie": movie_id}
+    except Exception as e:
+        print(f"Error in add_favourite_movie: {str(e)}")
+        print(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=404,
+            detail={"error": str(e), "message": "An error occurred while add a favourite movie."}
+        )

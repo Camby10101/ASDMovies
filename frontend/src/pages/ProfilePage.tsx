@@ -30,11 +30,15 @@ const ProfilePage = () => {
             {!userLoading && !profileLoading ? (
                 profile ? (
                     <>
-                    <Typography size="h1">{profile.email}</Typography>
+                    <Typography size="h1">{"@" + profile.handle}</Typography>
                     <hr></hr>
                     <section className="rounded-2xl border p-4 space-y-4">
                         <Typography size="h2">Bio</Typography>
                         <InfoBox text={bio} onChange={setBio} isEditable={isCurrentUser} maxLength={500}></InfoBox>
+                    </section>
+                    <section className="rounded-2xl border p-4 space-y-4">
+                        <Typography size="h2">Favourite movies</Typography>
+                        
                     </section>
                     {isCurrentUser && (
                     <>
