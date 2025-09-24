@@ -7,14 +7,15 @@ import { useUser } from "@/hooks/useUser";
 import { useProfile } from "@/hooks/useProfile";
 import { useParams } from "react-router-dom";
 
-import { updateBio } from "@/lib/profile-api";
+import { updateProfile } from "@/lib/profile-service";
+
 
 const ProfilePage = () => {
     const { id } = useParams<{ id: string }>(); // The page ID
-    const { user, userLoading } = useUser(); // The user (logged in)
-    const { profile, profileLoading } = useProfile(id!); // The profile (of user)
+    const { user, loadingUser, refreshUser } = useUser(); // The user (logged in)
+    const { profile, loadingProfile } = useProfile(id!); // The profile being viewed
 
-    const isCurrentUser = !userLoading && !profileLoading && profile?.user_id === user?.user_id;
+    const isCurrentUser = !loadingUser && !loadingProfile && profile?.user_id === user?.user_id;
     // const isCurrentUser = false; // testing
 
     const [bio, setBio] = useState("");
@@ -25,9 +26,18 @@ const ProfilePage = () => {
         }
     }, [profile]);
 
+    const handleSave = async () => {
+        try {
+            await updateProfile({ bio }); // Updates the database
+            await refreshUser();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     return (
         <div className="mx-auto max-w-3xl p-6 space-y-8">
-            {!userLoading && !profileLoading ? (
+            {!loadingUser && !loadingProfile ? (
                 profile ? (
                     <>
                     <Typography size="h1">{"@" + profile.handle}</Typography>
@@ -44,9 +54,7 @@ const ProfilePage = () => {
                     <>
                     <hr></hr>
                     <Button
-                        onClick={async () => {
-                            await updateBio(profile.user_id, bio);
-                        }}
+                        onClick={handleSave}
                     >
                         Save changes
                     </Button>
