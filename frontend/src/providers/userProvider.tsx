@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { UserContext } from "@/contexts/userContext";
 import type { Profile } from "@/types/profile";
 import { supabase } from "@/lib/supabase";
+import { fetchUser } from "@/lib/profile-service";
 
 
 interface Props {
@@ -9,32 +10,15 @@ interface Props {
 }
 
 export const UserProvider = ({ children }: Props) => {
-	const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 	const [user, setUser] = useState<Profile | null>(null);
-	const [userLoading, setUserLoading] = useState(true);
+	const [loadingUser, setUserLoading] = useState(true);
 	
 
 	const refreshUser = useCallback(async () => {
-		const { data: { session } } = await supabase.auth.getSession();
-
-		if (!session) {
-			console.log("No active session");
-			setUser(null);
-			return;
-		}
-
 		setUserLoading(true);
-		
+
 		try {
-			const res = await fetch(`${API_BASE}/api/profile`, {
-				method: "GET",
-				headers: {
-				"Authorization": `Bearer ${session.access_token}`,
-				"Content-Type": "application/json",
-				},
-			});
-		if (!res.ok) throw new Error("Failed to fetch user");
-			const data = await res.json();
+			const data = await fetchUser();
 			setUser(data);
 		} catch (err) {
 			console.error(err);
@@ -42,7 +26,7 @@ export const UserProvider = ({ children }: Props) => {
 		} finally {
 			setUserLoading(false);
 		}
-	}, [API_BASE]);
+	}, []);
 
 	useEffect(() => {
 		let mounted = true;
@@ -69,7 +53,7 @@ export const UserProvider = ({ children }: Props) => {
 	}, [refreshUser]);
 
 	return (
-		<UserContext value={{ user, userLoading, refreshUser }}>
+		<UserContext value={{ user, loadingUser, refreshUser }}>
 		{children}
 		</UserContext>
 	);

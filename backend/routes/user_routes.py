@@ -1,6 +1,7 @@
 # user_routes.py
 from fastapi import APIRouter, Depends, HTTPException
 import traceback
+import logging
 
 # Import dependencies from our modular files
 from auth import get_current_user
@@ -11,7 +12,7 @@ from pydantic import BaseModel
 
 from datetime import datetime, timezone
 
-class UpdateBioRequest(BaseModel):
+class UpdateProfileRequest(BaseModel):
     bio: str
 
 router = APIRouter()
@@ -53,6 +54,37 @@ async def get_profile(current_user=Depends(get_current_user)):
             status_code=404,
             detail={"error": str(e), "message": "An error occurred while fetching or creating the profile."}
         )
+
+@router.patch("/api/profile/")
+async def update_profile(payload: UpdateProfileRequest, current_user=Depends(get_current_user)):
+    """
+    Update the user's profile
+    """
+
+    update_data = payload.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields provided for update")
+
+    try:
+        
+        user_id = str(current_user.id)
+        print(f"Updating profile for user: {user_id}")
+
+        result = supabase_admin.table("profiles").update(update_data).eq("user_id", user_id).execute()
+
+        if result.data:
+            return {"message": "Profile updated successfully", "profile": result.data[0]}
+        
+        raise Exception("No profile found")
+    
+    except Exception as e:
+        print(f"Error in update_profile: {str(e)}")
+        print(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=403,
+            detail={"error": str(e), "message": "You are not allowed to update this profile."}
+        )
     
 @router.get("/api/profile/{id}")
 async def get_profile_by_id(id: str):
@@ -73,28 +105,6 @@ async def get_profile_by_id(id: str):
             status_code=404,
             detail={"error": str(e), "message": "An error occurred while fetching a profile."}
         )
-    
-@router.post("/api/profile/{id}/bio")
-async def update_profile_bio(id: str, payload: UpdateBioRequest):
-    """
-    Update the user's bio using a specific id
-    """
-    try:
-        result = supabase_admin.table("profiles").update({"bio": payload.bio}).eq("user_id", id).execute()
-
-        if result.data:
-            return {"message": "Bio updated successfully", "profile": result.data[0]}
-        
-        raise Exception("No profile found with given id")
-    except Exception as e:
-        print(f"Error in update_profile_bio: {str(e)}")
-        print(f"Full traceback: {traceback.format_exc()}")
-        raise HTTPException(
-            status_code=404,
-            detail={"error": str(e), "message": "An error occurred while updating a profile."}
-        )
-
-
 
 @router.get("/api/debug-auth")
 async def debug_auth(current_user=Depends(get_current_user)):

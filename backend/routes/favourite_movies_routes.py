@@ -35,7 +35,7 @@ async def add_favourite_movie(user_id: str, movie_id: str):
         }).execute()
 
         if result.data:
-            return {"message": "New favourite movie added successfully", "user": result.data[0], "movie": result.data[1]}
+            return {"message": "New favourite movie added successfully", "user": user_id, "movie": movie_id}
         
     except Exception as e:
         print(f"Error in add_favourite_movie: {str(e)}")
