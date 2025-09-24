@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes.user_routes import router as user_router
 from routes.friend_list_routes import router as friend_router
 from routes.debug_routes import router as debug_router
+from routes.tmdb_routes import router as tmdb_router
 
 
 app = FastAPI(title="Advanced SW Dev API")
@@ -31,6 +32,7 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(friend_router)
 app.include_router(debug_router)
+app.include_router(tmdb_router)
 
 @app.get("/")
 async def read_root():
