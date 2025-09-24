@@ -8,7 +8,10 @@ import { useProfile } from "@/hooks/useProfile";
 import { useParams } from "react-router-dom";
 
 import { updateProfile } from "@/lib/profile-service";
+<<<<<<< HEAD
 // import { fetchMovieDetails } from "@/lib/tmdb-api-helper";
+=======
+>>>>>>> 18cf335 (Reconfigured how user profile is updated using auth)
 
 
 const ProfilePage = () => {
