@@ -3,10 +3,6 @@ from fastapi import APIRouter, HTTPException
 from config import supabase_admin
 import traceback
 
-
-class FavouriteMovieIn(BaseModel):
-    movie_id: str
-
 router = APIRouter()
 
 @router.get("/api/favourite_movies/{user_id}")
