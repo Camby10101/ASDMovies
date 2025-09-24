@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException
 from config import supabase_admin
 import traceback
@@ -37,12 +36,13 @@ async def add_favourite_movie(user_id: str, movie_id: str):
 
         if result.data:
             return {"message": "New favourite movie added successfully", "user": result.data[0], "movie": result.data[1]}
+        
     except Exception as e:
         print(f"Error in add_favourite_movie: {str(e)}")
         print(f"Full traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=404,
-            detail={"error": str(e), "message": "An error occurred while add a favourite movie."}
+            detail={"error": str(e), "message": "An error occurred while adding a favourite movie."}
         )
 
 @router.delete("/api/favourite_movies/{user_id}/{movie_id}")
@@ -59,12 +59,11 @@ async def remove_favourite_movie(user_id: str, movie_id: str):
 
         if result.data:
             return {"message": "Favourite movie removed successfully", "user": user_id, "movie": movie_id}
-        else:
-            return {"message": "No matching movie found", "user": user_id, "movie": movie_id}
+        
     except Exception as e:
-        print(f"Error in add_favourite_movie: {str(e)}")
+        print(f"Error in remove_favourite_movie: {str(e)}")
         print(f"Full traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=404,
-            detail={"error": str(e), "message": "An error occurred while add a favourite movie."}
+            detail={"error": str(e), "message": "An error occurred while removing a favourite movie."}
         )
