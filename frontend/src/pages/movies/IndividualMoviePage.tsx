@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button"
 import { StarRating } from "@/components/ui/ratings"
 import { Star } from "lucide-react"
 import { HeartRating } from "@/components/ui/heart"
+import { useUser } from "@/hooks/useUser";
+import { addFavouriteMovie, removeFavouriteMovie, isMovieFavourite } from '@/lib/favourite-movies-service';
 
 export default function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>()
@@ -18,6 +20,7 @@ export default function MovieDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState<string | null>(null)
   const [rating, setRating] = useState<number>(0)
+  const { user } = useUser();
   const [isFavourite, setIsFavourite] = useState(false);
 
   useEffect(() => {
@@ -40,6 +43,36 @@ export default function MovieDetailsPage() {
       .finally(() => setLoading(false))
     return () => ctrl.abort()
   }, [numericId])
+
+  useEffect(() => {
+    if (user && movie) {
+      const checkFavourite = async () => {
+        const result = await isMovieFavourite(user.user_id, movie.id);
+        
+        setIsFavourite(result);
+      };
+
+      checkFavourite();
+    }
+  }, [user, movie]);
+
+  const handleAddToFavourites = async () => {
+    if (!user || !movie) return;
+
+    setIsFavourite(prev => !prev);
+
+    try {
+      if (!isFavourite) {
+        await addFavouriteMovie(user.user_id, movie.id);
+      }
+      else {
+        await removeFavouriteMovie(user.user_id, movie.id);
+      }
+    } catch (err) {
+      setIsFavourite(prev => !prev);
+      console.error(err);
+    }
+  }
 
   if (loading) return <div className="p-6">Loading…</div>
   if (err) return <div className="p-6 text-red-600">Error: {err}</div>
@@ -85,7 +118,9 @@ export default function MovieDetailsPage() {
                   <StarRating value={rating} onChange={setRating} />
                 </div>
                 {/* Right side */}
-                <HeartRating value={isFavourite} onChange={setIsFavourite} />
+                {user && (
+                  <HeartRating value={isFavourite} onChange={handleAddToFavourites} />
+                )}
               </div>
               <p className="text-base leading-relaxed">{movie.description}</p>
             </CardContent>

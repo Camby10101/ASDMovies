@@ -8,6 +8,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useParams } from "react-router-dom";
 
 import { updateProfile } from "@/lib/profile-service";
+// import { fetchMovieDetails } from "@/lib/tmdb-api-helper";
 
 
 const ProfilePage = () => {
@@ -48,7 +49,6 @@ const ProfilePage = () => {
                     </section>
                     <section className="rounded-2xl border p-4 space-y-4">
                         <Typography size="h2">Favourite movies</Typography>
-                        
                     </section>
                     {isCurrentUser && (
                     <>

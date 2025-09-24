@@ -43,7 +43,7 @@ export async function fetchProfile(user_id: string): Promise<Profile> {
 
 export async function updateProfile(updates: { bio?: string }) {
 	if (!session) {
-		throw new Error("No active session. User must be logged in to update profile.");
+		throw new Error("No active session. User must be logged in.");
 	}
 
 	const res = await fetch(`${API_BASE}/api/profile/`, {
