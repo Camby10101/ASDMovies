@@ -6,8 +6,6 @@ npm install tailwindcss @tailwindcss/vite
 npm install -D @types/node
 npm install @supabase/supabase-js
 
-npm install react-router
-
 npx shadcn@latest init
 npx shadcn@latest add navigation-menu
 
