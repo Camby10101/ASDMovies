@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // <-- missing
+import { useParams } from "react-router-dom";
 import { Typography } from "@/components/ui/typography";
 import { InfoBox } from "@/components/ui/info-box";
 import { Button } from "@/components/ui/button";
@@ -62,9 +62,8 @@ const ProfilePage = () => {
           })
         )
         setRatedMovies(moviesWithRatings)
-      } catch (e: any) {
-        console.error("Failed to load user ratings:", e)
-        setErrRated(e?.message ?? "Failed to load ratings")
+      } catch (err) {
+        console.log(err)
       } finally {
         setLoadingRated(false)
       }
