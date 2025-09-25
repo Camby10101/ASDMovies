@@ -4,7 +4,7 @@ import { InfoBox } from "@/components/ui/info-box";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent} from "@/components/ui/card";
 import MovieList from "@/components/ui/movieList";
-import { type FavouriteMovies } from "@/types/favourite-movies";
+// import { type FavouriteMovies } from "@/types/favourite-movies";
 
 import { useUser } from "@/hooks/useUser";
 import { useProfile } from "@/hooks/useProfile";
@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 
 import { updateProfile } from "@/lib/profile-service";
 import { fetchFavouriteMovies } from "@/lib/favourite-movies-service";
-// import { fetchMovieDetails } from "@/lib/tmdb-api-helper";
+import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper";
 
 
 const ProfilePage = () => {
@@ -25,23 +25,42 @@ const ProfilePage = () => {
     // const isCurrentUser = false; // testing
 
     const [bio, setBio] = useState("");
-    const [movie_ids, setMovie_ids] = useState<FavouriteMovies>([]);
-    const [loadingMovies, setLoadingMovies] = useState(true);
+    const [movies, setMovies] = useState<Movie[]>([])
+    const [loadingMovies, setLoadingMovies] = useState(true)
+    const [noFavourites, setNoFavourites] = useState(false)
 
-    useEffect(() => { 
-        if (profile) {
-            // Pull and update profile
-            setBio(profile.bio);
-            // Fetch favourite movies
+    useEffect(() => {
+        if (!profile) return
+
+        const ctrl = new AbortController()
+
+        const loadMovies = async () => {
+            setLoadingMovies(true)
+
             try {
-                fetchFavouriteMovies(profile.user_id)
-                .then(setMovie_ids)
-                .finally(() => setLoadingMovies(false))
+                const movie_ids = await fetchFavouriteMovies(profile.user_id)
+
+                if (movie_ids.length === 1 && movie_ids[0] === -1) {
+                    setNoFavourites(true)
+                    return
+                }
+
+                const data = await Promise.all(
+                    movie_ids.map((id) => fetchMovieDetails(id, ctrl.signal))
+                )
+                setMovies(data)
+                
             } catch (err) {
-                console.error(err);
+                console.log("Error loading movies:", err)
+            } finally {
+                setLoadingMovies(false)
             }
         }
-    }, [profile]);
+
+        loadMovies()
+
+        return () => ctrl.abort()
+    }, [profile])
 
     const handleSave = async () => {
         try {
@@ -52,7 +71,7 @@ const ProfilePage = () => {
         }
     }
 
-    if (loadingProfile || loadingMovies) return <p>Loading...</p>
+    if (loadingProfile || (loadingMovies) ) return <p>Loading...</p>
     if (!profile) return <p>Profile does not exist</p>
 
     return (
@@ -72,7 +91,11 @@ const ProfilePage = () => {
                     <Typography size="h2">Favourite movies</Typography>
                 </CardHeader>
                 <CardContent>
-                    <MovieList movie_ids={movie_ids}/>
+                    {!noFavourites ? (
+                        <MovieList movies={movies} />
+                    ) : (
+                        <Typography>No movies yet!</Typography>
+                    )}       
                 </CardContent>
             </Card>
 
