@@ -101,10 +101,10 @@ export function Navbar() {
           {isAuthenticated ? (
             <>
             {user && (
-              <Button className="mr-2" size="sm" variant="secondary" onClick={() => navigate(`/profile/${user.user_id}`)}>My Profile</Button>
+              <Button className="mr-2 cursor-pointer" size="sm" variant="secondary" onClick={() => navigate(`/profile/${user.user_id}`)}>My Profile</Button>
             )}
 
-            <Button size="sm" variant="secondary" onClick={handleSignOut}>Sign Out</Button>
+            <Button classname="cursor-pointer" size="sm" variant="secondary" onClick={handleSignOut}>Sign Out</Button>
             </>
           ) : (
             <Dialog open={open} onOpenChange={setOpen}>

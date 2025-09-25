@@ -18,6 +18,7 @@ export async function fetchUserRatings(user_id: string): Promise<UserMovieRating
   return json.ratings as UserMovieRating[]
 }
 
+
 // fetch a user’s rating for a single movie
 export async function getMyRating(user_id: string, tmdb_id: number): Promise<number | null> {
   const res = await fetch(`${API_BASE}/api/ratings/${user_id}/${tmdb_id}`, { method: "GET" })

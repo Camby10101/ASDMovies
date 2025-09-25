@@ -45,7 +45,7 @@ const ProfilePage = () => {
       setLoadingRated(true)
       setErrRated(null)
       try {
-        const ratings: UserMovieRating[] = await fetchUserRatings(profile.user_id) // [{ tmdb_id, rating, created_at }]
+        const ratings: UserMovieRating[] = await fetchUserRatings(profile.user_id) 
         // Sort newest first; fallback to empty string if created_at missing
         const sorted = ratings
           .slice()
