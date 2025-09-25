@@ -13,7 +13,9 @@ async def get_favourite_movies_by_user_id(user_id: str):
         result = supabase_admin.table("favourite_movies").select("movie_id").eq("user_id", user_id).execute()
         
         if result.data:
-            return result
+            movie_ids = [item["movie_id"] for item in result.data]
+            return movie_ids
+        return []
     
     except Exception as e:
         print(f"Error in get_favourite_movies_by_user_id: {str(e)}")

@@ -1,1 +1,1 @@
-export type FavouriteMovies = string[];
+export type FavouriteMovies = number[];
