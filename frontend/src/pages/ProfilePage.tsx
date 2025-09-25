@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom"; // <-- missing
 import { Typography } from "@/components/ui/typography";
 import { InfoBox } from "@/components/ui/info-box";
 import { Button } from "@/components/ui/button";
