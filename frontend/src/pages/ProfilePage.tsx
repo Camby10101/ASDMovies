@@ -8,14 +8,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useParams } from "react-router-dom";
 
 import { updateProfile } from "@/lib/profile-service";
-<<<<<<< HEAD
-<<<<<<< HEAD
 // import { fetchMovieDetails } from "@/lib/tmdb-api-helper";
-=======
->>>>>>> 18cf335 (Reconfigured how user profile is updated using auth)
-=======
-// import { fetchMovieDetails } from "@/lib/tmdb-api-helper";
->>>>>>> 951dc43 (Added user adding and removing favourites)
 
 
 const ProfilePage = () => {
