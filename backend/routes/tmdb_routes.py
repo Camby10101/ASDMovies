@@ -85,6 +85,7 @@ async def trending(period: Literal["day", "week"] = "day"):
 
 @router.get("/movies/{movie_id}", response_model=MovieOut)
 async def movie_details(movie_id: int):
+    print("Movie ID:",  movie_id)
     data = await tmdb_get(f"/movie/{movie_id}", params={"language": "en-US"})
     genre = ", ".join([g.get("name", "") for g in data.get("genres", [])]) or "—"
     return MovieOut(
