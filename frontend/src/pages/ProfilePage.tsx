@@ -13,7 +13,6 @@ import { useUser } from "@/hooks/useUser"
 import { useProfile } from "@/hooks/useProfile"
 
 import { updateProfile } from "@/lib/profile-service"
-import { fetchFavouriteMovies } from "@/lib/favourite-movies-service"
 import { fetchUserRatings } from "@/lib/rating-service"
 import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper"
 
@@ -31,8 +30,6 @@ const ProfilePage = () => {
   // Bio
   const [bio, setBio] = useState("")
 
-  // Favourites
-  const [loadingMovies, setLoadingMovies] = useState(true)
 
   // Recently rated
   const [ratedMovies, setRatedMovies] = useState<
@@ -40,21 +37,6 @@ const ProfilePage = () => {
   >([])
   const [loadingRated, setLoadingRated] = useState(false)
   const [errRated, setErrRated] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!profile) return
-    setBio(profile.bio ?? "")
-
-    // Fetch favourite movies
-    setLoadingMovies(true)
-    fetchFavouriteMovies(profile.user_id)
-      .then(setMovieIds)
-      .catch((err) => {
-        console.error("Failed to fetch favourites:", err)
-        setMovieIds([])
-      })
-      .finally(() => setLoadingMovies(false))
-  }, [profile])
 
   // Load "Recently Rated Movies"
   useEffect(() => {
@@ -98,7 +80,7 @@ const ProfilePage = () => {
   }
 
   // Top-level loading/error states
-  if (loadingProfile || loadingUser || loadingMovies) {
+  if (loadingProfile || loadingUser) {
     return <p>Loading...</p>
   }
   if (!profile) {
