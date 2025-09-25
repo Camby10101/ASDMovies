@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter } from 'react-router-dom';
 import TrendingMoviesPage from './pages/movies/TrendingMoviesPage.tsx';
 import App from './App.tsx';
 // import HomePage from './pages/HomePage.tsx';
