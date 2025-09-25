@@ -1,4 +1,3 @@
-
 // src/pages/profile/ProfilePage.tsx
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
@@ -8,7 +7,6 @@ import { InfoBox } from "@/components/ui/info-box"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 
-import MovieList from "@/components/ui/movieList"
 import SmallMovieCard from "@/components/ui/smallMovieCard"
 
 import { useUser } from "@/hooks/useUser"
@@ -19,7 +17,6 @@ import { fetchFavouriteMovies } from "@/lib/favourite-movies-service"
 import { fetchUserRatings } from "@/lib/rating-service"
 import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper"
 
-import type { FavouriteMovies } from "@/types/favourite-movies"
 import type { UserMovieRating } from "@/types/user-movie-ratings"
 
 const ProfilePage = () => {
@@ -35,7 +32,6 @@ const ProfilePage = () => {
   const [bio, setBio] = useState("")
 
   // Favourites
-  const [movieIds, setMovieIds] = useState<FavouriteMovies>([])
   const [loadingMovies, setLoadingMovies] = useState(true)
 
   // Recently rated
@@ -45,7 +41,6 @@ const ProfilePage = () => {
   const [loadingRated, setLoadingRated] = useState(false)
   const [errRated, setErrRated] = useState<string | null>(null)
 
-  // Hydrate bio + favourites when profile loads
   useEffect(() => {
     if (!profile) return
     setBio(profile.bio ?? "")
