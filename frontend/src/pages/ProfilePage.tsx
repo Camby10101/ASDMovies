@@ -1,21 +1,18 @@
-// src/pages/profile/ProfilePage.tsx
-import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
-
-import { Typography } from "@/components/ui/typography"
-import { InfoBox } from "@/components/ui/info-box"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardContent } from "@/components/ui/card"
-
+import { useState, useEffect } from "react";
+import { Typography } from "@/components/ui/typography";
+import { InfoBox } from "@/components/ui/info-box";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardContent} from "@/components/ui/card";
+import MovieList from "@/components/ui/movieList";
 import SmallMovieCard from "@/components/ui/smallMovieCard"
 
 import { useUser } from "@/hooks/useUser"
 import { useProfile } from "@/hooks/useProfile"
 
-import { updateProfile } from "@/lib/profile-service"
+import { updateProfile } from "@/lib/profile-service";
+import { fetchFavouriteMovies } from "@/lib/favourite-movies-service";
+import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper";
 import { fetchUserRatings } from "@/lib/rating-service"
-import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper"
-
 import type { UserMovieRating } from "@/types/user-movie-ratings"
 
 const ProfilePage = () => {
@@ -32,11 +29,15 @@ const ProfilePage = () => {
 
 
   // Recently rated
-  const [ratedMovies, setRatedMovies] = useState<
-    Array<{ movie: Movie; userRating: number }>
-  >([])
-  const [loadingRated, setLoadingRated] = useState(false)
-  const [errRated, setErrRated] = useState<string | null>(null)
+    const [ratedMovies, setRatedMovies] = useState<
+        Array<{ movie: Movie; userRating: number }>
+    >([])
+    const [loadingRated, setLoadingRated] = useState(false)
+    const [errRated, setErrRated] = useState<string | null>(null)
+
+    const [movies, setMovies] = useState<Movie[]>([])
+    const [loadingMovies, setLoadingMovies] = useState(true)
+    const [noFavourites, setNoFavourites] = useState(false)
 
   // Load "Recently Rated Movies"
   useEffect(() => {
@@ -70,22 +71,55 @@ const ProfilePage = () => {
     loadRatedMovies()
   }, [profile])
 
-  const handleSave = async () => {
-    try {
-      await updateProfile({ bio })
-      await refreshUser()
-    } catch (err) {
-      console.error("Failed to save profile:", err)
-    }
-  }
 
-  // Top-level loading/error states
-  if (loadingProfile || loadingUser) {
-    return <p>Loading...</p>
-  }
-  if (!profile) {
-    return <p>Profile does not exist</p>
-  }
+
+    useEffect(() => {
+        if (!profile) return
+
+        setBio(profile.bio);
+        
+        const ctrl = new AbortController()
+
+        const loadMovies = async () => {
+            setLoadingMovies(true)
+
+            try {
+                const movie_ids = await fetchFavouriteMovies(profile.user_id)
+
+                if (movie_ids.length === 1 && movie_ids[0] === -1) {
+                    setNoFavourites(true)
+                    return
+                }
+
+                const data = await Promise.all(
+                    movie_ids.map((id) => fetchMovieDetails(id, ctrl.signal))
+                )
+                setMovies(data)
+                
+            } catch (err) {
+                console.log("Error loading movies:", err)
+            } finally {
+                setLoadingMovies(false)
+            }
+        }
+
+        loadMovies()
+
+        return () => ctrl.abort()
+    }, [profile])
+
+    const handleSave = async () => {
+        try {
+            await updateProfile({ bio }); // Updates the database
+            await refreshUser();
+            window.location.reload();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    if (loadingProfile || (loadingMovies) ) return <p>Loading...</p>
+    if (!profile) return <p>Profile does not exist</p>
 
   return (
     <div className="mx-auto max-w-3xl p-6 space-y-8">
@@ -112,6 +146,13 @@ const ProfilePage = () => {
         <CardHeader>
           <Typography size="h2">Favourite Movies</Typography>
         </CardHeader>
+        <CardContent>
+            {!noFavourites ? (
+                <MovieList movies={movies} />
+            ) : (
+                <Typography>No movies yet!</Typography>
+            )}       
+        </CardContent>
       </Card>
 
       {/* Recently Rated Movies */}
@@ -119,6 +160,7 @@ const ProfilePage = () => {
         <CardHeader>
           <Typography size="h2">Recently Rated Movies</Typography>
         </CardHeader>
+        
         <CardContent>
           {loadingRated && <p>Loading…</p>}
           {errRated && <p className="text-red-600">Error: {errRated}</p>}

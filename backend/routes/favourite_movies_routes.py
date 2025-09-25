@@ -15,7 +15,7 @@ async def get_favourite_movies_by_user_id(user_id: str):
         if result.data:
             movie_ids = [item["movie_id"] for item in result.data]
             return movie_ids
-        return []
+        return [-1]
     
     except Exception as e:
         print(f"Error in get_favourite_movies_by_user_id: {str(e)}")
