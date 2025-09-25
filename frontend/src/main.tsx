@@ -2,13 +2,14 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { RouterProvider } from 'react-router/dom';
+import { UserProvider } from "@/providers/userProvider";
 import { router } from './router.tsx';
-import { CurrentUserProvider } from "./contexts/CurrentUserProvider";
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CurrentUserProvider>
+    <UserProvider>
       <RouterProvider router={router} />
-    </CurrentUserProvider>
+    </UserProvider>
   </StrictMode>,
 )

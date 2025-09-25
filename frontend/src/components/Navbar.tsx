@@ -1,6 +1,7 @@
 // src/components/Navbar.tsx
 import { Link } from "react-router-dom"
 import { useEffect, useRef, useState, type FormEvent } from "react"
+import { useNavigate } from "react-router-dom";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { supabase } from "@/lib/supabase"
 import { api } from "@/lib/api"
+import { useUser } from "@/hooks/useUser"
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
@@ -74,6 +76,8 @@ export function Navbar() {
   }, [])
 
   const handleSignOut = async () => { await supabase.auth.signOut() }
+  const navigate = useNavigate();
+  const { user } = useUser();
 
   return (
     <header className="pl-4 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -88,7 +92,6 @@ export function Navbar() {
           <Link to="/trendingMovies" className="transition-colors hover:text-foreground/80 text-foreground/60">Trending</Link>
           <Link to="/movies" className="transition-colors hover:text-foreground/80 text-foreground/60">Movies</Link>
           <Link to="/friend" className="transition-colors hover:text-foreground/80 text-foreground/60">Friends</Link>
-          <Link to="/profile" className="transition-colors hover:text-foreground/80 text-foreground/60">My Profile</Link>
           <Link to="/account" className="transition-colors hover:text-foreground/80 text-foreground/60">Account</Link>
           <Link to="/privacy" className="transition-colors hover:text-foreground/80 text-foreground/60">Privacy &amp; Controls</Link>
           <Link to="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">About</Link>
@@ -96,7 +99,13 @@ export function Navbar() {
 
         <div className="ml-auto flex items-center">
           {isAuthenticated ? (
+            <>
+            {user && (
+              <Button className="mr-2" size="sm" variant="secondary" onClick={() => navigate(`/profile/${user.user_id}`)}>My Profile</Button>
+            )}
+
             <Button size="sm" variant="secondary" onClick={handleSignOut}>Sign Out</Button>
+            </>
           ) : (
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild><Button size="sm">Sign In</Button></DialogTrigger>

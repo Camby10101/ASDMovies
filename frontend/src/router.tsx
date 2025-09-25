@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import TrendingMoviesPage from './pages/movies/TrendingMoviesPage.tsx';
 import App from './App.tsx';
-import HomePage from './pages/HomePage.tsx';
+// import HomePage from './pages/HomePage.tsx';
 import AboutPage from './pages/AboutPage.tsx';
 import FriendPage from './pages/FriendPage.tsx';
 import MovieListPage from './pages/movies/MovieListPage.tsx'
@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
         element: <FriendPage />,
       },
       {
-        path: "profile/",
+        path: "profile/:id",
         element: <ProfilePage />,
       },
       {

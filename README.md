@@ -17,7 +17,7 @@ cd backend
 pip install supabase
 python3 -m venv .venv
 pip install supabase
-(source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1)
+(source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1) OR (bash (windows): .venv/Scripts/activate)
 python -m pip install --upgrade pip
 python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
 
@@ -47,5 +47,6 @@ npm run dev
 
 # TO RUN Backend
 
-(source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1)
+cd backend/tmdb-api
+(source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1) OR (bash (windows): .venv/Scripts/activate)
 python -m uvicorn main:app --reload --port 8000
