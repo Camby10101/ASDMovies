@@ -32,6 +32,8 @@ const ProfilePage = () => {
     useEffect(() => {
         if (!profile) return
 
+        setBio(profile.bio);
+        
         const ctrl = new AbortController()
 
         const loadMovies = async () => {
@@ -66,6 +68,7 @@ const ProfilePage = () => {
         try {
             await updateProfile({ bio }); // Updates the database
             await refreshUser();
+            window.location.reload();
         } catch (err) {
             console.error(err);
         }
