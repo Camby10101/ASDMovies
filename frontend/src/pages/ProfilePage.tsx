@@ -55,7 +55,7 @@ const ProfilePage = () => {
             .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
 
           // Take top 10 and fetch each movie’s details
-          const firstTen = sorted.slice(0, 10)
+          const firstTen = sorted.slice(0, 5)
           const moviesWithRatings = await Promise.all(
             firstTen.map(async (r) => {
               const m = await fetchMovieDetails(r.tmdb_id)
