@@ -8,72 +8,74 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  pythonVersion: '3.11.9'
-  nodeVersion: '24.7.0'
+  # Frontend ENV
+  VITE_SUPABASE_URL: "https://mcpzbvznxmkbvaeajwua.supabase.co/"
+  VITE_SUPABASE_ANON_KEY: "$(VITE_SUPABASE_ANON_KEY)"
+  NEXT_PUBLIC_API_URL: "http://localhost:8000/"
 
-jobs:
-  - job: TestBackend
-    displayName: 'Backend Tests and Setup'
-    steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '$(pythonVersion)'
-        displayName: 'Use Python $(pythonVersion)'
-      
-      - script: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-        displayName: 'Install Backend Dependencies'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/backend' # this installs dependencies
-      
-      # runs the tests in /backend/tmbd-api/test_main.py
-      - script: | 
-          python -m pytest
-        displayName: 'Run Backend Tests'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
-        condition: succeededOrFailed()
+  # Backend ENV
+  SUPABASE_URL: "https://mcpzbvznxmkbvaeajwua.supabase.co/"
+  SUPABASE_ANON_KEY: "$(SUPABASE_ANON_KEY)"
+  SUPABASE_SERVICE_ROLE_KEY: "$(SUPABASE_SERVICE_ROLE_KEY)"
+  TMDB_BEARER: "$(TMDB_BEARER)"
 
-  - job: BuildFrontend
-    displayName: 'Frontend Build and Setup'
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: '$(nodeVersion)'
-        displayName: 'Set up Node.js $(nodeVersion)'
-      
-      - script: |
-          npm install
-          npm install tailwindcss @tailwindcss/vite
-          npm install -D @types/node
-          npm install react-router-dom
-        displayName: 'Install Frontend Dependencies'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/frontend'
-      
-      - script: |
-          npx shadcn@latest init -y
-          npx shadcn@latest add navigation-menu
-        displayName: 'Setup Shadcn/UI Components'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/frontend'
-      
-      - script: |
-          npm run build
-        displayName: 'Build Frontend'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/frontend'
-    
-  - job: SetupBackendRuntime
-    displayName: 'Backend Runtime Setup'
-    dependsOn: TestBackend
-    condition: succeeded()
-    steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '$(pythonVersion)'
-        displayName: 'Set up Python $(pythonVersion)'
-      
-      - script: |
-          python -m venv .venv
-          source .venv/bin/activate
-          python -m pip install --upgrade pip
-          python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
-        displayName: 'Setup Backend Runtime Environment'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/backend'
+stages:
+  - stage: Frontend
+    displayName: "Frontend Setup & Build"
+    jobs:
+      - job: frontend_build
+        displayName: "Install & Build Frontend"
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+            displayName: "Use Node.js 20"
+
+          - script: |
+              cd frontend
+              npm ci
+              npm install tailwindcss @tailwindcss/vite
+              npm install -D @types/node
+              npm install @supabase/supabase-js
+              npx shadcn@latest init
+              npx shadcn@latest add navigation-menu
+              npm run build
+            displayName: "Install frontend dependencies and build"
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: 'frontend/dist'
+              artifactName: 'frontend_dist'
+            displayName: "Publish Frontend Build"
+
+  - stage: Backend
+    displayName: "Backend Setup & Run"
+    dependsOn: Frontend
+    jobs:
+      - job: backend_setup
+        displayName: "Install & Run Backend"
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.11'
+            displayName: "Use Python 3.11"
+
+          - script: |
+              cd backend
+              python -m venv .venv
+              source .venv/bin/activate
+              python -m pip install --upgrade pip
+              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
+
+              cd tmdb-api
+              python -m venv .venv
+              source .venv/bin/activate
+              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
+            displayName: "Install backend dependencies"
+
+          - script: |
+              cd backend/tmdb-api
+              source .venv/bin/activate
+              nohup uvicorn main:app --reload --port 8000 &
+            displayName: "Run Backend API"
+
