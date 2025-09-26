@@ -127,7 +127,7 @@ export default function MovieDetailsPage() {
     }
   }
 
-  const controlsDisabled = !user || loading || hydratingUserState
+  //const controlsDisabled = !user || loading || hydratingUserState
 
   if (loading) return <div className="p-6">Loading…</div>
   if (err) return <div className="p-6 text-red-600">Error: {err}</div>

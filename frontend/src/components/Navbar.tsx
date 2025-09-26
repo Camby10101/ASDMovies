@@ -104,7 +104,7 @@ export function Navbar() {
               <Button className="mr-2 cursor-pointer" size="sm" variant="secondary" onClick={() => navigate(`/profile/${user.user_id}`)}>My Profile</Button>
             )}
 
-            <Button classname="cursor-pointer" size="sm" variant="secondary" onClick={handleSignOut}>Sign Out</Button>
+            <Button className="cursor-pointer" size="sm" variant="secondary" onClick={handleSignOut}>Sign Out</Button>
             </>
           ) : (
             <Dialog open={open} onOpenChange={setOpen}>
