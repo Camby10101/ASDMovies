@@ -29,7 +29,8 @@ const typographyVariants = cva("text-black leading-tight", {
             red: "text-red-500",
             blue: "text-blue-500",
             green: "text-green-500",
-            white: "text-white"
+            white: "text-white",
+            yellow: "text-yellow-500"
         }
     },
     defaultVariants: {

@@ -15,6 +15,7 @@ import { fetchFavouriteMovies } from "@/lib/favourite-movies-service";
 import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper";
 import { fetchUserRatings } from "@/lib/rating-service"
 import type { UserMovieRating } from "@/types/user-movie-ratings"
+// import { isUint8ClampedArray } from "util/types";
 
 const ProfilePage = () => {
     const { id } = useParams<{ id: string }>()                       // profile page id (handle or user_id depending on your hook)
@@ -146,7 +147,7 @@ const ProfilePage = () => {
         </CardHeader>
         <CardContent>
             {!noFavourites ? (
-                <MovieList movies={movies} />
+                <MovieList movies={movies} editMode={isCurrentUser} />
             ) : (
                 <Typography>No favourties yet!</Typography>
             )}       
