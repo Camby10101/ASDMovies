@@ -8,16 +8,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  # Frontend ENV
   VITE_SUPABASE_URL: "https://mcpzbvznxmkbvaeajwua.supabase.co/"
-  VITE_SUPABASE_ANON_KEY: "$(VITE_SUPABASE_ANON_KEY)"
   NEXT_PUBLIC_API_URL: "http://localhost:8000/"
-
-  # Backend ENV
-  SUPABASE_URL: "https://mcpzbvznxmkbvaeajwua.supabase.co/"
-  SUPABASE_ANON_KEY: "$(SUPABASE_ANON_KEY)"
-  SUPABASE_SERVICE_ROLE_KEY: "$(SUPABASE_SERVICE_ROLE_KEY)"
-  TMDB_BEARER: "$(TMDB_BEARER)"
 
 stages:
   - stage: Frontend
