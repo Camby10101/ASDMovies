@@ -1,37 +1,38 @@
 import { type Movie } from "@/lib/tmdb-api-helper"
 import { Typography } from "@/components/ui/typography"
 import { GripVertical } from 'lucide-react';
+// import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 
 interface MovieListProps {
   movies: Movie[]
   editMode?: boolean
 }
 
-export default function MovieList({ movies, editMode = true }: MovieListProps) {
+export default function MovieList({ movies, editMode = false }: MovieListProps) {
     if (movies.length === 0) return <Typography>Loading...</Typography>
 
     return (
-        <ul className="w-full">
+          <ul className="w-full">
             {movies.map((movie, index) => (
-                <li key={movie.id} className="">
-                    <div 
-                        className="grid grid-cols-5 items-center justify-center my-2 border-2 border-gray-200 rounded-lg"
-                        style={{ gridTemplateColumns: "4% 6% 60% 10% 20%"}}
-                    >
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                            { editMode ? (
-                                <GripVertical className="w-full h-full"/>
-                            ) : (
-                                <p></p>
-                            )
-                            }
-                        </div>
-                        <Typography align="center">#{index + 1}</Typography>
-                        <Typography>{movie.title}</Typography>
-                        <Typography>{movie.year}</Typography>
-                        <Typography>{movie.genre}</Typography>
+            <li key={movie.id}>
+                <div
+                className="h-12 flex items-center justify-center grid grid-cols-4 my-2 border-2 border-gray-500 rounded-[12px]"
+                style={{ gridTemplateColumns: "4% 6% 80% 10%" }}
+                >
+                    <div className="w-full h-full bg-gray-500 flex items-center justify-center rounded-l-[6px]">
+                        {editMode && <GripVertical className="w-full h-full text-gray-100" />}
                     </div>
-                </li>
+                    <Typography align="center" className="font-semibold">
+                        #{index + 1}
+                    </Typography>
+                    <Typography>
+                        {movie.title}
+                    </Typography>
+                    <Typography align="center">
+                        {movie.year}
+                    </Typography>
+                </div>
+            </li>
             ))}
         </ul>
     )
