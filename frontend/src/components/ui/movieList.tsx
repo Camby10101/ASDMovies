@@ -15,7 +15,7 @@ export default function MovieList({ movies, editMode = true }: MovieListProps) {
             {movies.map((movie, index) => (
                 <li key={movie.id} className="">
                     <div 
-                        className="flex items-center justify-center grid grid-cols-5 my-2 border-2 border-gray-200 rounded-lg"
+                        className="grid grid-cols-5 items-center justify-center my-2 border-2 border-gray-200 rounded-lg"
                         style={{ gridTemplateColumns: "4% 6% 60% 10% 20%"}}
                     >
                         <div className="w-full h-full bg-gray-200 flex items-center justify-center">
