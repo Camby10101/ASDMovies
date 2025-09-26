@@ -24,7 +24,7 @@ export default function SmallMovieCard({ id, title, year, poster, genre, rating 
           <p className="text-sm text-gray-600">{genre}</p>
           {rating !== undefined && (
             <div className="mt-2 flex items-center gap-2">
-              <StarRating value={rating} disabled /> 
+              <StarRating value={rating} /> 
               <span className="text-sm text-gray-500">{rating}/5</span>
             </div>
           )}
