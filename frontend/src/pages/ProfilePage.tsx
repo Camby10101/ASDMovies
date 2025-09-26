@@ -17,61 +17,59 @@ import { fetchUserRatings } from "@/lib/rating-service"
 import type { UserMovieRating } from "@/types/user-movie-ratings"
 
 const ProfilePage = () => {
-  const { id } = useParams<{ id: string }>()                       // profile page id (handle or user_id depending on your hook)
-  const { user, loadingUser, refreshUser } = useUser()
-  const { profile, loadingProfile } = useProfile(id!)               // profile being viewed
+    const { id } = useParams<{ id: string }>()                       // profile page id (handle or user_id depending on your hook)
+    const { user, loadingUser, refreshUser } = useUser()
+    const { profile, loadingProfile } = useProfile(id!)               // profile being viewed
 
-  // is this the logged-in user's own profile?
-  const isCurrentUser =
-    !loadingUser && !loadingProfile && profile?.user_id === user?.user_id
+    // is this the logged-in user's own profile?
+    const isCurrentUser =
+      !loadingUser && !loadingProfile && profile?.user_id === user?.user_id
 
-  // Bio
-  const [bio, setBio] = useState("")
+    // Bio
+    const [bio, setBio] = useState("")
 
 
-  // Recently rated
-    const [ratedMovies, setRatedMovies] = useState<
-        Array<{ movie: Movie; userRating: number }>
-    >([])
-    const [loadingRated, setLoadingRated] = useState(false)
-    const [errRated, setErrRated] = useState<string | null>(null)
+    // Recently rated
+      const [ratedMovies, setRatedMovies] = useState<
+          Array<{ movie: Movie; userRating: number }>
+      >([])
+      const [loadingRated, setLoadingRated] = useState(false)
+      const [errRated, setErrRated] = useState<string | null>(null)
 
-    const [movies, setMovies] = useState<Movie[]>([])
-    const [loadingMovies, setLoadingMovies] = useState(true)
-    const [noFavourites, setNoFavourites] = useState(false)
+      const [movies, setMovies] = useState<Movie[]>([])
+      const [loadingMovies, setLoadingMovies] = useState(true)
+      const [noFavourites, setNoFavourites] = useState(false)
 
-  // Load "Recently Rated Movies"
-  useEffect(() => {
-    const loadRatedMovies = async () => {
-      if (!profile) return
-      setLoadingRated(true)
-      setErrRated(null)
-      try {
-        const ratings: UserMovieRating[] = await fetchUserRatings(profile.user_id) 
-        // Sort newest first; fallback to empty string if created_at missing
-        const sorted = ratings
-          .slice()
-          .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
+    // Load "Recently Rated Movies"
+    useEffect(() => {
+      const loadRatedMovies = async () => {
+        if (!profile) return
+        setLoadingRated(true)
+        setErrRated(null)
+        try {
+          const ratings: UserMovieRating[] = await fetchUserRatings(profile.user_id) 
+          // Sort newest first; fallback to empty string if created_at missing
+          const sorted = ratings
+            .slice()
+            .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
 
-        // Take top 10 and fetch each movie’s details
-        const firstTen = sorted.slice(0, 10)
-        const moviesWithRatings = await Promise.all(
-          firstTen.map(async (r) => {
-            const m = await fetchMovieDetails(r.tmdb_id)
-            return { movie: m, userRating: r.rating }
-          })
-        )
-        setRatedMovies(moviesWithRatings)
-      } catch (err) {
-        console.log(err)
-      } finally {
-        setLoadingRated(false)
+          // Take top 10 and fetch each movie’s details
+          const firstTen = sorted.slice(0, 10)
+          const moviesWithRatings = await Promise.all(
+            firstTen.map(async (r) => {
+              const m = await fetchMovieDetails(r.tmdb_id)
+              return { movie: m, userRating: r.rating }
+            })
+          )
+          setRatedMovies(moviesWithRatings)
+        } catch (err) {
+          console.log(err)
+        } finally {
+          setLoadingRated(false)
+        }
       }
-    }
-    loadRatedMovies()
-  }, [profile])
-
-
+      loadRatedMovies()
+    }, [profile])
 
     useEffect(() => {
         if (!profile) return
@@ -110,7 +108,7 @@ const ProfilePage = () => {
 
     const handleSave = async () => {
         try {
-            await updateProfile({ bio }); // Updates the database
+            await updateProfile({ bio }); // Updates the databases
             await refreshUser();
             window.location.reload();
         } catch (err) {
