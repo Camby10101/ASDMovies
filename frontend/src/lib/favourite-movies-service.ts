@@ -31,7 +31,6 @@ export async function isMovieFavourite(user_id: string, movie_id: number): Promi
 export async function addFavouriteMovie(user_id: string, movie_id: number) {
     const res = await fetch(`${API_BASE}/api/favourite_movies/${user_id}/${movie_id}`, {
         method: "POST"
-        
     });
 
     if (!res.ok) throw new Error("Failed to add movie to favourites");
@@ -39,6 +38,17 @@ export async function addFavouriteMovie(user_id: string, movie_id: number) {
     return await res.json();
 }
 
+export async function reorderFavouriteMovies(user_id: string, movie_ids: number[]) {
+    const res = await fetch(`${API_BASE}/api/favourite_movies/${user_id}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(movie_ids)
+    });
+
+    if (!res.ok) throw new Error("Failed to add movie to favourites");
+}
 
 // --------
 // DELETE

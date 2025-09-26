@@ -150,7 +150,7 @@ const ProfilePage = () => {
             {!noFavourites ? (
                 <MovieList movies={movies} />
             ) : (
-                <Typography>No movies yet!</Typography>
+                <Typography>No favourties yet!</Typography>
             )}       
         </CardContent>
       </Card>

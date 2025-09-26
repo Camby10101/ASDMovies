@@ -1,16 +1,17 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Body
 from config import supabase_admin
 import traceback
 
 router = APIRouter(tags=["favourite_movies"])
 
+# --GET--
 @router.get("/api/favourite_movies/{user_id}")
 async def get_favourite_movies_by_user_id(user_id: str):
     """
     Get a user's favourite movies using their user id
     """
     try:
-        result = supabase_admin.table("favourite_movies").select("movie_id").eq("user_id", user_id).execute()
+        result = supabase_admin.table("favourite_movies").select("movie_id").eq("user_id", user_id).order("rank", desc=False).execute()
         
         if result.data:
             movie_ids = [item["movie_id"] for item in result.data]
@@ -50,6 +51,7 @@ async def is_movie_favourite(user_id: str, movie_id: int):
             detail={"error": str(e), "message": "An error occurred while fetching a user's favourite movies."}
         )
 
+# -- POST --
 @router.post("/api/favourite_movies/{user_id}/{movie_id}")
 async def add_favourite_movie(user_id: str, movie_id: int):
     """
@@ -72,6 +74,33 @@ async def add_favourite_movie(user_id: str, movie_id: int):
             detail={"error": str(e), "message": "An error occurred while adding a favourite movie."}
         )
 
+@router.post("/api/favourite_movies/{user_id}")
+async def reorder_favourite_movies(user_id: str, movie_ids: list[int] = Body(...)):
+    """
+    Reorder a user's favourite movies based on the order of movie_ids array.
+    The first movie in the array will have rank 1, second rank 2, etc.
+    """
+    try:
+        updates = [{"movie_id": movie_id, "rank": movie_idx + 1} for movie_idx, movie_id in enumerate(movie_ids)]
+
+        for update in updates:
+            supabase_admin.table("favourite_movies")\
+                .update({"rank": update["rank"]})\
+                .eq("user_id", user_id)\
+                .eq("movie_id", update["movie_id"])\
+                .execute()
+            
+        return {"message": "Favourites reordered successfully", "user": user_id}
+
+    except Exception as e:
+        print(f"Error in reorder_favourite_movies: {str(e)}")
+        print(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=404,
+            detail={"error": str(e), "message": "An error occurred while reordering favourite movies."}
+        )
+
+# -- DELETE --
 @router.delete("/api/favourite_movies/{user_id}/{movie_id}")
 async def remove_favourite_movie(user_id: str, movie_id: int):
     """
