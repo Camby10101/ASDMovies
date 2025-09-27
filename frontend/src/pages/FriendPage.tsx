@@ -7,7 +7,7 @@ const Friends: React.FC = () => {
   const [friends, setFriends] = useState<ApiFriend[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [newFriendUserId, setNewFriendUserId] = useState<string>("");
+  const [newFriendEmail, setNewFriendEmail] = useState<string>("");
 
   const backendUrl = useMemo(() => {
     return import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8000";
@@ -50,10 +50,10 @@ const Friends: React.FC = () => {
       if (sessionError) throw sessionError;
       const accessToken = sessionData.session?.access_token;
       if (!accessToken) throw new Error("Not signed in");
-      if (!newFriendUserId) throw new Error("Enter a user id");
+      if (!newFriendEmail) throw new Error("Enter an email address");
 
       const form = new URLSearchParams();
-      form.set("friend_user_id", newFriendUserId);
+      form.set("friend_email", newFriendEmail);
 
       const resp = await fetch(`${backendUrl}/api/friends?${form.toString()}`, {
         method: "POST",
@@ -61,7 +61,7 @@ const Friends: React.FC = () => {
       });
       if (!resp.ok) throw new Error(`Failed to add friend (${resp.status})`);
       // Reload list
-      setNewFriendUserId("");
+      setNewFriendEmail("");
       const listResp = await fetch(`${backendUrl}/api/friends`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
@@ -78,11 +78,11 @@ const Friends: React.FC = () => {
 
       <form onSubmit={handleAddFriend} className="mb-6 flex gap-2">
         <input
-          type="text"
+          type="email"
           className="border rounded px-3 py-2 w-full max-w-md"
-          placeholder="Enter friend's user_id"
-          value={newFriendUserId}
-          onChange={(e) => setNewFriendUserId(e.target.value)}
+          placeholder="Enter friend's email address"
+          value={newFriendEmail}
+          onChange={(e) => setNewFriendEmail(e.target.value)}
         />
         <button
           type="submit"

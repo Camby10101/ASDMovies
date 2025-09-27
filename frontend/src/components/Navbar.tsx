@@ -92,6 +92,7 @@ export function Navbar() {
           <Link to="/trendingMovies" className="transition-colors hover:text-foreground/80 text-foreground/60">Trending</Link>
           <Link to="/movies" className="transition-colors hover:text-foreground/80 text-foreground/60">Movies</Link>
           <Link to="/friend" className="transition-colors hover:text-foreground/80 text-foreground/60">Friends</Link>
+          <Link to="/groups" className="transition-colors hover:text-foreground/80 text-foreground/60">Groups</Link>
           <Link to="/account" className="transition-colors hover:text-foreground/80 text-foreground/60">Account</Link>
           <Link to="/privacy" className="transition-colors hover:text-foreground/80 text-foreground/60">Privacy &amp; Controls</Link>
           <Link to="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">About</Link>
