@@ -41,6 +41,7 @@ SUPABASE_SERVICE_ROLE_KEY= ASK TEAM LEAD
 ## Activate and run
 # TO RUN Frontend
 
+cd frontend
 npm run dev
 
 # TO RUN Backend
