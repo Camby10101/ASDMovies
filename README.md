@@ -5,7 +5,7 @@ cd frontend
 npm install tailwindcss @tailwindcss/vite
 npm install -D @types/node
 npm install @supabase/supabase-js
-
+npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
 npx shadcn@latest init
 npx shadcn@latest add navigation-menu
 
