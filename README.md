@@ -12,9 +12,9 @@ npx shadcn@latest add navigation-menu
 # Backend Setup
 
 cd backend
-pip install supabase
 python3 -m venv .venv
 (source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1) OR (bash (windows): .venv/Scripts/activate)
+pip install supabase
 python -m pip install --upgrade pip
 python -m pip install fastapi "uvicorn[standard]" httpx python-dotenv
 
