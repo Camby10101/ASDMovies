@@ -77,9 +77,9 @@ stages:
               source .venv/bin/activate
               pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
             displayName: "Install backend dependencies"
-
+#IMPROTANT, we may need to change is so that it boots in the tmdb-api folder first to populate the movies, then boot the main backend, but if this works then keep it as is.
           - script: |
-              cd backend/tmdb-api
+              cd backend
               source .venv/bin/activate
               nohup uvicorn main:app --reload --port 8000 &
             displayName: "Run Backend API"

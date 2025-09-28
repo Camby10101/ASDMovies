@@ -251,3 +251,62 @@ async def add_group_member(
             status_code=500,
             detail={"error": str(e), "message": "An error occurred while adding member to group."}
         )
+    
+#For Updating groups once they have been created *Insert down arrow here* lol
+class UpdateGroupRequest(BaseModel):
+    group_name: Optional[str] = None
+    group_colour: Optional[str] = None
+
+@router.put("/api/groups/{group_id}", response_model=GroupResponse)
+async def update_group(
+    group_id: str,
+    payload: UpdateGroupRequest,
+    current_user=Depends(get_current_user)
+):
+    """
+    Update group name or colour. Only accessible by group admins.
+    """
+    try:
+        user_id_str = str(current_user.id)
+        print(f"Updating group {group_id} by user {user_id_str}")
+
+        # Verify user is an admin of the group
+        admin_check = supabase_admin.table("group_members").select("is_admin").eq(
+            "group_id", group_id
+        ).eq("user_id", user_id_str).execute()
+
+        if not admin_check.data or not admin_check.data[0].get("is_admin", False):
+            raise HTTPException(
+                status_code=403,
+                detail="You must be an admin to update this group."
+            )
+
+        # Build update data
+        update_data = {}
+        if payload.group_name is not None:
+            update_data["group_name"] = payload.group_name
+        if payload.group_colour is not None:
+            update_data["group_colour"] = payload.group_colour
+
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No update fields provided.")
+
+        # Update group
+        result = supabase_admin.table("groups").update(update_data).eq("id", group_id).execute()
+
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Group not found.")
+
+        updated_group = result.data[0]
+        print(f"Group {group_id} updated successfully.")
+        return GroupResponse(**updated_group)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error in update_group: {str(e)}")
+        print(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "message": "An error occurred while updating the group."}
+        )
