@@ -45,6 +45,6 @@ npm run dev
 
 # TO RUN Backend
 
-cd backend/tmdb-api
+cd backend
 (source .venv/bin/activate) OR (PowerShell: .venv\Scripts\Activate.ps1) OR (bash (windows): .venv/Scripts/activate)
 python -m uvicorn main:app --reload --port 8000
