@@ -44,6 +44,7 @@ CREATE TABLE Groups (
     creator_user_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     group_colour TEXT,
+    group_name TEXT,
 
     CONSTRAINT fk_groups_creator
         FOREIGN KEY (creator_user_id)
@@ -100,6 +101,7 @@ CREATE TABLE Group_Members (
     group_id UUID NOT NULL,
     is_admin BOOLEAN DEFAULT FALSE,
     joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    user_email TEXT,
 
     PRIMARY KEY (user_id, group_id),
 

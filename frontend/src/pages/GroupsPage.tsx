@@ -12,12 +12,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 
 interface Group {
   id: string;
   creator_user_id: string;
   created_at: string;
   group_colour?: string;
+  group_name?: string;
 }
 
 interface Friend {
@@ -35,6 +37,7 @@ const GroupsPage: React.FC = () => {
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
   const [groupColour, setGroupColour] = useState<string>("");
   const [isCreating, setIsCreating] = useState(false);
+  const navigate = useNavigate();
 
   // Load groups
   useEffect(() => {
@@ -211,7 +214,7 @@ const GroupsPage: React.FC = () => {
                 <Card key={group.id} className="p-6 hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold mb-2">Group</h3>
+                      <h3 className="text-lg font-semibold mb-2">{group.group_name ?? "Unamed Group"}</h3>
                       <p className="text-sm text-gray-600">
                         Created {formatDate(group.created_at)}
                       </p>
@@ -231,10 +234,7 @@ const GroupsPage: React.FC = () => {
                       variant="outline"
                       size="sm"
                       className="w-full"
-                      onClick={() => {
-                        // TODO: Navigate to group details or implement group management
-                        console.log("View group details:", group.id);
-                      }}
+                      onClick={() => navigate(`/groups/${group.id}`)}
                     >
                       View Details
                     </Button>

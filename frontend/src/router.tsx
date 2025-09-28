@@ -5,6 +5,7 @@ import App from './App.tsx';
 import AboutPage from './pages/AboutPage.tsx';
 import FriendPage from './pages/FriendPage.tsx';
 import GroupsPage from './pages/GroupsPage.tsx';
+import GroupDetailsPage from './pages/GroupDetailsPage.tsx';
 import MovieListPage from './pages/movies/MovieListPage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx';
 import IndividualMoviePage from './pages/movies/IndividualMoviePage.tsx';
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: "groups",
         element: <GroupsPage />,
+      },
+      {
+        path: "/groups/:groupId",
+        element: <GroupDetailsPage />,
       },
       {
         path: "profile/:id",
