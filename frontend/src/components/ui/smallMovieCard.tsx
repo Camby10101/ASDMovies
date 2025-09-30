@@ -1,7 +1,9 @@
+
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { Link } from "react-router-dom"
 import { StarRating } from "@/components/ui/ratings"
 import { Typography } from "@/components/ui/typography"
+
 
 interface MovieCardProps {
   id: number
@@ -9,15 +11,18 @@ interface MovieCardProps {
   year: string
   poster: string
   genre: string
-  rating?: number  // 👈 optional, so you can show a user’s rating
+  rating?: number
 }
+
 
 export default function SmallMovieCard({ id, title, year, poster, genre, rating }: MovieCardProps) {
   return (
-    <Link to={`/movies/${id}`} className="block">
+
       <Card className="w-full rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-200">
         <CardHeader className="p-0 relative">
-          <img src={poster} alt={`${title} poster`} className="w-full h-auto object-cover"/>
+          <Link to={`/movies/${id}`} className="block">
+            <img src={poster} alt={`${title} poster`} className="w-full h-auto object-cover"/>
+          </Link>
 
           {rating !== undefined && (
             <div className="w-1/2 absolute right-1 top-1 flex items-center justify-center bg-white rounded-md px-1 py-1">
@@ -31,10 +36,10 @@ export default function SmallMovieCard({ id, title, year, poster, genre, rating 
             className="grid grid-cols-2"
             style={{ gridTemplateColumns: "75% 25%"}}
           >
-            <Typography size="body" className="line-clamp-2 break-words text-left">
+            <Typography size="body" weight="bold" className="line-clamp-2 break-words text-left">
               {title}
             </Typography>
-            <Typography size="body" className="text-right">
+            <Typography size="body" className="text-right" color={"gray"}>
               {year}
             </Typography>
           </div>
@@ -44,6 +49,5 @@ export default function SmallMovieCard({ id, title, year, poster, genre, rating 
           
         </CardContent>
       </Card>
-    </Link>
   )
 }

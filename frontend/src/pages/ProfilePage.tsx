@@ -135,7 +135,7 @@ return (
           text={bio}
           onChange={setBio}
           isEditable={isCurrentUser}
-          maxLength={200}
+          maxLength={250}
         />
         {/* Newest Ratings */}
         <Card>
@@ -171,7 +171,7 @@ return (
       <div className="w-[60%] flex flex-col">
         <Card className="flex flex-col flex-1">
           <CardHeader>
-            <Typography size="h2">My Favourites</Typography>
+            <Typography size="h2">Favourites</Typography>
           </CardHeader>
           <CardContent>
             {!noFavourites ? (
@@ -179,7 +179,7 @@ return (
                   <MovieList movies={movies} />
                 </div>
             ) : (
-              <Typography>No favourties yet!</Typography>
+              <Typography>No favourites yet!</Typography>
             )}
           </CardContent>
         </Card>
