@@ -1,39 +1,30 @@
 import { type Movie } from "@/lib/tmdb-api-helper"
-import { Typography } from "@/components/ui/typography"
-import { GripVertical } from 'lucide-react';
+import { Typography } from "@/components/ui/typography";
+import SmallMovieCard from "@/components/ui/smallMovieCard"
 // import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 
 interface MovieListProps {
   movies: Movie[]
-  editMode?: boolean
 }
 
-export default function MovieList({ movies, editMode = false }: MovieListProps) {
+export default function MovieList({ movies }: MovieListProps) {
     if (movies.length === 0) return <Typography>Loading...</Typography>
 
     return (
-          <ul className="w-full">
-            {movies.map((movie, index) => (
-            <li key={movie.id}>
-                <div
-                className="h-12 flex items-center justify-center grid grid-cols-4 my-2 border-2 border-gray-500 rounded-[12px]"
-                style={{ gridTemplateColumns: "4% 6% 80% 10%" }}
-                >
-                    <div className="w-full h-full bg-gray-500 flex items-center justify-center rounded-l-[6px]">
-                        {editMode && <GripVertical className="w-full h-full text-gray-100" />}
-                    </div>
-                    <Typography align="center" className="font-semibold">
-                        #{index + 1}
-                    </Typography>
-                    <Typography>
-                        {movie.title}
-                    </Typography>
-                    <Typography align="center">
-                        {movie.year}
-                    </Typography>
-                </div>
-            </li>
-            ))}
-        </ul>
+      <div className = "grid gap-5 grid-cols-5">
+          {movies.slice(0, 5).map((movie) => (
+            <div>
+                {/* <p>{index+1}</p> */}
+                <SmallMovieCard 
+                  key={movie.id}
+                  id={movie.id}
+                  title={movie.title}
+                  year={movie.year}
+                  poster={movie.poster}
+                  genre={movie.genre}
+                />
+            </div>
+          ))}
+      </div>
     )
 }

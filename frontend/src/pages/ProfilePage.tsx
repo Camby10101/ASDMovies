@@ -22,13 +22,12 @@ const ProfilePage = () => {
     const { user, loadingUser, refreshUser } = useUser()
     const { profile, loadingProfile } = useProfile(id!)               // profile being viewed
 
-    // is this the logged-in user's own profile?
-    const isCurrentUser =
+    
+    const isCurrentUser = // True if logged in user is viewing their own profile
       !loadingUser && !loadingProfile && profile?.user_id === user?.user_id
 
     // Bio
     const [bio, setBio] = useState("")
-
 
     // Recently rated
       const [ratedMovies, setRatedMovies] = useState<
@@ -121,24 +120,60 @@ const ProfilePage = () => {
     if (!profile) return <p>Profile does not exist</p>
 
   return (
-    <div className="mx-auto max-w-3xl p-6 space-y-8">
-      <Typography size="h1">{"@" + profile.handle}</Typography>
+    <div className="mx-auto p-6 space-y-8">
+      <Typography size="h1" className="mb-4">{"@" + profile.handle}</Typography>
       <hr />
 
-      {/* Bio */}
-      <Card>
-        <CardHeader>
-          <Typography size="h2">Bio</Typography>
-        </CardHeader>
-        <CardContent>
-          <InfoBox
-            text={bio}
-            onChange={setBio}
-            isEditable={isCurrentUser}
-            maxLength={500}
-          />
-        </CardContent>
-      </Card>
+      <div 
+        className="grid grid-cols-2 gap-4 items-start -mt-6"
+        style={{ gridTemplateColumns: "40% 60%"}}
+      >
+        <div>
+          {/* Bio */}
+          <Card className="mb-2">
+            <CardHeader>
+              <Typography size="h2">Bio</Typography>
+            </CardHeader>
+            <CardContent>
+              <InfoBox
+                text={bio}
+                onChange={setBio}
+                isEditable={isCurrentUser}
+                maxLength={500}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Recently Rated Movies */}
+          <Card>
+            <CardHeader>
+              <Typography size="h2">Recently Rated Movies</Typography>
+            </CardHeader>
+            
+            <CardContent>
+              {loadingRated && <p>Loading…</p>}
+              {errRated && <p className="text-red-600">Error: {errRated}</p>}
+              {!loadingRated && !errRated && ratedMovies.length > 0 ? (
+                <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+                  {ratedMovies.map(({ movie, userRating }) => (
+                    <SmallMovieCard
+                      key={movie.id}
+                      id={movie.id}
+                      title={movie.title}
+                      year={movie.year}
+                      poster={movie.poster}
+                      genre={movie.genre}
+                      rating={userRating} // show the user's rating (read-only)
+                    />
+                  ))}
+                </div>
+              ) : (
+                !loadingRated &&
+                !errRated && <p className="text-muted-foreground">No rated movies yet.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
       {/* Favourite Movies */}
       <Card>
@@ -147,42 +182,15 @@ const ProfilePage = () => {
         </CardHeader>
         <CardContent>
             {!noFavourites ? (
-                <MovieList movies={movies} editMode={isCurrentUser} />
+                <MovieList movies={movies}/>
             ) : (
                 <Typography>No favourties yet!</Typography>
             )}       
         </CardContent>
       </Card>
+      </div>
 
-      {/* Recently Rated Movies */}
-      <Card>
-        <CardHeader>
-          <Typography size="h2">Recently Rated Movies</Typography>
-        </CardHeader>
-        
-        <CardContent>
-          {loadingRated && <p>Loading…</p>}
-          {errRated && <p className="text-red-600">Error: {errRated}</p>}
-          {!loadingRated && !errRated && ratedMovies.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {ratedMovies.map(({ movie, userRating }) => (
-                <SmallMovieCard
-                  key={movie.id}
-                  id={movie.id}
-                  title={movie.title}
-                  year={movie.year}
-                  poster={movie.poster}
-                  genre={movie.genre}
-                  rating={userRating} // show the user's rating (read-only)
-                />
-              ))}
-            </div>
-          ) : (
-            !loadingRated &&
-            !errRated && <p className="text-muted-foreground">No rated movies yet.</p>
-          )}
-        </CardContent>
-      </Card>
+
 
       {isCurrentUser && (
         <>
