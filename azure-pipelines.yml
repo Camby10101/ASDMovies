@@ -8,7 +8,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  - group: SupabaseSecrets      # <-- must match the group name exactly
+  # Vars usadas no build do frontend (Vite)
   - name: VITE_SUPABASE_URL
     value: "https://mcpzbvznxmkbvaeajwua.supabase.co/"
   - name: NEXT_PUBLIC_API_URL
@@ -19,33 +19,55 @@ stages:
     displayName: "Frontend Setup & Build"
     jobs:
       - job: frontend_build
+        displayName: "Install & Build Frontend"
         steps:
           - task: NodeTool@0
-            inputs: { versionSpec: '20.x' }
+            inputs:
+              versionSpec: '20.x'
+            displayName: "Use Node.js 20"
+
+          # (Opcional) cache do npm para builds mais rápidos
+          - task: Cache@2
+            displayName: "Cache npm"
+            inputs:
+              key: 'npm | "$(Agent.OS)" | frontend/package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+              path: $(Pipeline.Workspace)/.npm
+
           - script: |
               set -e
               cd frontend
-              npm ci
-              npm install tailwindcss @tailwindcss/vite
-              npm install -D @types/node
-              npm install @supabase/supabase-js
-              npx shadcn@latest init -y || true
-              npx shadcn@latest add navigation-menu || true
+              export npm_config_cache=$(Pipeline.Workspace)/.npm
+              if [ -f package-lock.json ]; then
+                npm ci --no-audit --fund=false
+              else
+                npm install --no-audit --fund=false
+              fi
               npm run build
             displayName: "Install frontend dependencies and build"
+            env:
+              VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
+              NEXT_PUBLIC_API_URL: $(NEXT_PUBLIC_API_URL)
+
           - task: PublishBuildArtifacts@1
             inputs:
               pathToPublish: 'frontend/dist'
               artifactName: 'frontend_dist'
+            displayName: "Publish Frontend Build"
 
   - stage: Backend
     displayName: "Backend: Install & Test"
     dependsOn: Frontend
     jobs:
       - job: backend_tests
+        displayName: "Install deps & run pytest"
         steps:
           - task: UsePythonVersion@0
-            inputs: { versionSpec: '3.11' }
+            inputs:
+              versionSpec: '3.11'
+            displayName: "Use Python 3.11"
+
           - script: |
               set -e
               python -m venv .venv
@@ -54,13 +76,16 @@ stages:
               if [ -f backend/requirements.txt ]; then
                 pip install -r backend/requirements.txt
               else
+                # deps mínimas p/ app + testes
                 pip install fastapi "uvicorn[standard]" httpx python-dotenv supabase pytest pytest-cov anyio
               fi
             displayName: "Install backend dependencies"
+
           - script: |
               set -e
               source .venv/bin/activate
               cd backend
+              # roda só os testes de privacidade (evita falhas não relacionadas ao TMDB)
               pytest -vv tests/test_privacy.py
             displayName: "Run backend tests"
             env:
