@@ -132,9 +132,9 @@ return (
           maxLength={20}
         />
       <Typography size="h1" color="gray">{"@" + profile.handle}</Typography>
-      <hr/>
+      
     </div>
-
+    <hr/>
     <div className="flex flex-1 gap-2">
       {/* Left column */}
       <div className="w-[40%] flex flex-col gap-2">
