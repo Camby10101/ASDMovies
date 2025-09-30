@@ -132,9 +132,10 @@ return (
           maxLength={20}
         />
       <Typography size="h1" color="gray">{"@" + profile.handle}</Typography>
-      
     </div>
+
     <hr/>
+
     <div className="flex flex-1 gap-2">
       {/* Left column */}
       <div className="w-[40%] flex flex-col gap-2">
@@ -151,28 +152,33 @@ return (
           <CardHeader>
             <Typography size="h2">Newest Ratings</Typography>
           </CardHeader>
-          <CardContent>
-            {loadingRated && <p>Loading…</p>}
-            {errRated && <p className="text-red-600">Error: {errRated}</p>}
-            {!loadingRated && !errRated && ratedMovies.length > 0 ? (
-              <div className="grid grid-cols-4 gap-3">
-                {ratedMovies.map(({ movie, userRating }) => (
-                  <SmallMovieCard
-                    key={movie.id}
-                    id={movie.id}
-                    title={movie.title}
-                    year={movie.year}
-                    poster={movie.poster}
-                    genre={movie.genre}
-                    rating={userRating}
-                  />
-                ))}
-              </div>
-            ) : (
-              !loadingRated &&
-              !errRated && <p className="text-muted-foreground">No rated movies yet.</p>
-            )}
-          </CardContent>
+            <CardContent>
+              {loadingRated && <p>Loading…</p>}
+              {errRated && <p className="text-red-600">Error: {errRated}</p>}
+              {!loadingRated && !errRated && ratedMovies.length > 0 ? (
+                <div className="flex overflow-x-auto gap-3 pb-2">
+                  {ratedMovies.map(({ movie, userRating }) => (
+                    <div
+                      key={movie.id}
+                      className={"flex-shrink-0 w-[23.5%]"}
+                    >
+                      <SmallMovieCard
+                        id={movie.id}
+                        title={movie.title}
+                        year={movie.year}
+                        poster={movie.poster}
+                        genre={movie.genre}
+                        rating={userRating}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                !loadingRated &&
+                !errRated && <p className="text-muted-foreground">No rated movies yet.</p>
+              )}
+            </CardContent>
+
         </Card>
       </div>
       
