@@ -32,6 +32,8 @@ export function InfoLine({text, maxLength = 200, onChange, isEditable = false}: 
                     value={text}
                     maxLength={maxLength}
                     onChange={(e) => onChange(e.target.value)}
+                    autoFocus
+                    spellCheck={false}
                 />
             ) : (
                 <div className={"w-full relative flex flex-col"}>

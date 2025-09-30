@@ -148,7 +148,7 @@ return (
           maxLength={250}
         />
         {/* Newest Ratings */}
-        <Card>
+        <Card className="flex flex-col flex-1">
           <CardHeader>
             <Typography size="h2">Newest Ratings</Typography>
           </CardHeader>
@@ -156,11 +156,11 @@ return (
               {loadingRated && <p>Loading…</p>}
               {errRated && <p className="text-red-600">Error: {errRated}</p>}
               {!loadingRated && !errRated && ratedMovies.length > 0 ? (
-                <div className="flex overflow-x-auto gap-3 pb-2">
+                <div className="flex flex-1 overflow-x-auto gap-3">
                   {ratedMovies.map(({ movie, userRating }) => (
                     <div
                       key={movie.id}
-                      className={"flex-shrink-0 w-[23.5%]"}
+                      className={"flex-shrink-0 w-[23.4%]"}
                     >
                       <SmallMovieCard
                         id={movie.id}
@@ -201,7 +201,7 @@ return (
       </div>
     </div>
     {isCurrentUser && (         
-      <div className="flex justify-end -mt-1">
+      <div className="flex justify-end -mt-2">
           <Button onClick={handleSave}>Save changes</Button>
       </div>
     )}

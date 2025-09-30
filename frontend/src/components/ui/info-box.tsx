@@ -26,7 +26,7 @@ export function InfoBox({header, text, maxLength = 200, onChange, isEditable = f
     };
 
     return (
-        <Card className="h-[20vh]">
+        <Card>
             <CardHeader>
                 <div className="flex items-center gap-2">
                     <Typography size="h2">{header}</Typography>
@@ -53,6 +53,7 @@ export function InfoBox({header, text, maxLength = 200, onChange, isEditable = f
                             value={text}
                             maxLength={maxLength}
                             onChange={(e) => onChange(e.target.value)}
+                            autoFocus
                         />
                         {/* <div className="flex justify-end mt-2">
                             <Typography>
@@ -64,9 +65,14 @@ export function InfoBox({header, text, maxLength = 200, onChange, isEditable = f
                 ) : (
                     <div className={"w-full relative flex flex-col"}>
                         <div className="flex flex-1">
-                            <Typography size="body" className="text-left">
-                            {text}
-                            </Typography>
+                            <textarea
+                                className="w-full h-full border border-white rounded p-2 outline-none resize-none -ml-2"
+                                rows={3}
+                                value={text}
+                                maxLength={maxLength}
+                                onChange={(e) => onChange(e.target.value)}
+                                readOnly={true}
+                            />
                         </div>
                     </div>
                 )}
