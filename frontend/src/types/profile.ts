@@ -5,4 +5,5 @@ export interface Profile {
   updated_at: string;
   bio: string;
   handle: string;
+  display_name: string;
 }

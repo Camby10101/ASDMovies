@@ -48,7 +48,7 @@ export function InfoBox({header, text, maxLength = 200, onChange, isEditable = f
                 {mode === "edit" ? (
                     <div className="w-full h-full flex flex-col">
                         <textarea
-                            className="w-full h-full border border-gray-400 rounded p-2 outline-none"
+                            className="w-full h-full border border-gray-400 rounded p-2 outline-none resize-none"
                             rows={3}
                             value={text}
                             maxLength={maxLength}

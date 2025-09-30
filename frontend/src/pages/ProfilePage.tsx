@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Typography } from "@/components/ui/typography";
 import { InfoBox } from "@/components/ui/info-box";
+import { InfoLine} from "@/components/ui/info-line";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent} from "@/components/ui/card";
 import MovieList from "@/components/ui/movieList";
@@ -26,8 +27,9 @@ const ProfilePage = () => {
     const isCurrentUser = // True if logged in user is viewing their own profile
       !loadingUser && !loadingProfile && profile?.user_id === user?.user_id
 
-    // Bio
+    // Profile
     const [bio, setBio] = useState("")
+    const [display_name, setDisplayName] = useState("")
 
     // Recently rated
       const [ratedMovies, setRatedMovies] = useState<
@@ -75,6 +77,7 @@ const ProfilePage = () => {
         if (!profile) return
 
         setBio(profile.bio);
+        setDisplayName(profile.display_name);
         
         const ctrl = new AbortController()
 
@@ -108,7 +111,7 @@ const ProfilePage = () => {
 
     const handleSave = async () => {
         try {
-            await updateProfile({ bio }); // Updates the databases
+            await updateProfile({ bio, display_name }); // Updates the databases
             await refreshUser();
             window.location.reload();
         } catch (err) {
@@ -121,9 +124,15 @@ const ProfilePage = () => {
 
 return (
   <div className="flex flex-col p-6 space-y-4">
-    <div>
-      <Typography size="h1" className="mb-4">{"@" + profile.handle}</Typography>
-      <hr />
+    <div className="flex items-center gap-2">
+      <InfoLine
+          text={display_name}
+          onChange={setDisplayName}
+          isEditable={isCurrentUser}  
+          maxLength={20}
+        />
+      <Typography size="h1" color="gray">{"@" + profile.handle}</Typography>
+      <hr/>
     </div>
 
     <div className="flex flex-1 gap-2">
