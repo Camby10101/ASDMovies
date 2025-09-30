@@ -201,7 +201,7 @@ return (
       </div>
     </div>
     {isCurrentUser && (         
-      <div className="flex justify-end">
+      <div className="flex justify-end -mt-1">
           <Button onClick={handleSave}>Save changes</Button>
       </div>
     )}
