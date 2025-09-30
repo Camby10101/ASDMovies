@@ -40,7 +40,7 @@ export default function MovieList({ movies }: MovieListProps) {
   if (movieList.length === 0) return <Typography>Loading...</Typography>;
 
   return (
-    <div className="gap-5 grid grid-cols-5">
+    <div className="gap-[0.5vw] grid grid-cols-4">
       {movieList.map((movie, index) => (
         <div key={movie.id} className="relative">
           <div>

@@ -44,12 +44,12 @@ export function InfoBox({header, text, maxLength = 200, onChange, isEditable = f
                     ) : null}
                 </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="-mt-[2vh]">
                 {mode === "edit" ? (
                     <div className="w-full h-full flex flex-col">
                         <textarea
                             className="w-full h-full border border-gray-400 rounded p-2 outline-none resize-none"
-                            rows={3}
+                            rows={2}
                             value={text}
                             maxLength={maxLength}
                             onChange={(e) => onChange(e.target.value)}
@@ -67,7 +67,7 @@ export function InfoBox({header, text, maxLength = 200, onChange, isEditable = f
                         <div className="flex flex-1">
                             <textarea
                                 className="w-full h-full border border-white rounded p-2 outline-none resize-none -ml-2"
-                                rows={3}
+                                rows={2}
                                 value={text}
                                 maxLength={maxLength}
                                 onChange={(e) => onChange(e.target.value)}

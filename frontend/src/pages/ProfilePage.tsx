@@ -123,7 +123,7 @@ const ProfilePage = () => {
     if (!profile) return <p>Profile does not exist</p>
 
 return (
-  <div className="flex flex-col p-6 space-y-4">
+  <div className="flex flex-col p-6 space-y-4 h-[90%]">
     <div className="flex items-center gap-2">
       <InfoLine
           text={display_name}
@@ -138,14 +138,14 @@ return (
 
     <div className="flex flex-1 gap-2">
       {/* Left column */}
-      <div className="w-[40%] flex flex-col gap-2">
+      <div className="w-[50%] flex flex-col gap-2">
         {/* Bio */}
         <InfoBox
           header={"Bio"}
           text={bio}
           onChange={setBio}
           isEditable={isCurrentUser}
-          maxLength={250}
+          maxLength={160}
         />
         {/* Newest Ratings */}
         <Card className="flex flex-col flex-1">
@@ -183,14 +183,14 @@ return (
       </div>
       
       {/* Right column */}
-      <div className="w-[60%] flex flex-col">
+      <div className="w-[50%] flex flex-col">
         <Card className="flex flex-col flex-1">
           <CardHeader>
             <Typography size="h2">Favourites</Typography>
           </CardHeader>
           <CardContent>
             {!noFavourites ? (
-                <div className="h-[60vh] flex-1 overflow-y-auto">
+                <div className="h-[75vh] flex-1 overflow-y-auto">
                   <MovieList movies={movies} />
                 </div>
             ) : (
@@ -201,7 +201,7 @@ return (
       </div>
     </div>
     {isCurrentUser && (         
-      <div className="flex justify-end -mt-2">
+      <div className="flex justify-end">
           <Button onClick={handleSave}>Save changes</Button>
       </div>
     )}
