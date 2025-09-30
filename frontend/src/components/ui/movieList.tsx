@@ -11,8 +11,8 @@ export default function MovieList({ movies }: MovieListProps) {
     if (movies.length === 0) return <Typography>Loading...</Typography>
 
     return (
-      <div className = "grid gap-5 grid-cols-5">
-          {movies.slice(0, 5).map((movie) => (
+      <div className = "gap-5 grid grid-cols-5">
+          {movies.map((movie) => (
             <div>
                 {/* <p>{index+1}</p> */}
                 <SmallMovieCard 

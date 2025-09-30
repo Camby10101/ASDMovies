@@ -119,87 +119,77 @@ const ProfilePage = () => {
     if (loadingProfile || (loadingMovies) ) return <p>Loading...</p>
     if (!profile) return <p>Profile does not exist</p>
 
-  return (
-    <div className="mx-auto p-6 space-y-8">
+return (
+  <div className="flex flex-col p-6 space-y-4">
+    <div>
       <Typography size="h1" className="mb-4">{"@" + profile.handle}</Typography>
       <hr />
+    </div>
 
-      <div 
-        className="grid grid-cols-2 gap-4 items-start -mt-6"
-        style={{ gridTemplateColumns: "40% 60%"}}
-      >
-        <div>
-          {/* Bio */}
-          <Card className="mb-2">
-            <CardHeader>
-              <Typography size="h2">Bio</Typography>
-            </CardHeader>
-            <CardContent>
-              <InfoBox
-                text={bio}
-                onChange={setBio}
-                isEditable={isCurrentUser}
-                maxLength={500}
-              />
-            </CardContent>
-          </Card>
+    <div className="flex flex-1 gap-2">
+      {/* Right column\ */}
+      <div className="w-[40%] flex flex-col gap-2">
+        {/* Bio */}
+        <InfoBox
+          header={"Bio"}
+          text={bio}
+          onChange={setBio}
+          isEditable={isCurrentUser}
+          maxLength={500}
+        />
 
-          {/* Recently Rated Movies */}
-          <Card>
-            <CardHeader>
-              <Typography size="h2">Recently Rated Movies</Typography>
-            </CardHeader>
-            
-            <CardContent>
-              {loadingRated && <p>Loading…</p>}
-              {errRated && <p className="text-red-600">Error: {errRated}</p>}
-              {!loadingRated && !errRated && ratedMovies.length > 0 ? (
-                <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-                  {ratedMovies.map(({ movie, userRating }) => (
-                    <SmallMovieCard
-                      key={movie.id}
-                      id={movie.id}
-                      title={movie.title}
-                      year={movie.year}
-                      poster={movie.poster}
-                      genre={movie.genre}
-                      rating={userRating} // show the user's rating (read-only)
-                    />
-                  ))}
-                </div>
-              ) : (
-                !loadingRated &&
-                !errRated && <p className="text-muted-foreground">No rated movies yet.</p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-      {/* Favourite Movies */}
-      <Card>
-        <CardHeader>
-          <Typography size="h2">Favourite Movies</Typography>
-        </CardHeader>
-        <CardContent>
-            {!noFavourites ? (
-                <MovieList movies={movies}/>
+        {/* Newest Ratings */}
+        <Card>
+          <CardHeader>
+            <Typography size="h2">Newest Ratings</Typography>
+          </CardHeader>
+          <CardContent>
+            {loadingRated && <p>Loading…</p>}
+            {errRated && <p className="text-red-600">Error: {errRated}</p>}
+            {!loadingRated && !errRated && ratedMovies.length > 0 ? (
+              <div className="grid grid-cols-3 gap-6">
+                {ratedMovies.map(({ movie, userRating }) => (
+                  <SmallMovieCard
+                    key={movie.id}
+                    id={movie.id}
+                    title={movie.title}
+                    year={movie.year}
+                    poster={movie.poster}
+                    genre={movie.genre}
+                    rating={userRating}
+                  />
+                ))}
+              </div>
             ) : (
-                <Typography>No favourties yet!</Typography>
-            )}       
-        </CardContent>
-      </Card>
+              !loadingRated &&
+              !errRated && <p className="text-muted-foreground">No rated movies yet.</p>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-
-
-      {isCurrentUser && (
-        <>
-          <hr />
-          <Button onClick={handleSave}>Save changes</Button>
-        </>
-      )}
+      <div className="w-[60%] flex flex-col">
+        <Card className="flex flex-col flex-1">
+          <CardHeader>
+            <Typography size="h2">My Favourites</Typography>
+          </CardHeader>
+          <CardContent>
+            {!noFavourites ? (
+                <div className="">
+                  <MovieList movies={movies} />
+                </div>
+            ) : (
+              <Typography>No favourties yet!</Typography>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  )
-}
+
+    <div className="flex justify-end">
+        <Button onClick={handleSave}>Save changes</Button>
+    </div>
+  </div>
+)}
 
 export default ProfilePage
