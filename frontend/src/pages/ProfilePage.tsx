@@ -127,7 +127,7 @@ return (
     </div>
 
     <div className="flex flex-1 gap-2">
-      {/* Right column\ */}
+      {/* Left column */}
       <div className="w-[40%] flex flex-col gap-2">
         {/* Bio */}
         <InfoBox
@@ -135,9 +135,8 @@ return (
           text={bio}
           onChange={setBio}
           isEditable={isCurrentUser}
-          maxLength={500}
+          maxLength={200}
         />
-
         {/* Newest Ratings */}
         <Card>
           <CardHeader>
@@ -147,7 +146,7 @@ return (
             {loadingRated && <p>Loading…</p>}
             {errRated && <p className="text-red-600">Error: {errRated}</p>}
             {!loadingRated && !errRated && ratedMovies.length > 0 ? (
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-4 gap-3">
                 {ratedMovies.map(({ movie, userRating }) => (
                   <SmallMovieCard
                     key={movie.id}
@@ -167,7 +166,8 @@ return (
           </CardContent>
         </Card>
       </div>
-
+      
+      {/* Right column */}
       <div className="w-[60%] flex flex-col">
         <Card className="flex flex-col flex-1">
           <CardHeader>
@@ -175,7 +175,7 @@ return (
           </CardHeader>
           <CardContent>
             {!noFavourites ? (
-                <div className="">
+                <div className="h-[60vh] flex-1 overflow-y-auto">
                   <MovieList movies={movies} />
                 </div>
             ) : (
@@ -185,10 +185,11 @@ return (
         </Card>
       </div>
     </div>
-
-    <div className="flex justify-end">
-        <Button onClick={handleSave}>Save changes</Button>
-    </div>
+    {isCurrentUser && (         
+      <div className="flex justify-end">
+          <Button onClick={handleSave}>Save changes</Button>
+      </div>
+    )}
   </div>
 )}
 
