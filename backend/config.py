@@ -14,11 +14,15 @@ load_dotenv(env_path, override=False)
 SUPABASE_URL = (os.getenv("SUPABASE_URL") or "").strip().rstrip("/")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY") or ""
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or ""
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY") or ""
 
 if not SUPABASE_URL.startswith("https://"):
     raise RuntimeError("SUPABASE_URL ausente ou inválida (ex.: https://xxxx.supabase.co)")
-if not SUPABASE_ANON_KEY:
-    raise RuntimeError("SUPABASE_ANON_KEY ausente.")
+
+#Removing the Following to test, will re-add later:
+
+#if not SUPABASE_ANON_KEY:
+    #raise RuntimeError("SUPABASE_ANON_KEY ausente.")
 
 def _mask(s: str, keep: int = 6) -> str:
     if not s: return "<empty>"
