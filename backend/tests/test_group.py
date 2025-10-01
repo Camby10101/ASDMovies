@@ -1,35 +1,46 @@
+from config import supabase_admin
 def test_update_group_upsert(client):
-    payload = {
-        "id": "709d7e7b-b709-4fae-902b-5f1932afd8c8",
-        "creator_user_id": "f50b8e89-b65e-46b5-afdd-f8bea58e9504",
-        "created_at": None,
-        "group_colour": "#ff0000",
-        "group_name": None,
+    #Create a new group
+    payload_create = {
+        "group_colour": "#ff0000"
     }
 
-    # Upload fake group
-    r = client.put("/api/groups", json=payload)
-    assert r.status_code == 200
-    data = r.json()
-    for k, v in payload.items():
-        assert data[k] == v
+    r_create = client.post("/api/groups", json=payload_create)
+    assert r_create.status_code == 200
+    created_group = r_create.json()
+    group_id = created_group["id"]
 
-    # Verify the group exists
-    r2 = client.get("/api/groups")
-    assert r2.status_code == 200
-    data2 = r2.json()
-    # /api/groups returns a list of groups?
-    group_ids = [g["id"] for g in data2]
-    assert payload["id"] in group_ids
+    assert created_group["group_colour"] == payload_create["group_colour"]
+    assert created_group["creator_user_id"] is not None
+    assert created_group["id"] == group_id
 
-    # Remove the group
-    r3 = client.delete(f"/api/groups/{payload['id']}")
-    assert r3.status_code == 200
+    payload_update = {
+        "group_name": "Test Group Updated",
+        "group_colour": "#00ff00"
+    }
 
-    # Verify the group was removed
-    r4 = client.get("/api/groups")
-    assert r4.status_code == 200
-    data4 = r4.json()
-    group_ids_after_delete = [g["id"] for g in data4]
-    assert payload["id"] not in group_ids_after_delete
+    r_update = client.put(f"/api/groups/{group_id}", json=payload_update)
+    assert r_update.status_code == 200
+    updated_group = r_update.json()
+    assert updated_group["group_name"] == payload_update["group_name"]
+    assert updated_group["group_colour"] == payload_update["group_colour"]
+    assert updated_group["id"] == group_id
+
+    r_list = client.get("/api/groups")
+    assert r_list.status_code == 200
+    groups = r_list.json()
+    group_ids = [g["id"] for g in groups]
+    assert group_id in group_ids
+
+    # Optional cleanup: delete directly via supabase_admin if you want
+    supabase_admin.table("groups").delete().eq("id", group_id).execute()
+    supabase_admin.table("group_members").delete().eq("group_id", group_id).execute()
+
+    # Step 4: Verify group is gone
+    r_list_after_delete = client.get("/api/groups")
+    assert r_list_after_delete.status_code == 200
+    groups_after_delete = r_list_after_delete.json()
+    group_ids_after_delete = [g["id"] for g in groups_after_delete]
+    assert group_id not in group_ids_after_delete
+
 
