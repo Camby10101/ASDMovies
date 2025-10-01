@@ -80,7 +80,7 @@ stages:
             displayName: "Run Backend API"
 
   - stage: Pipeline_Tests
-    displayName: "Pipeline_Tests"
+    displayName: "Pipeline Tests"
     dependsOn: Backend
     jobs:
       - job: run_tests
