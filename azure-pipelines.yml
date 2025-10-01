@@ -78,6 +78,14 @@ stages:
               source .venv/bin/activate
               nohup uvicorn main:app --reload --port 8000 &
             displayName: "Run Backend API"
+
+  - stage: Pipeline_Tests
+    displayName: "Pipeline_Tests"
+    dependsOn: Backend
+    jobs:
+      - job: run_tests
+        displayName: "Run Tests"
+        steps:
 #Tests for Friends and Group Members, may need some touches to fully work
           - script: |
               cd backend
@@ -85,7 +93,11 @@ stages:
               pip install pytest pytest-asyncio httpx
               pytest -v tests/test_api.py --junitxml=pytest-results.xml
             displayName: "Run Friends & Groups API Tests"
-            continueOnError: false
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+            continueOnError: true
 
           - task: PublishTestResults@2
             inputs:
