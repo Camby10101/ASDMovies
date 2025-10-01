@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { Typography } from "@/components/ui/typography"
-import { Button } from "@/components/ui/button"
 import SmallMovieCard from "@/components/ui/smallMovieCard"
 
 import { useUser } from "@/hooks/useUser"

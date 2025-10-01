@@ -8,6 +8,7 @@ import { HeartRating } from "@/components/ui/heart"
 
 interface MovieListProps {
   movies: Movie[]
+  editMode?: boolean;
 }
 
 export default function MovieList({ movies }: MovieListProps) {
