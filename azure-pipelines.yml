@@ -162,6 +162,20 @@ stages:
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
             continueOnError: true
+
+          #test_ratings
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_ratings.py --maxfail=1 --disable-warnings -q
+            displayName: "Testing Ratings"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+            continueOnError: true
+
+
           
           # ALL TESTS (use this after we show David)
           # - script: |
