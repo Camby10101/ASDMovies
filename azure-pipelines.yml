@@ -82,7 +82,8 @@ stages:
           - script: |
               cd backend
               source .venv/bin/activate
-              export SUPABASE_SERVICE_KEY=$(SUPABASE_SERVICE_KEY)
+              export SUPABASE_URL=${VITE_SUPABASE_URL}
+              export SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
               python -m pytest tests/test_favourites.py --maxfail=1 --disable-warnings -q
             displayName: "Test favourites"
 
