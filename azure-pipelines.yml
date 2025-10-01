@@ -79,13 +79,14 @@ stages:
               nohup uvicorn main:app --reload --port 8000 &
             displayName: "Run Backend API"
 
-          # python -m pytest tests--maxfail=1 --disable-warnings -q # ADD THIS IN ONCE ALL TESTS WORK
+          
           - script: |
               cd backend
               source .venv/bin/activate
               python -m pytest tests/test_favourites.py --maxfail=1 --disable-warnings -q
-
-            displayName: "Backend tests"
+            # Add your tests under this line ^^^
+            # python -m pytest tests--maxfail=1 --disable-warnings -q # <-- Replace tests with this when all tests are working
+            displayName: "Backend tests"    
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
