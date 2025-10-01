@@ -84,10 +84,15 @@ stages:
     dependsOn: Backend
     jobs:
       - job: run_tests
+        variables:
+        - group: SupabaseSecrets
         displayName: "Run Tests"
         steps:
           #test_sanity
           - script: |
+              echo "URL: $SUPABASE_URL"
+              echo "Anon len: ${#SUPABASE_ANON_KEY}"
+              echo "Service len: ${#SUPABASE_SERVICE_ROLE_KEY}"
               cd backend
               pip install -r requirements.txt
               pip install pytest pytest-asyncio httpx
@@ -100,7 +105,7 @@ stages:
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
               #SUPABASE_URL = (os.getenv("SUPABASE_URL") or "").strip().rstrip("/")
               #SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY") or ""
-              #SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or ""
+              #SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY") or ""
             continueOnError: true
           #Tests for Friends and Group Members, may need some touches to fully work
           - script: |

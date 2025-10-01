@@ -13,7 +13,6 @@ load_dotenv(env_path, override=False)
 
 SUPABASE_URL = (os.getenv("SUPABASE_URL") or "").strip().rstrip("/")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY") or ""
-SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or ""
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY") or ""
 
 if not SUPABASE_URL.startswith("https://"):
@@ -30,10 +29,10 @@ def _mask(s: str, keep: int = 6) -> str:
 
 print(f"[config] SUPABASE_URL = {SUPABASE_URL}")
 print(f"[config] ANON_KEY = { _mask(SUPABASE_ANON_KEY) }")
-print(f"[config] SERVICE_KEY set? { 'yes' if SUPABASE_SERVICE_ROLE_KEY else 'no' }")
+print(f"[config] SERVICE_KEY set? { 'yes' if SUPABASE_SERVICE_KEY else 'no' }")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 supabase_admin: Optional[Client] = None
-if SUPABASE_SERVICE_ROLE_KEY:
-    supabase_admin = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+if SUPABASE_SERVICE_KEY:
+    supabase_admin = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
