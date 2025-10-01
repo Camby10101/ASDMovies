@@ -24,7 +24,6 @@ stages:
             displayName: "Use Node.js 20"
 
           - script: |
-              set -x
               cd frontend
               npm ci
               npm install tailwindcss @tailwindcss/vite
@@ -71,12 +70,7 @@ stages:
               python -m venv .venv
               source .venv/bin/activate
               python -m pip install --upgrade pip
-              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
-
-              cd tmdb-api
-              python -m venv .venv
-              source .venv/bin/activate
-              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
+              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv pytest pytest-mock
             displayName: "Install backend dependencies"
 
           - script: |
