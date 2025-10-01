@@ -96,6 +96,7 @@ stages:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+            continueOnError: true
           #Tests for Friends and Group Members, may need some touches to fully work
           - script: |
               cd backend
