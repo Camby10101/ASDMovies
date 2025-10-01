@@ -4,13 +4,13 @@ from pathlib import Path
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from routes.groups_routes import router as groups_router
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 from routes.user_routes import router as user_router
+from routes.groups_routes import router as groups_router
 from auth import get_current_user
 from config import supabase_admin
 
