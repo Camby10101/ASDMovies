@@ -24,6 +24,7 @@ stages:
             displayName: "Use Node.js 20"
 
           - script: |
+              set -x
               cd frontend
               npm ci
               npm install tailwindcss @tailwindcss/vite
