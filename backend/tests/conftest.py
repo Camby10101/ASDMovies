@@ -35,7 +35,8 @@ def app():
 @pytest.fixture
 def client(app, test_user_id: str):
     async def override_get_current_user():
-        return DummyUser(id=test_user_id, email=f"{test_user_id}@example.com")
+        #IMPORTANT: The client simulating tests is currently using a fixed user ID. to go back to random use test_user_id, however this will break some tests that depend on a user authenticated in the database.
+        return DummyUser(id="f50b8e89-b65e-46b5-afdd-f8bea58e9504", email=f"{test_user_id}@example.com")
 
     app.dependency_overrides[get_current_user] = override_get_current_user
     c = TestClient(app)
