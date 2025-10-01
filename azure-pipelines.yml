@@ -78,6 +78,19 @@ stages:
               source .venv/bin/activate
               nohup uvicorn main:app --reload --port 8000 &
             displayName: "Run Backend API"
+#Tests for Friends and Group Members, may need some touches to fully work
+          - script: |
+              cd backend
+              pip install -r requirements.txt
+              pip install pytest pytest-asyncio httpx
+              pytest -v tests/test_api.py --junitxml=pytest-results.xml
+            displayName: "Run Friends & Groups API Tests"
+            continueOnError: false
+
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFiles: '**/pytest-results.xml'
+              testRunTitle: 'Friends & Groups API Tests'
 
           #test_favourites
           - script: |
