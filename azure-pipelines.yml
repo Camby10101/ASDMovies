@@ -77,10 +77,22 @@ stages:
               source .venv/bin/activate
               pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
             displayName: "Install backend dependencies"
-#IMPROTANT, we may need to change is so that it boots in the tmdb-api folder first to populate the movies, then boot the main backend, but if this works then keep it as is.
+
           - script: |
               cd backend
               source .venv/bin/activate
               nohup uvicorn main:app --reload --port 8000 &
             displayName: "Run Backend API"
 
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_favourites.py --maxfail=1 --disable-warnings -q
+            displayName: "Test favourites"
+
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFiles: '**/pytest-results.xml'
+              testRunTitle: 'Backend Tests'
+            condition: succeededOrFailed()
+            displayName: "Publish Backend Test Results"
