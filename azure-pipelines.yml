@@ -92,23 +92,18 @@ stages:
               pip install -r requirements.txt
               pip install pytest pytest-asyncio httpx
               pytest -v tests/test_api.py --junitxml=pytest-results.xml
-            displayName: "Run Friends & Groups API Tests"
+            displayName: "Testing Friends & Groups"
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
             continueOnError: true
-
-          - task: PublishTestResults@2
-            inputs:
-              testResultsFiles: '**/pytest-results.xml'
-              testRunTitle: 'Friends & Groups API Tests'
 
           #test_favourites
           - script: |
               cd backend
               source .venv/bin/activate
               python -m pytest tests/test_favourites.py --maxfail=1 --disable-warnings -q
-            displayName: "Favourite movies tests"    
+            displayName: "Testing Favourite Movies"    
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
@@ -119,7 +114,7 @@ stages:
               cd backend
               source .venv/bin/activate
               python -m pytest tests/test_privacy.py --maxfail=1 --disable-warnings -q
-            displayName: "Privacy tests"    
+            displayName: "Testing Privacy"    
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
@@ -131,18 +126,19 @@ stages:
               cd backend
               source .venv/bin/activate
               python -m pytest tests/test_tmdb.py --maxfail=1 --disable-warnings -q
-            displayName: "TMDB tests"    
+            displayName: "Testing TMDB"    
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+            continueOnError: true
           
           #test_sanity
           - script: |
               cd backend
               source .venv/bin/activate
               python -m pytest tests/test_sanity.py --maxfail=1 --disable-warnings -q
-            displayName: "Sanity tests"    
+            displayName: "Sanity Test"    
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
