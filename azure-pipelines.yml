@@ -85,7 +85,7 @@ stages:
               source .venv/bin/activate
               python -m pytest tests/test_favourites.py --maxfail=1 --disable-warnings -q
 
-            displayName: "Backend testts"
+            displayName: "Backend tests"
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
