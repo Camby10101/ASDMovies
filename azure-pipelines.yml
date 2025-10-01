@@ -90,23 +90,23 @@ stages:
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
           
-          #conftest
-          - script: |
-              cd backend
-              source .venv/bin/activate
-              python -m pytest tests/conftest.py --maxfail=1 --disable-warnings -q
-            displayName: "Conf tests"    
-            env:
-              SUPABASE_URL: $(VITE_SUPABASE_URL)
-              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
-              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
-          
           #test_privacy
           - script: |
               cd backend
               source .venv/bin/activate
               python -m pytest tests/test_privacy.py --maxfail=1 --disable-warnings -q
             displayName: "Privacy tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+
+          #test_tmdb
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_tmdb.py --maxfail=1 --disable-warnings -q
+            displayName: "TMDB tests"    
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
@@ -123,18 +123,7 @@ stages:
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
           
-          #test_tmdb
-          - script: |
-              cd backend
-              source .venv/bin/activate
-              python -m pytest tests/test_tmdb.py --maxfail=1 --disable-warnings -q
-            displayName: "TMDB tests"    
-            env:
-              SUPABASE_URL: $(VITE_SUPABASE_URL)
-              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
-              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
-          
-          # ALL TESTS
+          # ALL TESTS (use this after we show David)
           # - script: |
           #     cd backend
           #     source .venv/bin/activate
