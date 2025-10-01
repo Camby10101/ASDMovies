@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage.tsx';
 import IndividualMoviePage from './pages/movies/IndividualMoviePage.tsx';
 import AccountPage from './pages/AccountPage.tsx';
 import PrivacyPage from './pages/PrivacyPage.tsx';
+import UserFavouriteMovies from './pages/movies/UserFavouriteMovies.tsx'; 
 
 export const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ export const router = createBrowserRouter([
       {
         path: "privacy",
         element: <PrivacyPage />,
+      },
+      {
+        path: "userFavouriteMovies/:id",
+        element: <UserFavouriteMovies />,
       },
     ],
   },

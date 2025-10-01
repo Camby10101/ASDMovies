@@ -1,5 +1,9 @@
 "use client" // runs on the client side
 
+/*
+* Component for star ratings 
+*/
+
 import { useState } from "react"
 import { Star } from "lucide-react"
 import { cn } from "@/lib/utils" 
