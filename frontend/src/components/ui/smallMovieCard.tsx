@@ -5,6 +5,7 @@ import { StarRating } from "@/components/ui/ratings"
 import { Typography } from "@/components/ui/typography"
 
 
+// Reusable component to show a subset of a movies information
 interface MovieCardProps {
   id: number
   title: string
@@ -25,7 +26,8 @@ export default function SmallMovieCard({ id, title, year, poster, genre, rating 
           </Link>
 
           {rating !== undefined && (
-            <div className="w-1/2 absolute right-1 top-1 flex items-center justify-center bg-white rounded-md px-1 py-1">
+            <div className="w-1/2 absolute right-1 top-1 flex items-center justify-center bg-white rounded-md px-1 py-1"
+          style={{ backgroundColor: "#000000"}}>
               <StarRating value={rating} readOnly={true}/> 
             </div>
           )}
