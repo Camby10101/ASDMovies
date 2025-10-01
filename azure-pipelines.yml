@@ -40,12 +40,12 @@ stages:
               npm run test
             displayName: "Run frontend tests"
 
-          - task: PublishTestResults@2
-            inputs:
-              testResultsFiles: '**/vitest-results.xml'
-              testRunTitle: 'Frontend Tests'
-            condition: succeededOrFailed()
-            displayName: "Publish Frontend Test Results"
+          # - task: PublishTestResults@2
+          #   inputs:
+          #     testResultsFiles: '**/vitest-results.xml'
+          #     testRunTitle: 'Frontend Tests'
+          #   condition: succeededOrFailed()
+          #   displayName: "Publish Frontend Test Results"
 
           - task: PublishBuildArtifacts@1
             inputs:
@@ -70,17 +70,73 @@ stages:
               python -m venv .venv
               source .venv/bin/activate
               python -m pip install --upgrade pip
-              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
-
-              cd tmdb-api
-              python -m venv .venv
-              source .venv/bin/activate
-              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
+              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv pytest pytest-mock
             displayName: "Install backend dependencies"
-#IMPROTANT, we may need to change is so that it boots in the tmdb-api folder first to populate the movies, then boot the main backend, but if this works then keep it as is.
+
           - script: |
               cd backend
               source .venv/bin/activate
               nohup uvicorn main:app --reload --port 8000 &
             displayName: "Run Backend API"
 
+          #test_favourites
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_favourites.py --maxfail=1 --disable-warnings -q
+            displayName: "Favourite movies tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          #test_privacy
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_privacy.py --maxfail=1 --disable-warnings -q
+            displayName: "Privacy tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+
+          #test_tmdb
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_tmdb.py --maxfail=1 --disable-warnings -q
+            displayName: "TMDB tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          #test_sanity
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_sanity.py --maxfail=1 --disable-warnings -q
+            displayName: "Sanity tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          # ALL TESTS (use this after we show David)
+          # - script: |
+          #     cd backend
+          #     source .venv/bin/activate
+          #     python -m pytest tests --maxfail=1 --disable-warnings -q
+          #   displayName: "All backend tests"    
+          #   env:
+          #     SUPABASE_URL: $(VITE_SUPABASE_URL)
+          #     SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+          #     SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+
+          # - task: PublishTestResults@2
+          #   inputs:
+          #     testResultsFiles: '**/pytest-results.xml'
+          #     testRunTitle: 'Backend Tests'
+          #   condition: succeededOrFailed()
+          #   displayName: "Publish Backend Test Results"

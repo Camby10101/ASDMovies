@@ -9,7 +9,7 @@ const typographyVariants = cva("text-black leading-tight", {
         size: {
             h1: "scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance",
             h2: "text-2xl",
-            h3: "text-1xl",
+            h3: "text-[1.4rem]",
             body: "text-base",
             small: "text-sm text-gray-700",
         },

@@ -112,6 +112,27 @@ export default function MovieDetailsPage() {
     }
   }, [rating, user, movie, hydratingUserState])
 
+  useEffect(() => {
+  if (!user || !movie) return
+
+  let cancelled = false
+
+  const fetchFavouriteStatus = async () => {
+    try {
+      const fav = await isMovieFavourite(user.user_id, movie.id)
+      if (!cancelled) setIsFavourite(fav)
+    } catch (err) {
+      console.error("Failed to fetch favourite status:", err)
+    }
+  }
+
+  fetchFavouriteStatus()
+
+  return () => {
+    cancelled = true
+  }
+}, [user, movie])
+
   const handleAddToFavourites = async () => {
     if (!user || !movie) return
     setIsFavourite(prev => !prev)
@@ -184,11 +205,13 @@ export default function MovieDetailsPage() {
                 {/* Right: Favourite */}
                 <div className="flex items-center gap-2">
                   <p className="font-bold">Favourite</p>
-                  {user ? (
-                    <HeartRating
-                      value={isFavourite}
-                      onChange={handleAddToFavourites}
-                    />
+                    {user ? (
+                      isFavourite !== null && (
+                      <HeartRating
+                        value={isFavourite}
+                        onChange={handleAddToFavourites}
+                      />
+                    )
                   ) : (
                       <span className="text-sm text-muted-foreground">
                         Sign in to save

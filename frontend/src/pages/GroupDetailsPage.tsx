@@ -46,6 +46,7 @@ const GroupDetailsPage: React.FC = () => {
     setGroupName(data.group_name || "");
     setGroupColour(data.group_colour || "");
     setLoading(false);
+    console.log(group);
   };
 
   const loadMembers = async () => {

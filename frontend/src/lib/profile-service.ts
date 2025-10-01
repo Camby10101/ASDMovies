@@ -41,7 +41,7 @@ export async function fetchProfile(user_id: string): Promise<Profile> {
 // PATCH
 // --------
 
-export async function updateProfile(updates: { bio?: string }) {
+export async function updateProfile(updates: { bio?: string, display_name?: string }) {
 	if (!session) {
 		throw new Error("No active session. User must be logged in.");
 	}

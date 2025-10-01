@@ -1,39 +1,67 @@
+import { useState, useEffect } from "react";
 import { type Movie } from "@/lib/tmdb-api-helper"
-import { Typography } from "@/components/ui/typography"
-import { GripVertical } from 'lucide-react';
-// import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+import { Typography } from "@/components/ui/typography";
+import SmallMovieCard from "@/components/ui/smallMovieCard";
+import { removeFavouriteMovie } from "@/lib/favourite-movies-service";
+import { useUser } from "@/hooks/useUser"
+import { HeartRating } from "@/components/ui/heart"
 
 interface MovieListProps {
   movies: Movie[]
-  editMode?: boolean
 }
 
-export default function MovieList({ movies, editMode = false }: MovieListProps) {
-    if (movies.length === 0) return <Typography>Loading...</Typography>
+export default function MovieList({ movies }: MovieListProps) {
+  const { user } = useUser();
+  const [movieList, setMovieList] = useState<Movie[]>(movies);
+  const [isMovieListEmpty, setIsMovieListEmpty] = useState(false);
 
-    return (
-          <ul className="w-full">
-            {movies.map((movie, index) => (
-            <li key={movie.id}>
-                <div
-                className="h-12 flex items-center justify-center grid grid-cols-4 my-2 border-2 border-gray-500 rounded-[12px]"
-                style={{ gridTemplateColumns: "4% 6% 80% 10%" }}
-                >
-                    <div className="w-full h-full bg-gray-500 flex items-center justify-center rounded-l-[6px]">
-                        {editMode && <GripVertical className="w-full h-full text-gray-100" />}
-                    </div>
-                    <Typography align="center" className="font-semibold">
-                        #{index + 1}
-                    </Typography>
-                    <Typography>
-                        {movie.title}
-                    </Typography>
-                    <Typography align="center">
-                        {movie.year}
-                    </Typography>
-                </div>
-            </li>
-            ))}
-        </ul>
-    )
+  const handleRemoveFromFavourites = async (movieId: number, index: number) => {
+    if (!user) return;
+
+    try {
+      setMovieList(prev => {
+        const newList = [...prev];
+        newList.splice(index, 1);
+        if (newList.length === 0) setIsMovieListEmpty(true);
+        return newList;
+      });
+
+      await removeFavouriteMovie(user.user_id, movieId);
+    } catch (e) {
+      console.error("Favourite toggle failed", e);
+    }
+  };
+
+  useEffect(() => {
+    setMovieList(movies);
+  }, [movies]);
+
+  if (movieList.length === 0 && isMovieListEmpty) return <Typography>No favourites yet!</Typography>;
+  if (movieList.length === 0) return <Typography>Loading...</Typography>;
+
+  return (
+    <div className="gap-[0.5vw] grid grid-cols-4">
+      {movieList.map((movie, index) => (
+        <div key={movie.id} className="relative">
+          <div>
+            {user && (
+              <div className="w-1/6 absolute left-1.5 top-7.5 flex items-center justify-center bg-white rounded-md px-1 py-1 z-10">
+                  <HeartRating
+                  value={true}
+                  onChange={() => handleRemoveFromFavourites(movie.id, index)}
+                  />
+              </div>
+            )}
+            <SmallMovieCard 
+              id={movie.id}
+              title={movie.title}
+              year={movie.year}
+              poster={movie.poster}
+              genre={movie.genre}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
