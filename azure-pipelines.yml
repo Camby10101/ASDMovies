@@ -79,18 +79,71 @@ stages:
               nohup uvicorn main:app --reload --port 8000 &
             displayName: "Run Backend API"
 
-          
+          #test_favourites
           - script: |
               cd backend
               source .venv/bin/activate
               python -m pytest tests/test_favourites.py --maxfail=1 --disable-warnings -q
-            # Add your tests under this line ^^^
-            # python -m pytest tests--maxfail=1 --disable-warnings -q # <-- Replace tests with this when all tests are working
-            displayName: "Backend tests"    
+            displayName: "Favourite movies tests"    
             env:
               SUPABASE_URL: $(VITE_SUPABASE_URL)
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          #conftest
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/conftest.py --maxfail=1 --disable-warnings -q
+            displayName: "Conf tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          #test_privacy
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_privacy.py --maxfail=1 --disable-warnings -q
+            displayName: "Privacy tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          #test_sanity
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_sanity.py --maxfail=1 --disable-warnings -q
+            displayName: "Sanity tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          #test_tmdb
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_tmdb.py --maxfail=1 --disable-warnings -q
+            displayName: "TMDB tests"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          # ALL TESTS
+          # - script: |
+          #     cd backend
+          #     source .venv/bin/activate
+          #     python -m pytest tests --maxfail=1 --disable-warnings -q
+          #   displayName: "All backend tests"    
+          #   env:
+          #     SUPABASE_URL: $(VITE_SUPABASE_URL)
+          #     SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+          #     SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
 
           # - task: PublishTestResults@2
           #   inputs:
