@@ -19,7 +19,7 @@ import { fetchUserRatings } from "@/lib/rating-service";
 import type { UserMovieRating } from "@/types/user-movie-ratings";
 
 const ProfilePage = () => {
-  const { id } = useParams<{ id: string }>(); // profile page id (handle or user_id depending on your hook)
+  const { id } = useParams<{ id: string }>(); 
   const { user, loadingUser, refreshUser } = useUser();
   const { profile, loadingProfile } = useProfile(id!); // profile being viewed
 
@@ -31,11 +31,14 @@ const ProfilePage = () => {
   const [bio, setBio] = useState("");
   const [display_name, setDisplayName] = useState("");
 
-  // Recently rated
+  // Will store recently rated moviesx
   const [ratedMovies, setRatedMovies] = useState<
-    Array<{ movie: Movie; userRating: number }>
-  >([]);
+  Array<{ movie: Movie; userRating: number }>
+>([]);
+
+  // Loading state for the movie fetch operation
   const [loadingRated, setLoadingRated] = useState(false);
+  // Error state for rated movies
   const [errRated, setErrRated] = useState<string | null>(null);
 
   // Favourites
@@ -44,20 +47,29 @@ const ProfilePage = () => {
   const [noFavourites, setNoFavourites] = useState(false);
 
   // Load "Recently Rated Movies" (top 10)
+  // Fetches user's 10 most recent movies whenever profile changes
   useEffect(() => {
     const loadRatedMovies = async () => {
+      // Don't bother if the profile data isn't available
       if (!profile) return;
-      setLoadingRated(true);
-      setErrRated(null);
-      try {
-        const ratings: UserMovieRating[] = await fetchUserRatings(profile.user_id);
-        // Sort newest first; fallback to empty string if created_at missing
-        const sorted = ratings
-          .slice()
-          .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
 
-        // Take top 10 and fetch each movie’s details
+      setLoadingRated(true); // begin loading
+      setErrRated(null); // no error yet
+
+      try {
+        // Fetches ALL ratings for the user
+        const ratings: UserMovieRating[] = await fetchUserRatings(profile.user_id);
+      
+        // Sort ratings by creation date
+        const sorted = ratings
+        .slice() // slice (means we work on a new array)
+        .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? "")); // compares two strings lexagraphically
+
+        // We take only the 10 most recent movies
         const firstTen = sorted.slice(0, 10);
+
+        // For each rating, fetch the full movie details from TMDB 
+        // Return an array of objects containing both movie data and user ratings
         const moviesWithRatings = await Promise.all(
           firstTen.map(async (r) => {
             const m = await fetchMovieDetails(r.tmdb_id);
@@ -67,12 +79,14 @@ const ProfilePage = () => {
         setRatedMovies(moviesWithRatings);
       } catch (err) {
         console.log(err);
+        setErrRated("Error");
       } finally {
+        // Finished loading
         setLoadingRated(false);
       }
     };
     loadRatedMovies();
-  }, [profile]);
+  }, [profile]); // Re-run whenever the profile changes
 
   // Load favourites + set profile fields
   useEffect(() => {
@@ -152,10 +166,11 @@ const ProfilePage = () => {
             maxLength={160}
           />
 
-          {/* Newest Ratings */}
+          {/* Newest Ratings */} 
           <Card className="flex flex-col flex-1">
             <CardHeader className="flex items-center justify-between">
-              <Typography size="h2">Newest Ratings</Typography>
+              <Typography size="h2">Recently Rated</Typography>
+              {/* link to the full list of a users rated movies */}
               <Link
                 to={`/userFavouriteMovies/${profile.user_id}`}
                 className="hover:shadow-lg text-sm"
@@ -163,30 +178,37 @@ const ProfilePage = () => {
                 See All →
               </Link>
             </CardHeader>
+            {/* Show loading message while fetching movies */}
             <CardContent>
               {loadingRated && <p>Loading…</p>}
+              {/* Display error if failed */}
               {errRated && <p className="text-red-600">Error: {errRated}</p>}
+
+              {/* Displaying movies in a horizontal scrollable container */}
               {!loadingRated && !errRated && ratedMovies.length > 0 ? (
                 <div className="flex flex-1 overflow-x-auto gap-3">
+                  { /* Map through each rated movie and display as a small card */}
                   {ratedMovies.map(({ movie, userRating }) => (
                     <div key={movie.id} className={"flex-shrink-0 w-[23.4%]"}>
+                      {/* Subset of a movie card just displaying minimal information */}
                       <SmallMovieCard
                         id={movie.id}
                         title={movie.title}
                         year={movie.year}
                         poster={movie.poster}
                         genre={movie.genre}
-                        rating={userRating}
+                        rating={userRating} // the users rating
                       />
                     </div>
                   ))}
                 </div>
               ) : (
-                !loadingRated &&
-                !errRated && (
-                  <p className="text-muted-foreground">No rated movies yet.</p>
-                )
-              )}
+                  // Show a message if the user hasn't rated any movies yet
+                  !loadingRated &&
+                    !errRated && (
+                      <p className="text-muted-foreground">No rated movies yet!</p>
+                    )
+                )}
             </CardContent>
           </Card>
         </div>
@@ -203,8 +225,8 @@ const ProfilePage = () => {
                   <MovieList movies={movies} editMode={isCurrentUser} />
                 </div>
               ) : (
-                <Typography>No favourites yet!</Typography>
-              )}
+                  <Typography>No favourites yet!</Typography>
+                )}
             </CardContent>
           </Card>
         </div>
