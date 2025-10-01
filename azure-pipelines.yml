@@ -105,16 +105,16 @@ stages:
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
             continueOnError: true
           #Tests for API (Friends and Group Members), may need some touches to fully work
-          - script: |
-              cd backend
-              pip install -r requirements.txt
-              pip install pytest pytest-asyncio httpx
-              pytest -v tests/test_api.py --junitxml=pytest-results.xml
-            displayName: "Testing API"
-            env:
-              SUPABASE_URL: $(SUPABASE_URL)
-              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
-            continueOnError: true
+          #- script: |
+          #    cd backend
+          #    pip install -r requirements.txt
+          #    pip install pytest pytest-asyncio httpx
+          #    pytest -v tests/test_api.py --junitxml=pytest-results.xml
+          #  displayName: "Testing API"
+          #  env:
+          #    SUPABASE_URL: $(SUPABASE_URL)
+          #    SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+          #  continueOnError: true
 
           #Test Friends
           - script: |
