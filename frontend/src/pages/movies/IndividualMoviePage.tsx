@@ -8,7 +8,6 @@ import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StarRating } from "@/components/ui/ratings"
-import { Star } from "lucide-react"
 import { HeartRating } from "@/components/ui/heart"
 import { useUser } from "@/hooks/useUser"
 
@@ -30,13 +29,16 @@ export default function MovieDetailsPage() {
   const [err, setErr] = useState<string | null>(null)
 
   const { user } = useUser()
-
+  const statusTimerRef = useRef<number | null>(null)
   const [rating, setRating] = useState<number>(0)
   const [isFavourite, setIsFavourite] = useState(false)
   const [hydratingUserState, setHydratingUserState] = useState(true)
 
   const ratingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastSavedRef = useRef<number | null>(null)
+
+  const [statusMessage, setStatusMessage] = useState("");
+
 
   // Fetch movie details
   useEffect(() => {
@@ -102,6 +104,7 @@ export default function MovieDetailsPage() {
       try {
         await upsertMyRating(user.user_id, movie.id, rating)
         lastSavedRef.current = rating
+        setStatusMessage("Added to your ratings!")
       } catch (e) {
         console.error("Failed to save rating", e)
       }
@@ -113,25 +116,40 @@ export default function MovieDetailsPage() {
   }, [rating, user, movie, hydratingUserState])
 
   useEffect(() => {
-  if (!user || !movie) return
+    if (!user || !movie) return
 
-  let cancelled = false
+    let cancelled = false
 
-  const fetchFavouriteStatus = async () => {
-    try {
-      const fav = await isMovieFavourite(user.user_id, movie.id)
-      if (!cancelled) setIsFavourite(fav)
-    } catch (err) {
-      console.error("Failed to fetch favourite status:", err)
+    const fetchFavouriteStatus = async () => {
+      try {
+        const fav = await isMovieFavourite(user.user_id, movie.id)
+        if (!cancelled) setIsFavourite(fav)
+      } catch (err) {
+        console.error("Failed to fetch favourite status:", err)
+      }
     }
-  }
 
-  fetchFavouriteStatus()
+    fetchFavouriteStatus()
 
-  return () => {
-    cancelled = true
-  }
-}, [user, movie])
+    return () => {
+      cancelled = true
+    }
+  }, [user, movie])
+
+  useEffect(() => {
+    if (!statusMessage) return
+    // clear any previous timer
+    if (statusTimerRef.current) window.clearTimeout(statusTimerRef.current)
+    // auto-hide after 2.5s
+    statusTimerRef.current = window.setTimeout(() => {
+      setStatusMessage("")
+    }, 2500)
+
+    // cleanup
+    return () => {
+      if (statusTimerRef.current) window.clearTimeout(statusTimerRef.current)
+    }
+  }, [statusMessage])
 
   const handleAddToFavourites = async () => {
     if (!user || !movie) return
@@ -182,44 +200,43 @@ export default function MovieDetailsPage() {
             <CardContent className="p-6 space-y-4">
               <div className="text-sm text-muted-foreground">{movie.genre}</div>
 
-              <div className="flex items-center gap-2 text-lg">
-                <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-                <span>{movie.rating} IMDb</span>
-              </div>
 
-              <div className="flex items-center justify-between text-lg">
+              <div className="flex items-center justify-between text-lg whitespace-nowrap">
                 {/* Left: Rating */}
-                <div className="flex items-center gap-2">
-                  <p className="font-bold">My Rating</p>
+                <div className="flex items-center gap-2 font-bold">
+                  <p>My Rating</p>
                   {user ? (
-                    <StarRating
-                      value={rating}
-                      onChange={setRating}
-                    />
+                    <>
+                      <StarRating value={rating} onChange={setRating} />
+                      {statusMessage && (
+                        <span
+                          role="status"
+                          aria-live="polite"
+                          className="text-sm text-green-600 transition-opacity duration-200"
+                        >
+                          {statusMessage}
+                        </span>
+                      )}
+                    </>
                   ) : (
                       <span className="text-sm text-muted-foreground">
-                        Sign in to rate movies! 
+                        Sign in to rate movies!
                       </span>
                     )}
                 </div>
+
                 {/* Right: Favourite */}
                 <div className="flex items-center gap-2">
                   <p className="font-bold">Favourite</p>
-                    {user ? (
-                      isFavourite !== null && (
-                      <HeartRating
-                        value={isFavourite}
-                        onChange={handleAddToFavourites}
-                      />
+                  {user ? (
+                    isFavourite !== null && (
+                      <HeartRating value={isFavourite} onChange={handleAddToFavourites} />
                     )
                   ) : (
-                      <span className="text-sm text-muted-foreground">
-                        Sign in to save
-                      </span>
+                      <span className="text-sm text-muted-foreground">Sign in to save</span>
                     )}
                 </div>
               </div>
-
               <p className="text-base leading-relaxed">{movie.description}</p>
             </CardContent>
           </Card>

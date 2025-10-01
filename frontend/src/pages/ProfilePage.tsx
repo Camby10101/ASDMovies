@@ -22,7 +22,6 @@ const ProfilePage = () => {
   const { id } = useParams<{ id: string }>(); 
   const { user, loadingUser, refreshUser } = useUser();
   const { profile, loadingProfile } = useProfile(id!); // profile being viewed
-
   // True if logged-in user is viewing their own profile
   const isCurrentUser =
     !loadingUser && !loadingProfile && profile?.user_id === user?.user_id;

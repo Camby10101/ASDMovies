@@ -16,11 +16,11 @@ export default function MovieCard(props: MovieCardProps) {
   const { id, title, year, poster, genre, rating, description } = props
   return (
     <Link to={`/movies/${id}`} className="block">
-      <Card className="w-full max-w-sm rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-200">
-        <img src={poster} alt={`${title} poster`} className="w-full h-80 object-cover" />
+      <Card className="w-full max-w-sm h-[40rem] flex flex-col rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-200">
+        <img src={poster} alt={`${title} poster`} className="w-full h-90 object-cover" />
         <CardHeader className="p-4 pb-0">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold truncate">{title}</h3>
+            <h3 className="text-lg font-semibold line-clamp-2">{title}</h3>
             <span className="text-sm text-gray-500">{year}</span>
           </div>
           <p className="text-sm text-gray-600">{genre}</p>
