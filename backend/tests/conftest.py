@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from routes.groups_routes import router as groups_router
 
-# ✅ garante que .../backend está no PYTHONPATH
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
@@ -29,6 +29,7 @@ def test_user_id() -> str:
 def app():
     app = FastAPI()
     app.include_router(user_router)  # expõe /api/privacy, etc.
+    app.include_router(groups_router)  # expõe /api/groups, etc.
     return app
 
 @pytest.fixture
@@ -45,6 +46,8 @@ def client(app, test_user_id: str):
         if supabase_admin:
             supabase_admin.table("blocked_users").delete().eq("user_id", test_user_id).execute()
             supabase_admin.table("privacy_settings").delete().eq("user_id", test_user_id).execute()
+            supabase_admin.table("group_members").delete().eq("user_id", test_user_id).execute()
+            supabase_admin.table("groups").delete().eq("creator_user_id", test_user_id).execute()
     except Exception as e:
         print("[tests] cleanup warning:", repr(e))
 
