@@ -42,6 +42,7 @@ const UserFavouriteMovies = () => {
   // NEW: sort state
   const [sortMode, setSortMode] = useState<SortMode>("newest")
 
+  // SORTING FUNCTIONALITY
   useEffect(() => {
     if (!profile) return
 
