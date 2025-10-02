@@ -35,6 +35,7 @@ const GroupsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
+  const [groupName, setGroupName] = useState<string>("");
   const [groupColour, setGroupColour] = useState<string>("");
   const [isCreating, setIsCreating] = useState(false);
   const navigate = useNavigate();
@@ -86,6 +87,7 @@ const GroupsPage: React.FC = () => {
       const response = await api("/api/groups", {
         method: "POST",
         body: JSON.stringify({
+          group_name: groupName || null,
           group_colour: groupColour || null,
         }),
       });
@@ -113,6 +115,7 @@ const GroupsPage: React.FC = () => {
       
       // Reset form
       setSelectedFriends([]);
+      setGroupName("");
       setGroupColour("");
       setIsCreateDialogOpen(false);
     } catch (e: any) {
@@ -151,6 +154,16 @@ const GroupsPage: React.FC = () => {
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Group Name</label>
+                  <Input
+                    type="text"
+                    placeholder="Enter group name"
+                    value={groupName}
+                    onChange={(e) => setGroupName(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
                 <div>
                   <label className="text-sm font-medium">Group Color (optional)</label>
                   <Input

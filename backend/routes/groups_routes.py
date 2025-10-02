@@ -12,12 +12,14 @@ from pydantic import BaseModel
 from datetime import datetime, timezone
 
 class CreateGroupRequest(BaseModel):
+    group_name: Optional[str] = None
     group_colour: Optional[str] = None
 
 class GroupResponse(BaseModel):
     id: str
     creator_user_id: str
     created_at: str
+    group_name: Optional[str] = None
     group_colour: Optional[str] = None
 
 class GroupMemberResponse(BaseModel):
@@ -46,6 +48,7 @@ async def create_group(
         # Create the group
         group_data = {
             "creator_user_id": user_id_str,
+            "group_name": payload.group_name,
             "group_colour": payload.group_colour
         }
         
@@ -93,7 +96,7 @@ async def list_groups(current_user=Depends(get_current_user)):
 
         # Get all groups where the user is a member
         result = supabase_admin.table("group_members").select(
-            "group_id, groups(id, creator_user_id, created_at, group_colour)"
+            "group_id, groups(id, creator_user_id, created_at, group_name, group_colour)"
         ).eq("user_id", user_id_str).execute()
         
         if not result.data:
