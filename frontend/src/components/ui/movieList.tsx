@@ -46,12 +46,14 @@ export default function MovieList({ movies, editMode = false }: MovieListProps) 
         <div key={movie.id} className="relative">
           <div>
             {user && (
-              <div className="w-1/6 absolute left-1.5 top-7.5 flex items-center justify-center bg-white rounded-md px-1 py-1 z-10">
+              <div>
                   {editMode && (
+                    <div className="w-1/6 absolute left-1.5 top-7.5 flex items-center justify-center bg-white rounded-md px-1 py-1 z-10">
                     <HeartRating
                     value={true}
                     onChange={() => handleRemoveFromFavourites(movie.id, index)}
                     />
+                    </div>
                   )}
                   
               </div>
