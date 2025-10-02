@@ -27,6 +27,7 @@ class GroupMemberResponse(BaseModel):
     group_id: str
     is_admin: bool
     joined_at: str
+    user_email: Optional[str] = None
 
 class AddMemberRequest(BaseModel):
     user_id: str
@@ -60,11 +61,16 @@ async def create_group(
         group = group_result.data[0]
         group_id = group["id"]
         
+        # Get the creator's email from profiles table
+        profile_result = supabase_admin.table("profiles").select("email").eq("user_id", user_id_str).execute()
+        user_email = profile_result.data[0]["email"] if profile_result.data else None
+        
         # Add the creator as an admin member
         member_data = {
             "user_id": user_id_str,
             "group_id": group_id,
-            "is_admin": True
+            "is_admin": True,
+            "user_email": user_email
         }
         
         member_result = supabase_admin.table("group_members").insert(member_data).execute()
@@ -143,13 +149,26 @@ async def get_group_members(
                 detail="You are not a member of this group."
             )
         
-        # Get all members of the group
-        result = supabase_admin.table("group_members").select("*").eq("group_id", group_id).execute()
+        # Get all members of the group with their email from profiles
+        result = supabase_admin.table("group_members").select(
+            "user_id, group_id, is_admin, joined_at, user_email, profiles(email)"
+        ).eq("group_id", group_id).execute()
         
         if not result.data:
             return []
         
-        members = [GroupMemberResponse(**member) for member in result.data]
+        # Merge email from profiles table if user_email is not set
+        members = []
+        for member in result.data:
+            member_data = {
+                "user_id": member["user_id"],
+                "group_id": member["group_id"],
+                "is_admin": member["is_admin"],
+                "joined_at": member["joined_at"],
+                "user_email": member.get("user_email") or (member.get("profiles", {}).get("email") if member.get("profiles") else None)
+            }
+            members.append(GroupMemberResponse(**member_data))
+        
         print(f"Found {len(members)} members in group {group_id}")
         return members
         
@@ -230,11 +249,16 @@ async def add_group_member(
                 detail="You must be an admin to add members to this group."
             )
         
+        # Get the user's email from profiles table
+        profile_result = supabase_admin.table("profiles").select("email").eq("user_id", payload.user_id).execute()
+        user_email = profile_result.data[0]["email"] if profile_result.data else None
+        
         # Add the new member
         member_data = {
             "user_id": payload.user_id,
             "group_id": group_id,
-            "is_admin": False
+            "is_admin": False,
+            "user_email": user_email
         }
         
         result = supabase_admin.table("group_members").insert(member_data).execute()

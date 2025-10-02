@@ -18,7 +18,7 @@ interface GroupMember {
   group_id: string;
   is_admin: boolean;
   joined_at: string;
-  email: string | null;
+  user_email: string | null;
 }
 
 const GroupDetailsPage: React.FC = () => {
@@ -73,7 +73,7 @@ const GroupDetailsPage: React.FC = () => {
 
         await loadGroupDetails();
         setStatusMessage("Changes saved successfully");
-    } catch (error) {
+    } catch {
         setStatusMessage("Error saving changes");
     } finally {
         setSaving(false);
@@ -90,7 +90,7 @@ const GroupDetailsPage: React.FC = () => {
         <ul className="space-y-2">
           {members.map((m) => (
             <li key={m.user_id} className="text-sm">
-              {m.user_id} {m.is_admin && <span className="text-xs text-blue-500">(Admin)</span>}
+              {m.user_email || m.user_id} {m.is_admin && <span className="text-xs text-blue-500">(Admin)</span>}
             </li>
           ))}
         </ul>
