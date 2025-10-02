@@ -19,23 +19,7 @@ import { Input } from "@/components/ui/input"
 // Input UI from shad
 
 // utility function to wrap a promise with a timeout
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error("Request timed out"))
-    }, ms)
 
-    promise
-      .then((val) => {
-        clearTimeout(timer)
-        resolve(val)
-      })
-      .catch((err) => {
-        clearTimeout(timer)
-        reject(err)
-      })
-  })
-}
 
 
 // REACT FUNCTIONAL COMPONENT DEFINITION
