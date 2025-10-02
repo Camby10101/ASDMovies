@@ -11,7 +11,7 @@ interface MovieListProps {
   editMode?: boolean;
 }
 
-export default function MovieList({ movies }: MovieListProps) {
+export default function MovieList({ movies, editMode = false }: MovieListProps) {
   const { user } = useUser();
   const [movieList, setMovieList] = useState<Movie[]>(movies);
   const [isMovieListEmpty, setIsMovieListEmpty] = useState(false);
@@ -46,11 +46,16 @@ export default function MovieList({ movies }: MovieListProps) {
         <div key={movie.id} className="relative">
           <div>
             {user && (
-              <div className="w-1/6 absolute left-1.5 top-7.5 flex items-center justify-center bg-white rounded-md px-1 py-1 z-10">
-                  <HeartRating
-                  value={true}
-                  onChange={() => handleRemoveFromFavourites(movie.id, index)}
-                  />
+              <div>
+                  {editMode && (
+                    <div className="w-[20%] h-auto absolute left-1.5 top-7.5 flex items-center justify-center bg-white rounded-md px-1 py-1 z-10">
+                    <HeartRating
+                    value={true}
+                    onChange={() => handleRemoveFromFavourites(movie.id, index)}
+                    />
+                    </div>
+                  )}
+                  
               </div>
             )}
             <SmallMovieCard 

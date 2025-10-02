@@ -18,6 +18,26 @@ import { fetchMovies, type Movie } from "@/lib/tmdb-api-helper"
 import { Input } from "@/components/ui/input"
 // Input UI from shad
 
+// utility function to wrap a promise with a timeout
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error("Request timed out"))
+    }, ms)
+
+    promise
+      .then((val) => {
+        clearTimeout(timer)
+        resolve(val)
+      })
+      .catch((err) => {
+        clearTimeout(timer)
+        reject(err)
+      })
+  })
+}
+
+
 // REACT FUNCTIONAL COMPONENT DEFINITION
 
 // This is the default export of this module
@@ -66,6 +86,8 @@ export default function MovieGridPage() {
     // STATE UPDATES - prepares for new API calls
     setLoading(true)  // Set loading to true
     setErr(null)  // Clear any previous errors
+
+
 
     // PROMISE CHAIN - handling async API calls
     fetchMovies(q, ctrl.signal) // Call API function with search query and abort signal
@@ -151,7 +173,7 @@ export default function MovieGridPage() {
             // COMPONENT PROPS: data passed from parent to child componet
           ))
         ) : (
-            !loading && !err && <p className="text-muted-foreground">No movies found.</p>
+            !loading && !err && <p className="text-muted-foreground">Loading...</p>
           )}
       </div>
     </div>

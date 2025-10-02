@@ -172,7 +172,7 @@ const ProfilePage = () => {
               {/* link to the full list of a users rated movies */}
               <Link
                 to={`/userFavouriteMovies/${profile.user_id}`}
-                className="hover:shadow-lg text-sm"
+                className="inline-block rounded-xl bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-gray-700 hover:shadow-lg transition-all duration-200"
               >
                 See All →
               </Link>
