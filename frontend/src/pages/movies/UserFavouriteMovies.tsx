@@ -282,13 +282,13 @@ const UserFavouriteMovies = () => {
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <p className="mb-4 text-2xl font-semibold text-gray-700">
             {isCurrentUser 
-              ? "You haven't rated any movies yet." 
-              : "No rated movies yet."}
+              ? "You haven't rated any movies yet!" 
+              : "Loading..."}
           </p>
           {isCurrentUser && (
             <a 
               href="/movies" 
-              className="rounded-md bg-blue-500 px-6 py-3 text-lg font-medium text-white transition hover:bg-blue-600"
+              className="rounded-md bg-gray-500 px-6 py-3 text-lg font-medium text-white transition hover:bg-gray-600"
             >
               Browse Movies
             </a>
