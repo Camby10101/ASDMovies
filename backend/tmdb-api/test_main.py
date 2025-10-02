@@ -2,7 +2,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, AsyncMock
-from main import app, simplify, poster_url
+from tmbd_functions import app, simplify, poster_url
 
 client = TestClient(app)
 

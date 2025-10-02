@@ -4,10 +4,8 @@ import sys
 from pathlib import Path
 from fastapi.testclient import TestClient
 from unittest.mock import patch, AsyncMock
-from main import app, simplify, poster_url
+from tmbd_functions import app, simplify, poster_url
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "tmdb-api"))
-from main import app, simplify, poster_url
 
 client = TestClient(app)
 
