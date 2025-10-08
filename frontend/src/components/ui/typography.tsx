@@ -9,7 +9,7 @@ const typographyVariants = cva("text-black leading-tight", {
         size: {
             h1: "scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance",
             h2: "text-2xl",
-            h3: "text-1xl",
+            h3: "text-[1.4rem]",
             body: "text-base",
             small: "text-sm text-gray-700",
         },
@@ -29,7 +29,8 @@ const typographyVariants = cva("text-black leading-tight", {
             red: "text-red-500",
             blue: "text-blue-500",
             green: "text-green-500",
-            white: "text-white"
+            white: "text-white",
+            yellow: "text-yellow-500"
         }
     },
     defaultVariants: {

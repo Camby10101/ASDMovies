@@ -1,56 +1,57 @@
-# backend/tests/conftest.py
-import uuid
-import pytest
-from fastapi.testclient import TestClient
+# tests/test_privacy.py
 
-from main import app
-from auth import get_current_user
-from config import supabase_admin
+def test_update_privacy_upsert(client):
+    payload = {
+        "profile_visibility": "friends",
+        "allow_friend_requests": False,
+        "show_activity": False,
+        "show_favorites_to": "only_me",
+        "allow_tagging": False,
+    }
+    r = client.put("/api/privacy", json=payload)
+    assert r.status_code == 200
+    data = r.json()
+    for k, v in payload.items():
+        assert data[k] == v
 
-class DummyUser:
-    def __init__(self, id: str, email: str):
-        self.id = id
-        self.email = email
-        self.user_metadata = {}
+    # fetch again to ensure persistence
+    r2 = client.get("/api/privacy")
+    assert r2.status_code == 200
+    data2 = r2.json()
+    for k, v in payload.items():
+        assert data2[k] == v
 
-@pytest.fixture
-def test_user_id() -> str:
-    # user_id exclusivo por teste (evita interferência)
-    return f"test_user_{uuid.uuid4()}"
 
-@pytest.fixture
-def client(test_user_id: str):
-    """
-    Client autenticado (override da dependência get_current_user).
-    Também garante limpeza dos dados do usuário de teste ao final.
-    """
-    # override do auth para simular usuário logado
-    async def override_get_current_user():
-        return DummyUser(id=test_user_id, email=f"{test_user_id}@example.com")
+def test_blocklist_flow(client):
+    # starts empty (or returns a list)
+    r0 = client.get("/api/privacy/blocklist")
+    assert r0.status_code == 200
+    assert isinstance(r0.json().get("blocked_users", []), list)
 
-    app.dependency_overrides[get_current_user] = override_get_current_user
-    c = TestClient(app)
+    # add
+    r1 = client.post("/api/privacy/block", json={"user": "ann@example.com"})
+    assert r1.status_code == 200
+    assert "ann@example.com" in r1.json()["blocked_users"]
 
-    yield c
+    # idempotent add
+    r1b = client.post("/api/privacy/block", json={"user": "ann@example.com"})
+    assert r1b.status_code == 200
+    assert r1b.json()["blocked_users"].count("ann@example.com") == 1
 
-    # --- limpeza dos dados do teste (se houver service role) ---
-    try:
-        if supabase_admin:
-            supabase_admin.table("blocked_users").delete().eq("user_id", test_user_id).execute()
-            supabase_admin.table("privacy_settings").delete().eq("user_id", test_user_id).execute()
-    except Exception as e:
-        # Em ambiente sem service key, ignore a limpeza
-        print("[tests] cleanup warning:", repr(e))
+    # list
+    r2 = client.get("/api/privacy/blocklist")
+    assert r2.status_code == 200
+    assert "ann@example.com" in r2.json()["blocked_users"]
 
-    # remove override
-    app.dependency_overrides.pop(get_current_user, None)
+    # remove
+    r3 = client.delete("/api/privacy/block/ann@example.com")
+    assert r3.status_code == 200
+    assert "ann@example.com" not in r3.json()["blocked_users"]
 
-@pytest.fixture
-def client_noauth():
-    """
-    Client sem override de auth, para testar 401/403.
-    """
-    # garante que não há override ativo
-    app.dependency_overrides.pop(get_current_user, None)
-    c = TestClient(app)
-    return c
+
+def test_requires_auth(client_noauth):
+    assert client_noauth.get("/api/privacy").status_code in (401, 403)
+    assert client_noauth.put("/api/privacy", json={}).status_code in (401, 403)
+    assert client_noauth.get("/api/privacy/blocklist").status_code in (401, 403)
+    assert client_noauth.post("/api/privacy/block", json={"user": "x"}).status_code in (401, 403)
+    assert client_noauth.delete("/api/privacy/block/x").status_code in (401, 403)

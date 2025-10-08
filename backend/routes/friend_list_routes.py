@@ -37,7 +37,30 @@ async def list_friend_list(current_user=Depends(get_current_user)):
             .execute()
         )
 
-        friends = [{"user_id": row["member_user_id"], "email": None} for row in (members_result.data or [])]
+        # Get friend details including email
+        friends = []
+        for row in (members_result.data or []):
+            member_user_id = row["member_user_id"]
+            # Get profile information for each friend
+            profile_result = (
+                supabase_admin
+                .table("profiles")
+                .select("user_id, email")
+                .eq("user_id", member_user_id)
+                .execute()
+            )
+            if profile_result.data:
+                friend_data = profile_result.data[0]
+                friends.append({
+                    "user_id": friend_data["user_id"], 
+                    "email": friend_data["email"]
+                })
+            else:
+                # Fallback if profile not found
+                friends.append({
+                    "user_id": member_user_id, 
+                    "email": None
+                })
 
         return {"friend_list_id": friend_list_id, "friends": friends}
     except Exception as e:
@@ -46,7 +69,7 @@ async def list_friend_list(current_user=Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/api/friends")
-async def add_friend(friend_user_id: str, current_user=Depends(get_current_user)):
+async def add_friend(friend_email: str, current_user=Depends(get_current_user)):
     try:
         owner_user_id = str(current_user.id)
 
@@ -69,18 +92,20 @@ async def add_friend(friend_user_id: str, current_user=Depends(get_current_user)
         else:
             friend_list_id = friend_list_result.data[0]["id"]
 
-        # Verify the friend profile exists
-        print(f"[friends] add -> owner={owner_user_id} friend_user_id={friend_user_id}")
+        # Look up user_id from email
+        print(f"[friends] add -> owner={owner_user_id} friend_email={friend_email}")
         profile_check = (
             supabase_admin
             .table("profiles")
-            .select("user_id")
-            .eq("user_id", friend_user_id)
+            .select("user_id, email")
+            .eq("email", friend_email)
             .execute()
         )
         print(f"[friends] profile_check rows={len(profile_check.data or [])} data={profile_check.data}")
         if not profile_check.data:
             raise HTTPException(status_code=404, detail="Friend profile not found")
+        
+        friend_user_id = profile_check.data[0]["user_id"]
 
         insert_result = (
             supabase_admin

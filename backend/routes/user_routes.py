@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 
 class UpdateProfileRequest(BaseModel):
     bio: str
+    display_name: str
 
 router = APIRouter()
 

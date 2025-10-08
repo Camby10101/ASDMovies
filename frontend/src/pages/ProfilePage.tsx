@@ -1,198 +1,244 @@
+
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Typography } from "@/components/ui/typography";
 import { InfoBox } from "@/components/ui/info-box";
+import { InfoLine } from "@/components/ui/info-line";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent} from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import MovieList from "@/components/ui/movieList";
-import SmallMovieCard from "@/components/ui/smallMovieCard"
+import SmallMovieCard from "@/components/ui/smallMovieCard";
 
-import { useUser } from "@/hooks/useUser"
-import { useProfile } from "@/hooks/useProfile"
+import { useUser } from "@/hooks/useUser";
+import { useProfile } from "@/hooks/useProfile";
 
 import { updateProfile } from "@/lib/profile-service";
 import { fetchFavouriteMovies } from "@/lib/favourite-movies-service";
 import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper";
-import { fetchUserRatings } from "@/lib/rating-service"
-import type { UserMovieRating } from "@/types/user-movie-ratings"
+import { fetchUserRatings } from "@/lib/rating-service";
+import type { UserMovieRating } from "@/types/user-movie-ratings";
 
 const ProfilePage = () => {
-  const { id } = useParams<{ id: string }>()                       // profile page id (handle or user_id depending on your hook)
-  const { user, loadingUser, refreshUser } = useUser()
-  const { profile, loadingProfile } = useProfile(id!)               // profile being viewed
-
-  // is this the logged-in user's own profile?
+  const { id } = useParams<{ id: string }>(); 
+  const { user, loadingUser, refreshUser } = useUser();
+  const { profile, loadingProfile } = useProfile(id!); // profile being viewed
+  // True if logged-in user is viewing their own profile
   const isCurrentUser =
-    !loadingUser && !loadingProfile && profile?.user_id === user?.user_id
+    !loadingUser && !loadingProfile && profile?.user_id === user?.user_id;
 
-  // Bio
-  const [bio, setBio] = useState("")
+  // Profile
+  const [bio, setBio] = useState("");
+  const [display_name, setDisplayName] = useState("");
 
+  // Will store recently rated moviesx
+  const [ratedMovies, setRatedMovies] = useState<
+  Array<{ movie: Movie; userRating: number }>
+>([]);
 
-  // Recently rated
-    const [ratedMovies, setRatedMovies] = useState<
-        Array<{ movie: Movie; userRating: number }>
-    >([])
-    const [loadingRated, setLoadingRated] = useState(false)
-    const [errRated, setErrRated] = useState<string | null>(null)
+  // Loading state for the movie fetch operation
+  const [loadingRated, setLoadingRated] = useState(false);
+  // Error state for rated movies
+  const [errRated, setErrRated] = useState<string | null>(null);
 
-    const [movies, setMovies] = useState<Movie[]>([])
-    const [loadingMovies, setLoadingMovies] = useState(true)
-    const [noFavourites, setNoFavourites] = useState(false)
+  // Favourites
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loadingMovies, setLoadingMovies] = useState(true);
+  const [noFavourites, setNoFavourites] = useState(false);
 
-  // Load "Recently Rated Movies"
+  // Load "Recently Rated Movies" (top 10)
+  // Fetches user's 10 most recent movies whenever profile changes
   useEffect(() => {
     const loadRatedMovies = async () => {
-      if (!profile) return
-      setLoadingRated(true)
-      setErrRated(null)
-      try {
-        const ratings: UserMovieRating[] = await fetchUserRatings(profile.user_id) 
-        // Sort newest first; fallback to empty string if created_at missing
-        const sorted = ratings
-          .slice()
-          .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
+      // Don't bother if the profile data isn't available
+      if (!profile) return;
 
-        // Take top 10 and fetch each movie’s details
-        const firstTen = sorted.slice(0, 10)
+      setLoadingRated(true); // begin loading
+      setErrRated(null); // no error yet
+
+      try {
+        // Fetches ALL ratings for the user
+        const ratings: UserMovieRating[] = await fetchUserRatings(profile.user_id);
+      
+        // Sort ratings by creation date
+        const sorted = ratings
+        .slice() // slice (means we work on a new array)
+        .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? "")); // compares two strings lexagraphically
+
+        // We take only the 10 most recent movies
+        const firstTen = sorted.slice(0, 10);
+
+        // For each rating, fetch the full movie details from TMDB 
+        // Return an array of objects containing both movie data and user ratings
         const moviesWithRatings = await Promise.all(
           firstTen.map(async (r) => {
-            const m = await fetchMovieDetails(r.tmdb_id)
-            return { movie: m, userRating: r.rating }
+            const m = await fetchMovieDetails(r.tmdb_id);
+            return { movie: m, userRating: r.rating };
           })
-        )
-        setRatedMovies(moviesWithRatings)
+        );
+        setRatedMovies(moviesWithRatings);
       } catch (err) {
-        console.log(err)
+        console.log(err);
+        setErrRated("Error");
       } finally {
-        setLoadingRated(false)
+        // Finished loading
+        setLoadingRated(false);
       }
-    }
-    loadRatedMovies()
-  }, [profile])
+    };
+    loadRatedMovies();
+  }, [profile]); // Re-run whenever the profile changes
 
+  // Load favourites + set profile fields
+  useEffect(() => {
+    if (!profile) return;
 
+    setBio(profile.bio);
+    setDisplayName(profile.display_name);
 
-    useEffect(() => {
-        if (!profile) return
+    const ctrl = new AbortController();
+    const { signal } = ctrl;
 
-        setBio(profile.bio);
-        
-        const ctrl = new AbortController()
+    const loadMovies = async () => {
+      setLoadingMovies(true);
 
-        const loadMovies = async () => {
-            setLoadingMovies(true)
+      try {
+        const movie_ids = await fetchFavouriteMovies(profile.user_id);
 
-            try {
-                const movie_ids = await fetchFavouriteMovies(profile.user_id)
-
-                if (movie_ids.length === 1 && movie_ids[0] === -1) {
-                    setNoFavourites(true)
-                    return
-                }
-
-                const data = await Promise.all(
-                    movie_ids.map((id) => fetchMovieDetails(id, ctrl.signal))
-                )
-                setMovies(data)
-                
-            } catch (err) {
-                console.log("Error loading movies:", err)
-            } finally {
-                setLoadingMovies(false)
-            }
+        if (movie_ids.length === 1 && movie_ids[0] === -1) {
+          setNoFavourites(true);
+          setMovies([]);
+          return;
         }
 
-        loadMovies()
+        const data = await Promise.all(
+          movie_ids.map((mid) => fetchMovieDetails(mid, signal))
+        );
+        setMovies(data);
+      } catch (err) {
+        console.log("Error loading movies:", err);
+      } finally {
+        if (!signal.aborted) setLoadingMovies(false);
+      }
+    };
 
-        return () => ctrl.abort()
-    }, [profile])
+    loadMovies();
+    return () => ctrl.abort();
+  }, [profile]);
 
-    const handleSave = async () => {
-        try {
-            await updateProfile({ bio }); // Updates the database
-            await refreshUser();
-            window.location.reload();
-        } catch (err) {
-            console.error(err);
-        }
+  const handleSave = async () => {
+    try {
+      await updateProfile({ bio, display_name }); // Updates the database
+      await refreshUser();
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
     }
+  };
 
-    if (loadingProfile || (loadingMovies) ) return <p>Loading...</p>
-    if (!profile) return <p>Profile does not exist</p>
+  if (loadingProfile || loadingMovies) return <p>Loading...</p>;
+  if (!profile) return <p>Profile does not exist</p>;
 
   return (
-    <div className="mx-auto max-w-3xl p-6 space-y-8">
-      <Typography size="h1">{"@" + profile.handle}</Typography>
+    <div className="flex flex-col p-6 space-y-4 h-[90%]">
+      <div className="flex items-center gap-2">
+        <InfoLine
+          text={display_name}
+          onChange={setDisplayName}
+          isEditable={isCurrentUser}
+          maxLength={20}
+        />
+        <Typography size="h1" color="gray">
+          {"@" + profile.handle}
+        </Typography>
+      </div>
+
       <hr />
 
-      {/* Bio */}
-      <Card>
-        <CardHeader>
-          <Typography size="h2">Bio</Typography>
-        </CardHeader>
-        <CardContent>
+      <div className="flex flex-1 gap-2">
+        {/* Left column */}
+        <div className="w-[50%] flex flex-col gap-2">
+          {/* Bio */}
           <InfoBox
+            header={"Bio"}
             text={bio}
             onChange={setBio}
             isEditable={isCurrentUser}
-            maxLength={500}
+            maxLength={160}
           />
-        </CardContent>
-      </Card>
 
-      {/* Favourite Movies */}
-      <Card>
-        <CardHeader>
-          <Typography size="h2">Favourite Movies</Typography>
-        </CardHeader>
-        <CardContent>
-            {!noFavourites ? (
-                <MovieList movies={movies} />
-            ) : (
-                <Typography>No favourties yet!</Typography>
-            )}       
-        </CardContent>
-      </Card>
+          {/* Newest Ratings */} 
+          <Card className="flex flex-col flex-1">
+            <CardHeader className="flex items-center justify-between">
+              <Typography size="h2">Recently Rated</Typography>
+              {/* link to the full list of a users rated movies */}
+              <Link
+                to={`/userFavouriteMovies/${profile.user_id}`}
+                className="inline-block rounded-xl bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-gray-700 hover:shadow-lg transition-all duration-200"
+              >
+                See All →
+              </Link>
+            </CardHeader>
+            {/* Show loading message while fetching movies */}
+            <CardContent>
+              {loadingRated && <p>Loading…</p>}
+              {/* Display error if failed */}
+              {errRated && <p className="text-red-600">Error: {errRated}</p>}
 
-      {/* Recently Rated Movies */}
-      <Card>
-        <CardHeader>
-          <Typography size="h2">Recently Rated Movies</Typography>
-        </CardHeader>
-        
-        <CardContent>
-          {loadingRated && <p>Loading…</p>}
-          {errRated && <p className="text-red-600">Error: {errRated}</p>}
-          {!loadingRated && !errRated && ratedMovies.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {ratedMovies.map(({ movie, userRating }) => (
-                <SmallMovieCard
-                  key={movie.id}
-                  id={movie.id}
-                  title={movie.title}
-                  year={movie.year}
-                  poster={movie.poster}
-                  genre={movie.genre}
-                  rating={userRating} // show the user's rating (read-only)
-                />
-              ))}
-            </div>
-          ) : (
-            !loadingRated &&
-            !errRated && <p className="text-muted-foreground">No rated movies yet.</p>
-          )}
-        </CardContent>
-      </Card>
+              {/* Displaying movies in a horizontal scrollable container */}
+              {!loadingRated && !errRated && ratedMovies.length > 0 ? (
+                <div className="flex flex-1 overflow-x-auto gap-3">
+                  { /* Map through each rated movie and display as a small card */}
+                  {ratedMovies.map(({ movie, userRating }) => (
+                    <div key={movie.id} className={"flex-shrink-0 w-[23.4%]"}>
+                      {/* Subset of a movie card just displaying minimal information */}
+                      <SmallMovieCard
+                        id={movie.id}
+                        title={movie.title}
+                        year={movie.year}
+                        poster={movie.poster}
+                        genre={movie.genre}
+                        rating={userRating} // the users rating
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                  // Show a message if the user hasn't rated any movies yet
+                  !loadingRated &&
+                    !errRated && (
+                      <p className="text-muted-foreground">No rated movies yet!</p>
+                    )
+                )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right column */}
+        <div className="w-[50%] flex flex-col">
+          <Card className="flex flex-col flex-1">
+            <CardHeader>
+              <Typography size="h2">Favourites</Typography>
+            </CardHeader>
+            <CardContent>
+              {!noFavourites ? (
+                <div className="h-[75vh] flex-1 overflow-y-auto">
+                  <MovieList movies={movies} editMode={isCurrentUser} />
+                </div>
+              ) : (
+                  <Typography>No favourites yet!</Typography>
+                )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       {isCurrentUser && (
-        <>
-          <hr />
+        <div className="flex justify-end">
           <Button onClick={handleSave}>Save changes</Button>
-        </>
+        </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ProfilePage
+export default ProfilePage;
+

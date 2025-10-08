@@ -29,10 +29,23 @@ stages:
               npm install tailwindcss @tailwindcss/vite
               npm install -D @types/node
               npm install @supabase/supabase-js
+              npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
               npx shadcn@latest init
               npx shadcn@latest add navigation-menu
               npm run build
             displayName: "Install frontend dependencies and build"
+
+          - script: |
+              cd frontend
+              npm run test
+            displayName: "Run frontend tests"
+
+          # - task: PublishTestResults@2
+          #   inputs:
+          #     testResultsFiles: '**/vitest-results.xml'
+          #     testRunTitle: 'Frontend Tests'
+          #   condition: succeededOrFailed()
+          #   displayName: "Publish Frontend Test Results"
 
           - task: PublishBuildArtifacts@1
             inputs:
@@ -57,17 +70,129 @@ stages:
               python -m venv .venv
               source .venv/bin/activate
               python -m pip install --upgrade pip
-              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
-
-              cd tmdb-api
-              python -m venv .venv
-              source .venv/bin/activate
-              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv
+              pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv pytest pytest-mock
             displayName: "Install backend dependencies"
 
           - script: |
-              cd backend/tmdb-api
+              cd backend
               source .venv/bin/activate
               nohup uvicorn main:app --reload --port 8000 &
             displayName: "Run Backend API"
 
+  - stage: Pipeline_Tests
+    displayName: "Pipeline Tests"
+    dependsOn: Backend
+    jobs:
+      - job: run_tests
+        variables:
+        - group: SupabaseSecrets
+        displayName: "Run Tests"
+        steps:
+          #test_sanity
+          - script: |
+              echo "URL: $SUPABASE_URL"
+              echo "Anon len: ${#SUPABASE_ANON_KEY}"
+              echo "Service len: ${#SUPABASE_SERVICE_ROLE_KEY}"
+              cd backend
+              pip install -r requirements.txt
+              pip install pytest pytest-asyncio httpx
+              source .venv/bin/activate
+              python -m pytest tests/test_sanity.py --maxfail=1 --disable-warnings -q
+            displayName: "Sanity Test"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+            continueOnError: true
+          #Tests for API (Friends and Group Members), may need some touches to fully work
+          #- script: |
+          #    cd backend
+          #    pip install -r requirements.txt
+          #    pip install pytest pytest-asyncio httpx
+          #    pytest -v tests/test_api.py --junitxml=pytest-results.xml
+          #  displayName: "Testing API"
+          #  env:
+          #    SUPABASE_URL: $(SUPABASE_URL)
+          #    SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+          #  continueOnError: true
+
+          #Test Friends
+          - script: |
+              cd backend
+              pip install -r requirements.txt
+              pip install pytest pytest-asyncio httpx
+              pytest -v tests/test_group.py --junitxml=pytest-results.xml
+            displayName: "Testing Group"
+            env:
+              SUPABASE_URL: $(SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+            continueOnError: true
+
+          #test_favourites
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_favourites.py --maxfail=1 --disable-warnings -q
+            displayName: "Testing Favourite Movies"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+          
+          #test_privacy
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_privacy.py --maxfail=1 --disable-warnings -q
+            displayName: "Testing Privacy"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+            continueOnError: true
+
+          #test_tmdb
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_tmdb.py --maxfail=1 --disable-warnings -q
+            displayName: "Testing TMDB"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+            continueOnError: true
+
+          #test_ratings
+          - script: |
+              cd backend
+              source .venv/bin/activate
+              python -m pytest tests/test_ratings.py --maxfail=1 --disable-warnings -q
+            displayName: "Testing Ratings"    
+            env:
+              SUPABASE_URL: $(VITE_SUPABASE_URL)
+              SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+            continueOnError: true
+
+
+          
+          # ALL TESTS (use this after we show David)
+          # - script: |
+          #     cd backend
+          #     source .venv/bin/activate
+          #     python -m pytest tests --maxfail=1 --disable-warnings -q
+          #   displayName: "All backend tests"    
+          #   env:
+          #     SUPABASE_URL: $(VITE_SUPABASE_URL)
+          #     SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+          #     SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+
+          # - task: PublishTestResults@2
+          #   inputs:
+          #     testResultsFiles: '**/pytest-results.xml'
+          #     testRunTitle: 'Backend Tests'
+          #   condition: succeededOrFailed()
+          #   displayName: "Publish Backend Test Results"
+
+          #Test 4

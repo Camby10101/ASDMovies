@@ -59,7 +59,7 @@ export default function TrendingMoviesPage() {
             />
           ))
         ) : (
-            !loading && !err && <p className="text-muted-foreground">No movies found.</p>
+            !loading && !err && <p className="text-muted-foreground">Loading...</p>
           )}
       </div>
     </div>

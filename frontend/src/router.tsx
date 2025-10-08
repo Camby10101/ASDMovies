@@ -4,11 +4,14 @@ import App from './App.tsx';
 // import HomePage from './pages/HomePage.tsx';
 import AboutPage from './pages/AboutPage.tsx';
 import FriendPage from './pages/FriendPage.tsx';
+import GroupsPage from './pages/GroupsPage.tsx';
+import GroupDetailsPage from './pages/GroupDetailsPage.tsx';
 import MovieListPage from './pages/movies/MovieListPage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx';
 import IndividualMoviePage from './pages/movies/IndividualMoviePage.tsx';
 import AccountPage from './pages/AccountPage.tsx';
 import PrivacyPage from './pages/PrivacyPage.tsx';
+import UserFavouriteMovies from './pages/movies/UserFavouriteMovies.tsx'; 
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +43,14 @@ export const router = createBrowserRouter([
         element: <FriendPage />,
       },
       {
+        path: "groups",
+        element: <GroupsPage />,
+      },
+      {
+        path: "/groups/:groupId",
+        element: <GroupDetailsPage />,
+      },
+      {
         path: "profile/:id",
         element: <ProfilePage />,
       },
@@ -51,6 +62,10 @@ export const router = createBrowserRouter([
       {
         path: "privacy",
         element: <PrivacyPage />,
+      },
+      {
+        path: "userFavouriteMovies/:id",
+        element: <UserFavouriteMovies />,
       },
     ],
   },

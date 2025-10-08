@@ -15,6 +15,7 @@ from routes.debug_routes import router as debug_router
 from routes.tmdb_routes import router as tmdb_router
 from routes.favourite_movies_routes import router as favourite_movies_router
 from routes.rated_movies_route import router as user_ratings_router
+from routes.groups_routes import router as groups_router
 
 
 app = FastAPI(title="Advanced SW Dev API")
@@ -37,6 +38,7 @@ app.include_router(debug_router)
 app.include_router(tmdb_router)
 app.include_router(favourite_movies_router)
 app.include_router(user_ratings_router)
+app.include_router(groups_router)
 
 @app.get("/")
 async def read_root():
