@@ -196,7 +196,16 @@ stages:
           #   displayName: "Publish Backend Test Results"
 
           #Test 4
-
+          
+  - stage: Archive_Files
+    displayName: "File Archiving"
+    dependsOn: Pipeline_Tests
+    jobs:
+      - job: Archive
+        variables:
+        - group: SupabaseSecrets
+        displayName: "Archive Files"
+        steps:
           - task: ArchiveFiles@2
             displayName: 'Archive app into zip'
             inputs:
