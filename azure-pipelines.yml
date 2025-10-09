@@ -184,7 +184,6 @@ stages:
     jobs:
       - deployment: deploy_to_azure
         displayName: "Zip and Deploy to Azure"
-        environment: "production"
         strategy:
           runOnce:
             deploy:
