@@ -196,3 +196,19 @@ stages:
           #   displayName: "Publish Backend Test Results"
 
           #Test 4
+
+          - task: ArchiveFiles@2
+            displayName: 'Archive app into zip'
+            inputs:
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+              replaceExistingArchive: true
+
+          - task: AzureWebApp@1
+            displayName: 'Deploy to Azure Web App'
+            inputs:
+              azureSubscription: 'AzureAppConnection'
+              appName: 'MovieLily'              
+              package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
