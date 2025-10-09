@@ -8,7 +8,7 @@ pool:
 
 variables:
   VITE_SUPABASE_URL: "https://mcpzbvznxmkbvaeajwua.supabase.co/"
-  NEXT_PUBLIC_API_URL: "https://movielily-backend.azurewebsites.net/"  # Replace with your real backend URL
+  NEXT_PUBLIC_API_URL: "https://movielily.azurewebsites.net/"
 
 stages:
   - stage: Frontend
