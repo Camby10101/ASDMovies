@@ -1,15 +1,10 @@
-import os
-import httpx
 import logging
-from typing import Any, Optional, List, Literal
+from typing import List, Literal
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
+from config import supabase_admin
 
 logger = logging.getLogger(__name__)
-
-TMDB_BASE = "https://api.themoviedb.org/3"
-TMDB_KEY = os.getenv("TMDB_KEY")
-POSTER_BASE = "https://image.tmdb.org/t/p"
 
 router = APIRouter(tags=["tmdb"])
 
@@ -22,43 +17,24 @@ class MovieOut(BaseModel):
     rating: str
     description: str
 
-def poster_url(path: Optional[str], size: str = "w500") -> str:
-    return f"{POSTER_BASE}/{size}{path}" if path else "https://via.placeholder.com/500x750?text=No+Poster"
-
-async def tmdb_get(path: str, params: Optional[dict[str, Any]] = None):
-    if not TMDB_KEY:
-        raise RuntimeError("TMDB_KEY not set.")
-    headers = {"Authorization": f"Bearer {TMDB_KEY}"}
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        r = await client.get(f"{TMDB_BASE}{path}", headers=headers, params=params)
-    if r.status_code != 200:
-        raise HTTPException(status_code=r.status_code, detail=r.text)
-    return r.json()
+class PaginatedMoviesResponse(BaseModel):
+    movies: List[MovieOut]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
 
 
-genre_map: dict[int, str] = {}
-
-@router.on_event("startup")
-async def warm_genres():
-    try:
-        data = await tmdb_get("/genre/movie/list", params={"language": "en-US"})
-        for g in data.get("genres", []):
-            genre_map[g["id"]] = g["name"]
-    except Exception as e:
-        logger.error(f"Error warming genres: {e}")
-
-
-def simplify(m: dict) -> MovieOut:
-    year = (m.get("release_date") or "")[:4] or "—"
-    genre = ", ".join(genre_map.get(gid, "") for gid in m.get("genre_ids", []) if genre_map.get(gid)) or "—"
+def transform_db_movie(m: dict) -> MovieOut:
+    """Transform database movie record to MovieOut format"""
     return MovieOut(
-        id=m["id"],
-        title=m.get("title") or m.get("name") or "Untitled",
-        year=year,
-        poster=poster_url(m.get("poster_path")),
-        genre=genre,
-        rating=f'{(m.get("vote_average") or 0):.1f}',
-        description=m.get("overview") or "",
+        id=m.get("tmdb_id") or 0,
+        title=m.get("title") or "Untitled",
+        year=str(m.get("release_year") or "—"),
+        poster=m.get("poster") or "https://via.placeholder.com/500x750?text=No+Poster",
+        genre=m.get("genre") or "—",
+        rating=f'{(m.get("rating") or 0):.1f}',
+        description=m.get("description") or "",
     )
 
 
@@ -67,33 +43,93 @@ def health():
     return {"ok": True}
 
 
-@router.get("/search/movies", response_model=List[MovieOut])
-async def search_movies(q: str = Query("", description="Empty => popular")):
-    data = (
-        await tmdb_get("/search/movie", params={"query": q, "include_adult": "false", "language": "en-US", "page": 1})
-        if q.strip()
-        else await tmdb_get("/movie/popular", params={"language": "en-US", "page": 1})
-    )
-    return [simplify(m) for m in data.get("results", [])[:24]]
+@router.get("/search/movies", response_model=PaginatedMoviesResponse)
+async def search_movies(
+    q: str = Query("", description="Empty => popular"),
+    page: int = Query(1, ge=1, description="Page number (starting from 1)"),
+    page_size: int = Query(24, ge=1, le=100, description="Number of movies per page")
+):
+    try:
+        # Calculate offset for pagination
+        offset = (page - 1) * page_size
+        
+        if q.strip():
+            # Search by title (case-insensitive)
+            # Get total count
+            count_result = supabase_admin.table("movies").select("*", count="exact").ilike("title", f"%{q}%").execute()
+            total = count_result.count or 0
+            
+            # Get paginated results
+            result = supabase_admin.table("movies").select("*").ilike("title", f"%{q}%").order("rating", desc=True).range(offset, offset + page_size - 1).execute()
+        else:
+            # Return popular movies (ordered by rating)
+            # Get total count
+            count_result = supabase_admin.table("movies").select("*", count="exact").execute()
+            total = count_result.count or 0
+            
+            # Get paginated results
+            result = supabase_admin.table("movies").select("*").order("rating", desc=True).range(offset, offset + page_size - 1).execute()
+        
+        movies = result.data or []
+        total_pages = (total + page_size - 1) // page_size  # Ceiling division
+        
+        return PaginatedMoviesResponse(
+            movies=[transform_db_movie(m) for m in movies],
+            total=total,
+            page=page,
+            page_size=page_size,
+            total_pages=total_pages
+        )
+    except Exception as e:
+        logger.error(f"Error searching movies: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/trending", response_model=List[MovieOut])
-async def trending(period: Literal["day", "week"] = "day"):
-    data = await tmdb_get(f"/trending/movie/{period}", params={"language": "en-US"})
-    return [simplify(m) for m in data.get("results", [])[:24]]
+@router.get("/trending", response_model=PaginatedMoviesResponse)
+async def trending(
+    period: Literal["day", "week"] = "day",
+    page: int = Query(1, ge=1, description="Page number (starting from 1)"),
+    page_size: int = Query(24, ge=1, le=100, description="Number of movies per page")
+):
+    # Since we don't have trending data in the database, we'll return top-rated movies
+    # This could be enhanced later with a view count or popularity metric
+    try:
+        # Calculate offset for pagination
+        offset = (page - 1) * page_size
+        
+        # Get total count
+        count_result = supabase_admin.table("movies").select("*", count="exact").execute()
+        total = count_result.count or 0
+        
+        # Get paginated results
+        result = supabase_admin.table("movies").select("*").order("rating", desc=True).range(offset, offset + page_size - 1).execute()
+        movies = result.data or []
+        total_pages = (total + page_size - 1) // page_size  # Ceiling division
+        
+        return PaginatedMoviesResponse(
+            movies=[transform_db_movie(m) for m in movies],
+            total=total,
+            page=page,
+            page_size=page_size,
+            total_pages=total_pages
+        )
+    except Exception as e:
+        logger.error(f"Error fetching trending movies: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/movies/{movie_id}", response_model=MovieOut)
 async def movie_details(movie_id: int):
-    print("Movie ID:",  movie_id)
-    data = await tmdb_get(f"/movie/{movie_id}", params={"language": "en-US"})
-    genre = ", ".join([g.get("name", "") for g in data.get("genres", [])]) or "—"
-    return MovieOut(
-        id=data["id"],
-        title=data.get("title", "Untitled"),
-        year=(data.get("release_date") or "")[:4] or "—",
-        poster=poster_url(data.get("poster_path")),
-        genre=genre,
-        rating=f'{(data.get("vote_average") or 0):.1f}',
-        description=data.get("overview") or "",
-    )
+    try:
+        # Query by tmdb_id
+        result = supabase_admin.table("movies").select("*").eq("tmdb_id", movie_id).execute()
+        
+        if not result.data or len(result.data) == 0:
+            raise HTTPException(status_code=404, detail=f"Movie with ID {movie_id} not found")
+        
+        return transform_db_movie(result.data[0])
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching movie details: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
