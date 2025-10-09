@@ -8,7 +8,7 @@ from pydantic import BaseModel
 logger = logging.getLogger(__name__)
 
 TMDB_BASE = "https://api.themoviedb.org/3"
-TMDB_BEARER = os.getenv("TMDB_BEARER")
+TMDB_KEY = os.getenv("TMDB_KEY")
 POSTER_BASE = "https://image.tmdb.org/t/p"
 
 router = APIRouter(tags=["tmdb"])
@@ -26,9 +26,9 @@ def poster_url(path: Optional[str], size: str = "w500") -> str:
     return f"{POSTER_BASE}/{size}{path}" if path else "https://via.placeholder.com/500x750?text=No+Poster"
 
 async def tmdb_get(path: str, params: Optional[dict[str, Any]] = None):
-    if not TMDB_BEARER:
-        raise RuntimeError("TMDB_BEARER not set.")
-    headers = {"Authorization": f"Bearer {TMDB_BEARER}"}
+    if not TMDB_KEY:
+        raise RuntimeError("TMDB_KEY not set.")
+    headers = {"Authorization": f"Bearer {TMDB_KEY}"}
     async with httpx.AsyncClient(timeout=10.0) as client:
         r = await client.get(f"{TMDB_BASE}{path}", headers=headers, params=params)
     if r.status_code != 200:

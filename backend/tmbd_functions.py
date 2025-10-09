@@ -43,7 +43,7 @@ TMDB_BASE = "https://api.themoviedb.org/3" # The base URL for TMBD API v3
 
 # String variable: retrueves the TMBD API bearer token from the env variables
 # returns none or " " if the variable cannot be found
-TMDB_BEARER = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYjI5ZTI5NGUzMTFiYTMzZWU4Yjc2NzRiNTMxNDE3ZiIsIm5iZiI6MTc1NDk1OTc3MS45MjgsInN1YiI6IjY4OWE4ZjliNjViMzFlMzdjZjhlYjNmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-3kAUYHK5lUok0WYc8OF8h-k4Capvk6_PC_6DPS0vcc"
+TMDB_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjYjI5ZTI5NGUzMTFiYTMzZWU4Yjc2NzRiNTMxNDE3ZiIsIm5iZiI6MTc1NDk1OTc3MS45MjgsInN1YiI6IjY4OWE4ZjliNjViMzFlMzdjZjhlYjNmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-3kAUYHK5lUok0WYc8OF8h-k4Capvk6_PC_6DPS0vcc"
 
 POSTER_BASE = "https://image.tmdb.org/t/p"
 
@@ -109,12 +109,12 @@ def poster_url(path: Optional[str], size: str = "w500") -> str:
 """
 async def tmdb_get(path: str, params: Optional[dict[str, Any]] = None):
     # Check if the token is available
-    if not TMDB_BEARER:
+    if not TMDB_KEY:
         # throws an exception
-        raise RuntimeError("TMDB_BEARER not set.")
+        raise RuntimeError("TMDB_KEY not set.")
 
     # Dictionary with HTTP headers for authentication
-    headers = {"Authorization": f"Bearer {TMDB_BEARER}"}
+    headers = {"Authorization": f"Bearer {TMDB_KEY}"}
 
     # async with: asynchronous context manager for resource management
     # we are creating an async HTTP client with 10 second timeout
