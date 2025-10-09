@@ -40,13 +40,6 @@ stages:
               npm run test
             displayName: "Run frontend tests"
 
-          # - task: PublishTestResults@2
-          #   inputs:
-          #     testResultsFiles: '**/vitest-results.xml'
-          #     testRunTitle: 'Frontend Tests'
-          #   condition: succeededOrFailed()
-          #   displayName: "Publish Frontend Test Results"
-
           - task: PublishBuildArtifacts@1
             inputs:
               pathToPublish: 'frontend/dist'
@@ -67,10 +60,11 @@ stages:
 
           - script: |
               cd backend
-              python -m venv .venv
-              source .venv/bin/activate
+              python -m venv venv
+              source venv/bin/activate
               python -m pip install --upgrade pip
               pip install supabase fastapi "uvicorn[standard]" httpx python-dotenv pytest pytest-mock
+              pip install -r requirements.txt
             displayName: "Install backend dependencies"
 
           - script: |
@@ -104,17 +98,6 @@ stages:
               SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
             continueOnError: true
-          #Tests for API (Friends and Group Members), may need some touches to fully work
-          #- script: |
-          #    cd backend
-          #    pip install -r requirements.txt
-          #    pip install pytest pytest-asyncio httpx
-          #    pytest -v tests/test_api.py --junitxml=pytest-results.xml
-          #  displayName: "Testing API"
-          #  env:
-          #    SUPABASE_URL: $(SUPABASE_URL)
-          #    SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
-          #  continueOnError: true
 
           #Test Friends
           - script: |
@@ -194,30 +177,38 @@ stages:
           #     testRunTitle: 'Backend Tests'
           #   condition: succeededOrFailed()
           #   displayName: "Publish Backend Test Results"
-
-          #Test 4
           
-  - stage: Archive_Files
-    displayName: "File Archiving"
+  - stage: Deploy
+    displayName: "Deploy to Azure Web App (MovieLily)"
     dependsOn: Pipeline_Tests
     jobs:
-      - job: Archive
-        variables:
-        - group: SupabaseSecrets
-        displayName: "Archive Files"
-        steps:
-          - task: ArchiveFiles@2
-            displayName: 'Archive app into zip'
-            inputs:
-              rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
-              includeRootFolder: false
-              archiveType: 'zip'
-              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-              replaceExistingArchive: true
+      - deployment: deploy_to_azure
+        displayName: "Zip and Deploy to Azure"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: "Download Frontend Build"
+                  inputs:
+                    buildType: 'current'
+                    downloadType: 'single'
+                    artifactName: 'frontend_dist'
+                    downloadPath: '$(System.DefaultWorkingDirectory)/frontend_dist'
 
-          - task: AzureWebApp@1
-            displayName: 'Deploy to Azure Web App'
-            inputs:
-              azureSubscription: 'AzureAppConnection'
-              appName: 'MovieLily'              
-              package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+                - task: ArchiveFiles@2
+                  displayName: "Archive app into zip"
+                  inputs:
+                    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/frontend_dist'
+                    includeRootFolder: false
+                    archiveType: 'zip'
+                    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+                    replaceExistingArchive: true
+
+                - task: AzureWebApp@1
+                  displayName: "Deploy to Azure Web App: MovieLily"
+                  inputs:
+                    azureSubscription: 'AzureAppConnection'
+                    appName: 'MovieLily'
+                    resourceGroupName: 'MoviesASD'
+                    package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
