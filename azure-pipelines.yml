@@ -60,6 +60,10 @@ stages:
               versionSpec: '3.11'
             displayName: "Use Python 3.11"
 
+          - download: current
+            artifact: frontend_dist
+            displayName: "Download frontend artifact"
+
           - script: |
               cd backend
               python -m venv venv
