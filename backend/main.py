@@ -41,8 +41,8 @@ app.include_router(favourite_movies_router)
 app.include_router(user_ratings_router)
 app.include_router(groups_router)
 
-from fastapi.staticfiles import StaticFiles
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+if os.path.isdir("static"):
+    app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 @app.get("/")
 async def read_root():

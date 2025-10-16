@@ -36,15 +36,7 @@ stages:
               npm install @supabase/supabase-js
               npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
               npm run build
-            displayName: "Install frontend dependencies"
-
-          # Build frontend
-          - script: |
-              cd $(frontendDir)
-              npm ci
-              npm run build
-              cp -r dist ../backend/static
-            displayName: 'Build React frontend with Vite'
+            displayName: "Install frontend dependencies and build"
 
           - script: |
               cd frontend
@@ -175,6 +167,14 @@ stages:
           - task: UseNode@1
             inputs:
               version: $(nodeVersion)
+
+          # Build frontend
+          - script: |
+              cd $(frontendDir)
+              npm ci
+              npm run build
+              cp -r dist ../backend/static
+            displayName: 'Build React frontend with Vite'
 
           # Setup Python for backend
           - task: UsePythonVersion@0
