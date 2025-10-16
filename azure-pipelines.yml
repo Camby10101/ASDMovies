@@ -173,7 +173,7 @@ stages:
               cd $(frontendDir)
               npm ci
               npm run build
-              cp -r dist ../backend/static
+            # cp -r dist ../backend/static
             displayName: 'Build React frontend with Vite'
 
           # Setup Python for backend
