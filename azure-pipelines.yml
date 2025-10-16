@@ -201,6 +201,7 @@ stages:
                     resourceGroupName: 'MoviesASD'
                     package: '$(System.DefaultWorkingDirectory)/backend'
                     runtimeStack: 'PYTHON|3.11'
+                    package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
                   env:
                     VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
                     NEXT_PUBLIC_API_URL: $(NEXT_PUBLIC_API_URL)
