@@ -7,6 +7,8 @@ load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
 
 # Rotas
 from routes.user_routes import router as user_router
@@ -16,7 +18,6 @@ from routes.tmdb_routes import router as tmdb_router
 from routes.favourite_movies_routes import router as favourite_movies_router
 from routes.rated_movies_route import router as user_ratings_router
 from routes.groups_routes import router as groups_router
-
 
 app = FastAPI(title="Advanced SW Dev API")
 
@@ -39,6 +40,9 @@ app.include_router(tmdb_router)
 app.include_router(favourite_movies_router)
 app.include_router(user_ratings_router)
 app.include_router(groups_router)
+
+from fastapi.staticfiles import StaticFiles
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 @app.get("/")
 async def read_root():
