@@ -10,7 +10,7 @@ variables:
   VITE_SUPABASE_URL: "https://mcpzbvznxmkbvaeajwua.supabase.co/"
   NEXT_PUBLIC_API_URL: "https://movielily.azurewebsites.net/"
   pythonVersion: '3.11'
-  nodeVersion: '18.x'
+  nodeVersion: '20.x'
   frontendDir: 'frontend'
   backendDir: 'backend'
   buildOutput: 'dist'
