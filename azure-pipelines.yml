@@ -156,45 +156,6 @@ stages:
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
             continueOnError: true
 
-  - stage: Deploy
-    displayName: "Deploy to Azure Web App (MovieLily)"
-    dependsOn: Pipeline_Tests
-    jobs:
-      - deployment: deploy_to_azure
-        displayName: "Zip and Deploy to Azure"
-        environment: "production"
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: DownloadBuildArtifacts@0
-                  displayName: "Download Frontend Build"
-                  inputs:
-                    buildType: 'current'
-                    downloadType: 'single'
-                    artifactName: 'frontend_dist'
-                    downloadPath: '$(System.DefaultWorkingDirectory)/frontend_dist'
-
-                - task: ArchiveFiles@2
-                  displayName: "Archive frontend into zip"
-                  inputs:
-                    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/frontend_dist'
-                    includeRootFolder: false
-                    archiveType: 'zip'
-                    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-                    replaceExistingArchive: true
-
-                - task: AzureWebApp@1
-                  displayName: "Deploy to Azure Web App: MovieLily"
-                  inputs:
-                    azureSubscription: 'AzureAppConnection'
-                    appName: 'MovieLily'
-                    resourceGroupName: 'MoviesASD'
-                  env:
-                    VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
-                    NEXT_PUBLIC_API_URL: $(NEXT_PUBLIC_API_URL)
-                    SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
-                    SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
   - stage: Build
     jobs:
       - job: Build
