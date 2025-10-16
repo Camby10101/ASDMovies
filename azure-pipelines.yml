@@ -9,6 +9,12 @@ pool:
 variables:
   VITE_SUPABASE_URL: "https://mcpzbvznxmkbvaeajwua.supabase.co/"
   NEXT_PUBLIC_API_URL: "https://movielily.azurewebsites.net/"
+  pythonVersion: '3.11'
+  nodeVersion: '18.x'
+  frontendDir: 'frontend'
+  backendDir: 'backend'
+  buildOutput: 'dist'
+  buildDir: 'build_artifacts'
 
 stages:
   - stage: Frontend
@@ -37,17 +43,6 @@ stages:
               npm run test
             displayName: "Run frontend tests"
 
-          - script: |
-              mkdir -p backend/dist
-              cp -r frontend/dist/* backend/dist/
-            displayName: "Copy frontend build into backend"
-
-          - task: PublishBuildArtifacts@1
-            inputs:
-              pathToPublish: 'frontend/dist'
-              artifactName: 'frontend_dist'
-            displayName: "Publish Frontend Build"
-
   - stage: Backend
     displayName: "Backend Setup & Run"
     dependsOn: Frontend
@@ -59,10 +54,6 @@ stages:
             inputs:
               versionSpec: '3.11'
             displayName: "Use Python 3.11"
-
-          - download: current
-            artifact: frontend_dist
-            displayName: "Download frontend artifact"
 
           - script: |
               cd backend
@@ -199,11 +190,78 @@ stages:
                     azureSubscription: 'AzureAppConnection'
                     appName: 'MovieLily'
                     resourceGroupName: 'MoviesASD'
-                    package: '$(System.DefaultWorkingDirectory)/backend'
-                    runtimeStack: 'PYTHON|3.11'
-                    package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
                   env:
                     VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
                     NEXT_PUBLIC_API_URL: $(NEXT_PUBLIC_API_URL)
                     SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
                     SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+  - stage: Build
+    jobs:
+      - job: Build
+        steps:
+          - checkout: self
+
+          # Setup Node for frontend
+          - task: UseNode@1
+            inputs:
+              version: $(nodeVersion)
+
+          # Build frontend
+          - script: |
+              cd $(frontendDir)
+              npm ci
+              npm run build
+            displayName: 'Build React frontend with Vite'
+
+          # Setup Python for backend
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(pythonVersion)'
+
+          # Install backend dependencies
+          - script: |
+              cd $(backendDir)
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt -t ./python_packages
+            displayName: 'Install backend dependencies'
+
+          # Combine backend and frontend output
+          - script: |
+              mkdir -p $(buildDir)
+              cp -r $(backendDir)/* $(buildDir)/
+              cp -r $(backendDir)/python_packages $(buildDir)/
+              mkdir -p $(buildDir)/static
+              cp -r $(frontendDir)/$(buildOutput)/* $(buildDir)/static/
+            displayName: 'Assemble build directory'
+
+          # Publish artifact
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(buildDir)'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
+
+  - stage: Deploy
+    dependsOn: Build
+    jobs:
+      - deployment: DeployWebApp
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: drop
+
+                - task: AzureWebApp@1
+                  inputs:
+                    azureSubscription: 'AzureAppConnection'
+                    appName: 'MovieLily'
+                    resourceGroupName: 'MoviesASD'
+                    package: '$(Pipeline.Workspace)/drop'
+                    runtimeStack: 'PYTHON|3.11'
+                  env:
+                    VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
+                    NEXT_PUBLIC_API_URL: $(NEXT_PUBLIC_API_URL)
+                    SUPABASE_SERVICE_KEY: $(SUPABASE_SERVICE_KEY)
+                    SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)  
