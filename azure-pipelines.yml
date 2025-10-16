@@ -37,6 +37,11 @@ stages:
               npm run test
             displayName: "Run frontend tests"
 
+          - script: |
+              mkdir -p backend/dist
+              cp -r frontend/dist/* backend/dist/
+            displayName: "Copy frontend build into backend"
+
           - task: PublishBuildArtifacts@1
             inputs:
               pathToPublish: 'frontend/dist'
@@ -190,7 +195,8 @@ stages:
                     azureSubscription: 'AzureAppConnection'
                     appName: 'MovieLily'
                     resourceGroupName: 'MoviesASD'
-                    package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+                    package: '$(System.DefaultWorkingDirectory)/backend'
+                    runtimeStack: 'PYTHON|3.11'
                   env:
                     VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
                     NEXT_PUBLIC_API_URL: $(NEXT_PUBLIC_API_URL)
