@@ -1,7 +1,7 @@
 import type { FavouriteMovies } from "@/types/favourite-movies";
 
 // const API_BASE = import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-const API_BASE = "https://movielily.azurewebsites.net/";
+const API_BASE = "https://movielily.azurewebsites.net";
 
 // --------
 

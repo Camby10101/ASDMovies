@@ -2,7 +2,7 @@ import type { Profile } from "@/types/profile";
 import { supabase } from "@/lib/supabase";
 
 // const API_BASE = import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-const API_BASE = "https://movielily.azurewebsites.net/";
+const API_BASE = "https://movielily.azurewebsites.net";
 const {
   data: { session },
 } = await supabase.auth.getSession();
