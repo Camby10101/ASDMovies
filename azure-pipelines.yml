@@ -83,7 +83,7 @@ stages:
           - script: |
               echo "URL: $SUPABASE_URL"
               echo "Anon len: ${#SUPABASE_ANON_KEY}"
-              echo "Service len: ${#SUPABASE_SERVICE_ROLE_KEY}"
+              echo "Service len: ${#SUPABASE_SERVICE_KEY}"
               cd backend
               source venv/bin/activate
               pip install -r requirements.txt
