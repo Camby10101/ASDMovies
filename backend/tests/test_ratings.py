@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 from main import app
 
-# Creates test client that simulates HTTP requests to the FastAPI app without running a server
+# Creates test client that simulates HTTP requests to the FastAPI app without running a server 
 client = TestClient(app)
 
 # Reusable mock of a query builder for Supabase
