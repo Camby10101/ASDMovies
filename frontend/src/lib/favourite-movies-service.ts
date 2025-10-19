@@ -1,9 +1,9 @@
 import type { FavouriteMovies } from "@/types/favourite-movies";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
+const API_BASE = import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 // --------
-// GET
+
 // --------
 export async function fetchFavouriteMovies(user_id: string): Promise<FavouriteMovies> {
     const res = await fetch(`${API_BASE}/api/favourite_movies/${user_id}`, {
