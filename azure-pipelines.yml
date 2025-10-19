@@ -173,8 +173,12 @@ stages:
               cd $(frontendDir)
               npm ci
               npm run build
-            # cp -r dist ../backend/static
+          # cp -r dist ../backend/static
             displayName: 'Build React frontend with Vite'
+            env:
+              VITE_SUPABASE_URL: $(VITE_SUPABASE_URL)
+              VITE_SUPABASE_ANON_KEY: $(VITE_SUPABASE_ANON_KEY)
+              NEXT_PUBLIC_API_URL: $(NEXT_PUBLIC_API_URL)
 
           # Setup Python for backend
           - task: UsePythonVersion@0
