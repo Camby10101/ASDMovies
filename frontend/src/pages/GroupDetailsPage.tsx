@@ -25,7 +25,6 @@ const GroupDetailsPage: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
 
-  const [group, setGroup] = useState<Group | null>(null);
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [groupName, setGroupName] = useState("");
   const [groupColour, setGroupColour] = useState("");
@@ -43,7 +42,6 @@ const GroupDetailsPage: React.FC = () => {
   const loadGroupDetails = async () => {
     const response = await api(`/api/groups/${groupId}`, { method: "GET" });
     const data = await response.json();
-    setGroup(data);
     setGroupName(data.group_name || "");
     setGroupColour(data.group_colour || "");
     setLoading(false);
