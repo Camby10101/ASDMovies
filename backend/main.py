@@ -46,20 +46,23 @@ app.include_router(favourite_movies_router)
 app.include_router(user_ratings_router)
 app.include_router(groups_router)
 
-if os.path.isdir("static"):
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+
+if os.path.isdir(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/{full_path:path}")
 async def serve_frontend(full_path: str):
-    # If the request is for a file (like JS/CSS), let FastAPI serve it
-    file_path = os.path.join("static", full_path)
+    # Serve static file if it exists
+    file_path = os.path.join(STATIC_DIR, full_path)
     if os.path.exists(file_path) and os.path.isfile(file_path):
         return FileResponse(file_path)
 
-    # Otherwise, return index.html for React Router to handle the route
-    index_path = os.path.join("static", "index.html")
+    # Otherwise serve index.html for React Router
+    index_path = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
+
     return {"detail": "Frontend build not found"}
 
 if __name__ == "__main__":
