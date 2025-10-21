@@ -227,7 +227,9 @@ const GroupsPage: React.FC = () => {
                 <Card key={group.id} className="p-6 hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold mb-2">{group.group_name ?? "Unamed Group"}</h3>
+                      <h3 className="text-lg font-semibold mb-2">
+                        {group.group_name ?? "Unnamed Group"}
+                      </h3>
                       <p className="text-sm text-gray-600">
                         Created {formatDate(group.created_at)}
                       </p>
@@ -239,10 +241,11 @@ const GroupsPage: React.FC = () => {
                       />
                     )}
                   </div>
+
+                  <p className="text-sm text-gray-500 mb-3">ID: {group.id.slice(0, 8)}...</p>
+
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-500">
-                      ID: {group.id.slice(0, 8)}...
-                    </p>
+                    {/* View details (existing) */}
                     <Button
                       variant="outline"
                       size="sm"
@@ -250,6 +253,15 @@ const GroupsPage: React.FC = () => {
                       onClick={() => navigate(`/groups/${group.id}`)}
                     >
                       View Details
+                    </Button>
+
+                    {/* NEW: Generate Recommendations */}
+                    <Button
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md hover:shadow-lg hover:opacity-95 transition-all rounded-xl py-5 font-medium"
+                      onClick={() => navigate(`/groups/${group.id}/recommendations`)}
+                    >
+                      🔮 Generate Recommendations
                     </Button>
                   </div>
                 </Card>
