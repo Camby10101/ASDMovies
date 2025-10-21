@@ -170,9 +170,9 @@ stages:
 
           # Build frontend
           - script: |
-                  cd $(frontendDir)
-                  npm ci
-                  npm run build
+                cd $(frontendDir)
+                npm ci
+                npm run build
           # cp -r dist ../backend/static
             displayName: 'Build React frontend with Vite'
             env:
