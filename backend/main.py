@@ -46,7 +46,11 @@ app.include_router(user_ratings_router)
 app.include_router(groups_router)
 
 if os.path.isdir("static"):
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+    app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello World"}
 
 if __name__ == "__main__":
     print("Starting Uvicorn server on http://0.0.0.0:8000")
