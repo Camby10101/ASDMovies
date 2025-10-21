@@ -1,3 +1,4 @@
+// src/pages/GroupDetailsPage.tsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ const GroupDetailsPage: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
 
-  const [group, setGroup] = useState<Group | null>(null);
+  // Removido: const [group, setGroup] = useState<Group | null>(null);
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [groupName, setGroupName] = useState("");
   const [groupColour, setGroupColour] = useState("");
@@ -42,8 +43,8 @@ const GroupDetailsPage: React.FC = () => {
 
   const loadGroupDetails = async () => {
     const response = await api(`/api/groups/${groupId}`, { method: "GET" });
-    const data = await response.json();
-    setGroup(data);
+    const data: Group = await response.json();
+    // Removido: setGroup(data);
     setGroupName(data.group_name || "");
     setGroupColour(data.group_colour || "");
     setLoading(false);
@@ -51,7 +52,7 @@ const GroupDetailsPage: React.FC = () => {
 
   const loadMembers = async () => {
     const response = await api(`/api/groups/${groupId}/members`, { method: "GET" });
-    const data = await response.json();
+    const data: GroupMember[] = await response.json();
     setMembers(data);
   };
 
@@ -133,10 +134,10 @@ const GroupDetailsPage: React.FC = () => {
             <Input type="color" value={groupColour} onChange={(e) => setGroupColour(e.target.value)} />
           </div>
 
-        <Button onClick={handleSave} disabled={saving}>
-          {saving ? "Saving..." : "Save Changes"}
-        </Button>
-        {statusMessage && <p className="mt-2 text-sm text-green-600">{statusMessage}</p>}
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
+          {statusMessage && <p className="mt-2 text-sm text-green-600">{statusMessage}</p>}
         </div>
       </Card>
     </div>
