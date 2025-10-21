@@ -171,10 +171,8 @@ stages:
           # Build frontend
           - script: |
                   cd $(frontendDir)
-                  echo "Current directory: $(pwd)"
-                  ls -l
+                  npm ci
                   npm run build
-                  ls -l
           # cp -r dist ../backend/static
             displayName: 'Build React frontend with Vite'
             env:
