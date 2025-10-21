@@ -45,6 +45,13 @@ const ProfilePage = () => {
   const [loadingMovies, setLoadingMovies] = useState(true);
   const [noFavourites, setNoFavourites] = useState(false);
 
+  const [initialBio, setInitialBio] = useState("");
+  const [initialDisplayName, setInitialDisplayName] = useState("");
+
+  const [saving, setSaving] = useState(false);
+
+  const hasChanges = bio !== initialBio || display_name !== initialDisplayName;
+
   // Load "Recently Rated Movies" (top 10)
   // Fetches user's 10 most recent movies whenever profile changes
   useEffect(() => {
@@ -94,6 +101,11 @@ const ProfilePage = () => {
     setBio(profile.bio);
     setDisplayName(profile.display_name);
 
+    setInitialBio(profile.bio);
+    setInitialDisplayName(profile.display_name);
+
+    
+
     const ctrl = new AbortController();
     const { signal } = ctrl;
 
@@ -125,12 +137,14 @@ const ProfilePage = () => {
   }, [profile]);
 
   const handleSave = async () => {
+    setSaving(true);
     try {
       await updateProfile({ bio, display_name }); // Updates the database
+      setInitialBio(bio);
+      setInitialDisplayName(display_name);
       await refreshUser();
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -233,7 +247,9 @@ const ProfilePage = () => {
 
       {isCurrentUser && (
         <div className="flex justify-end">
-          <Button onClick={handleSave}>Save changes</Button>
+          <Button onClick={handleSave} disabled={!hasChanges || saving}>
+            {saving ? "Saving..." : "Save changes"}
+          </Button>
         </div>
       )}
     </div>
