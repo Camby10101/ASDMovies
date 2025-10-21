@@ -7,7 +7,7 @@ import logging
 from auth import get_current_user
 from config import supabase_admin
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 from datetime import datetime, timezone
 
@@ -337,3 +337,110 @@ async def update_group(
             status_code=500,
             detail={"error": str(e), "message": "An error occurred while updating the group."}
         )
+
+@router.get("/api/groups/{group_id}/top-genre")
+def group_top_genre(group_id: str, current_user=Depends(get_current_user)):
+    """
+    Compute the most 'liked' genre for a group.
+
+    Rules:
+      1) Count how many favourites each genre has across the group.
+      2) Tiebreaker: lower average 'rank' wins (1 is best).
+      3) Final tiebreaker: alphabetical by genre.
+
+    Response example:
+    {
+      "group_id": "...",
+      "top_genre": "Animation",
+      "reason": {"count": 7, "avg_rank": 1.86},
+      "breakdown": [
+        {"genre": "Animation", "count": 7, "avg_rank": 1.86},
+        {"genre": "Action",     "count": 5, "avg_rank": 2.40},
+        ...
+      ]
+    }
+    """
+    # 0) must be a member
+    mem_check = (
+        supabase_admin.table("group_members")
+        .select("user_id")
+        .eq("group_id", group_id)
+        .eq("user_id", str(current_user.id))
+        .limit(1)
+        .execute()
+    )
+    if not mem_check.data:
+        raise HTTPException(status_code=403, detail="You are not a member of this group.")
+
+    # 1) all member user_ids
+    members_res = (
+        supabase_admin.table("group_members")
+        .select("user_id")
+        .eq("group_id", group_id)
+        .execute()
+    )
+    user_ids = [m["user_id"] for m in (members_res.data or [])]
+    if not user_ids:
+        return {"group_id": group_id, "top_genre": None, "reason": None, "breakdown": []}
+
+    # 2) all favourites for those users (NOTE: table name is 'favourite_movies')
+    favs_res = (
+        supabase_admin.table("favourite_movies")
+        .select("user_id,movie_id,rank")
+        .in_("user_id", user_ids)
+        .order("rank", desc=False)  # lowest rank is best
+        .execute()
+    )
+    favs = favs_res.data or []
+    if not favs:
+        return {"group_id": group_id, "top_genre": None, "reason": None, "breakdown": []}
+
+    # 3) movie metadata for those tmdb ids
+    tmdb_ids = sorted({row["movie_id"] for row in favs})
+    movies_res = (
+        supabase_admin.table("movies")
+        .select("tmdb_id,genre")
+        .in_("tmdb_id", tmdb_ids)
+        .execute()
+    )
+    movies = {m["tmdb_id"]: (m.get("genre") or "").strip() for m in (movies_res.data or [])}
+
+    # 4) aggregate per-genre
+    stats: Dict[str, Dict[str, Any]] = {}
+    for row in favs:
+        mid = row["movie_id"]
+        genre = movies.get(mid, "")
+        if not genre:
+            continue
+        if genre not in stats:
+            stats[genre] = {"count": 0, "ranks": []}
+        stats[genre]["count"] += 1
+        # rank may be null; only include numeric ranks
+        rnk = row.get("rank")
+        if isinstance(rnk, (int, float)):
+            stats[genre]["ranks"].append(float(rnk))
+
+    if not stats:
+        return {"group_id": group_id, "top_genre": None, "reason": None, "breakdown": []}
+
+    # 5) compute avg_rank and choose winner
+    breakdown: List[Dict[str, Any]] = []
+    for g, s in stats.items():
+        ranks = s["ranks"]
+        avg_rank: Optional[float] = sum(ranks) / len(ranks) if ranks else None
+        breakdown.append({"genre": g, "count": s["count"], "avg_rank": avg_rank})
+
+    # sort: highest count desc, then lowest avg_rank asc (None treated as large), then genre asc
+    def sort_key(item: Dict[str, Any]):
+        avg = item["avg_rank"]
+        avg_key = avg if avg is not None else 1e9
+        return (-item["count"], avg_key, item["genre"] or "")
+
+    breakdown.sort(key=sort_key)
+    top = breakdown[0]
+    return {
+        "group_id": group_id,
+        "top_genre": top["genre"],
+        "reason": {"count": top["count"], "avg_rank": top["avg_rank"]},
+        "breakdown": breakdown,
+    }

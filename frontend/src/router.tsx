@@ -12,6 +12,7 @@ import IndividualMoviePage from './pages/movies/IndividualMoviePage.tsx';
 import AccountPage from './pages/AccountPage.tsx';
 import PrivacyPage from './pages/PrivacyPage.tsx';
 import UserFavouriteMovies from './pages/movies/UserFavouriteMovies.tsx'; 
+import GroupRecommendationsPage from './pages/GroupRecommendationsPage.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: "/groups/:groupId",
         element: <GroupDetailsPage />,
+      },
+      {
+        path: "/groups/:groupId/recommendations",
+        element: <GroupRecommendationsPage />,
       },
       {
         path: "profile/:id",
