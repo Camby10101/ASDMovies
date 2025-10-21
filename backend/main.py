@@ -46,7 +46,7 @@ app.include_router(user_ratings_router)
 app.include_router(groups_router)
 
 if os.path.isdir("static"):
-    app.mount("/", StaticFiles(directory="static", html=True), name="static")
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def read_root():
