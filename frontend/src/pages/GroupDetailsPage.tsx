@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // ⬅️ add useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { api } from "@/lib/api";
+import { Sparkles } from "lucide-react";
+
 
 interface Group {
   id: string;
@@ -23,8 +25,9 @@ interface GroupMember {
 
 const GroupDetailsPage: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // ⬅️ init navigator
 
+  const [group, setGroup] = useState<Group | null>(null);
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [groupName, setGroupName] = useState("");
   const [groupColour, setGroupColour] = useState("");
@@ -42,6 +45,7 @@ const GroupDetailsPage: React.FC = () => {
   const loadGroupDetails = async () => {
     const response = await api(`/api/groups/${groupId}`, { method: "GET" });
     const data = await response.json();
+    setGroup(data);
     setGroupName(data.group_name || "");
     setGroupColour(data.group_colour || "");
     setLoading(false);
@@ -67,13 +71,18 @@ const GroupDetailsPage: React.FC = () => {
       if (!response.ok) throw new Error("Failed to save changes");
       await loadGroupDetails();
       setStatusMessage("Changes saved successfully");
-    } catch (e: any) {
-      setStatusMessage(e?.message ?? "Error saving changes");
+    } catch {
+<<<<<<< HEAD
+        setStatusMessage("You do not have Permission!");
+=======
+      setStatusMessage("Error saving changes");
+>>>>>>> recommendation
     } finally {
       setSaving(false);
     }
   };
 
+  // ⬅️ NEW: go to recommendations page for this group
   const goToRecommendations = () => {
     if (!groupId) return;
     navigate(`/groups/${groupId}/recommendations`);
@@ -103,20 +112,23 @@ const GroupDetailsPage: React.FC = () => {
       <Card className="p-4 md:col-span-2 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Settings</h2>
-
-          {/* Call-to-action button */}
-          <button
+          {/* ⬅️ NEW BUTTON */}
+          <Button
             onClick={goToRecommendations}
             disabled={!groupId}
-            className="relative inline-flex items-center justify-center px-5 py-2.5 rounded-xl overflow-hidden transition
-                       disabled:opacity-50 disabled:cursor-not-allowed
-                       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-                       bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600
-                       text-white font-semibold shadow-lg hover:shadow-xl"
+            size="lg"
+            className="
+              bg-gradient-to-r from-indigo-600 to-fuchsia-600 
+              text-white shadow-lg hover:shadow-xl 
+              transition-transform duration-200 hover:scale-[1.02]
+              active:scale-[0.98] rounded-xl px-5
+            "
+            aria-label="Generate group recommendations"
           >
-            <span className="absolute inset-0 opacity-30 blur-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400" />
-            <span className="relative">✨ Generate Recommendations</span>
-          </button>
+            <Sparkles className="mr-2 h-5 w-5" />
+            Generate Recommendations
+          </Button>
+
         </div>
 
         <p className="text-gray-500">Group ID: {groupId}</p>
@@ -131,10 +143,10 @@ const GroupDetailsPage: React.FC = () => {
             <Input type="color" value={groupColour} onChange={(e) => setGroupColour(e.target.value)} />
           </div>
 
-        <Button onClick={handleSave} disabled={saving}>
-          {saving ? "Saving..." : "Save Changes"}
-        </Button>
-        {statusMessage && <p className="mt-2 text-sm text-green-600">{statusMessage}</p>}
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
+          {statusMessage && <p className="mt-2 text-sm text-green-600">{statusMessage}</p>}
         </div>
       </Card>
     </div>
