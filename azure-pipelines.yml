@@ -198,7 +198,7 @@ stages:
               cp -r $(backendDir)/* $(buildDir)/
               cp -r $(backendDir)/python_packages $(buildDir)/
               mkdir -p $(buildDir)/static
-              cp -r $(frontendDir)/$(buildOutput)/* $(buildDir)/static/
+            # cp -r $(frontendDir)/$(buildOutput)/* $(buildDir)/static/
             displayName: 'Assemble build directory'
 
           # Publish artifact
