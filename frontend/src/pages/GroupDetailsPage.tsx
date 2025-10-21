@@ -74,7 +74,7 @@ const GroupDetailsPage: React.FC = () => {
         await loadGroupDetails();
         setStatusMessage("Changes saved successfully");
     } catch {
-        setStatusMessage("Error saving changes");
+        setStatusMessage("You do not have Permission!");
     } finally {
         setSaving(false);
     }
