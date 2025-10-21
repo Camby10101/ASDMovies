@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // ⬅️ add useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { api } from "@/lib/api";
-import { Sparkles } from "lucide-react";
-
 
 interface Group {
   id: string;
@@ -25,7 +23,7 @@ interface GroupMember {
 
 const GroupDetailsPage: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
-  const navigate = useNavigate(); // ⬅️ init navigator
+  const navigate = useNavigate();
 
   const [group, setGroup] = useState<Group | null>(null);
   const [members, setMembers] = useState<GroupMember[]>([]);
@@ -72,17 +70,12 @@ const GroupDetailsPage: React.FC = () => {
       await loadGroupDetails();
       setStatusMessage("Changes saved successfully");
     } catch {
-<<<<<<< HEAD
-        setStatusMessage("You do not have Permission!");
-=======
       setStatusMessage("Error saving changes");
->>>>>>> recommendation
     } finally {
       setSaving(false);
     }
   };
 
-  // ⬅️ NEW: go to recommendations page for this group
   const goToRecommendations = () => {
     if (!groupId) return;
     navigate(`/groups/${groupId}/recommendations`);
@@ -112,23 +105,13 @@ const GroupDetailsPage: React.FC = () => {
       <Card className="p-4 md:col-span-2 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Settings</h2>
-          {/* ⬅️ NEW BUTTON */}
           <Button
             onClick={goToRecommendations}
             disabled={!groupId}
-            size="lg"
-            className="
-              bg-gradient-to-r from-indigo-600 to-fuchsia-600 
-              text-white shadow-lg hover:shadow-xl 
-              transition-transform duration-200 hover:scale-[1.02]
-              active:scale-[0.98] rounded-xl px-5
-            "
-            aria-label="Generate group recommendations"
+            className="bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.99] px-4"
           >
-            <Sparkles className="mr-2 h-5 w-5" />
-            Generate Recommendations
+            🎯 Generate Recommendations
           </Button>
-
         </div>
 
         <p className="text-gray-500">Group ID: {groupId}</p>
