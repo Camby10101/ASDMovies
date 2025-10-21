@@ -48,21 +48,14 @@ app.include_router(groups_router)
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 
-if os.path.isdir(STATIC_DIR):
-    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+if os.path.isdir("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/{full_path:path}")
 async def serve_frontend(full_path: str):
-    # Serve static file if it exists
-    file_path = os.path.join(STATIC_DIR, full_path)
-    if os.path.exists(file_path) and os.path.isfile(file_path):
-        return FileResponse(file_path)
-
-    # Otherwise serve index.html for React Router
-    index_path = os.path.join(STATIC_DIR, "index.html")
+    index_path = os.path.join("static", "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-
     return {"detail": "Frontend build not found"}
 
 if __name__ == "__main__":
