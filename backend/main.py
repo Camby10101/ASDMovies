@@ -9,7 +9,6 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 
 
 # Rotas
@@ -46,17 +45,12 @@ app.include_router(favourite_movies_router)
 app.include_router(user_ratings_router)
 app.include_router(groups_router)
 
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
-
 if os.path.isdir("static"):
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+    app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
-@app.get("/{full_path:path}")
-async def serve_frontend(full_path: str):
-    index_path = os.path.join("static", "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"detail": "Frontend build not found"}
+@app.get("/")
+async def read_root():
+    return {"message": "Hello World"}
 
 if __name__ == "__main__":
     print("Starting Uvicorn server on http://0.0.0.0:8000")
