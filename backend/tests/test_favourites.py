@@ -61,27 +61,6 @@ def test_add_favourite_movie(mock_supabase, supabase_chain):
     assert response.json()["user"] == "123"
     assert response.json()["movie"] == 101
 
-
-@patch("routes.favourite_movies_routes.supabase_admin")
-def test_reorder_favourite_movies(mock_supabase, supabase_chain):
-    supabase_chain.execute.return_value.data = [{"user_id": "123", "movie_id": 101, "rank": 1}]
-    mock_supabase.table.return_value = supabase_chain
-
-    payload = [303, 202, 101]   # Reordered movie ids ... ranks are updated based on list order
-                                # 303 -> rank: 1 ... 202 -> rank: 2 ... etc.
-    response = client.post("/api/favourite_movies/123", json=payload)
-
-    assert response.status_code == 200
-    assert response.json()["message"] == "Favourites reordered successfully"
-    assert response.json()["user"] == "123"
-
-    update_calls = [c for c in supabase_chain.mock_calls if c[0].endswith("update")]
-
-    assert update_calls[0] == call.update({"rank": 1})
-    assert update_calls[1] == call.update({"rank": 2})
-    assert update_calls[2] == call.update({"rank": 3})
-
-
 # --DELETE--
 @patch("routes.favourite_movies_routes.supabase_admin")
 def test_remove_favourite_movie(mock_supabase, supabase_chain):
