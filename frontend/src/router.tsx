@@ -13,6 +13,7 @@ import AccountPage from './pages/AccountPage.tsx';
 import PrivacyPage from './pages/PrivacyPage.tsx';
 import UserFavouriteMovies from './pages/movies/UserFavouriteMovies.tsx'; 
 import GroupRecommendationsPage from './pages/GroupRecommendationsPage.tsx';
+import Rankings from './pages/Rankings.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -71,6 +72,10 @@ export const router = createBrowserRouter([
       {
         path: "userFavouriteMovies/:id",
         element: <UserFavouriteMovies />,
+      },
+      {
+        path: "rankings/:id",
+        element: <Rankings />,
       },
     ],
   },

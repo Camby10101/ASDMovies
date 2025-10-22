@@ -5,6 +5,7 @@ import { Typography } from "@/components/ui/typography";
 import { InfoBox } from "@/components/ui/info-box";
 import { InfoLine } from "@/components/ui/info-line";
 import { Button } from "@/components/ui/button";
+import Spinner from "@/components/ui/spinner";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import MovieList from "@/components/ui/movieList";
 import SmallMovieCard from "@/components/ui/smallMovieCard";
@@ -148,7 +149,7 @@ const ProfilePage = () => {
     }
   };
 
-  if (loadingProfile || loadingMovies) return <p>Loading...</p>;
+  if (loadingProfile || loadingMovies) return <Spinner />;
   if (!profile) return <p>Profile does not exist</p>;
 
   return (
@@ -229,8 +230,15 @@ const ProfilePage = () => {
         {/* Right column */}
         <div className="w-[50%] flex flex-col">
           <Card className="flex flex-col flex-1">
-            <CardHeader>
+            <CardHeader className="flex items-center justify-between">
               <Typography size="h2">Favourites</Typography>
+              {isCurrentUser && (
+              <Link to={`/Rankings/${profile.user_id}`}
+                className="inline-block rounded-xl bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-gray-700 hover:shadow-lg transition-all duration-200"
+              >
+                Edit Rankings →
+              </Link>
+              )}
             </CardHeader>
             <CardContent>
               {!noFavourites ? (
