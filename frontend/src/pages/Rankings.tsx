@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, Link } from "react-router-dom";
 import { useUser } from "@/hooks/useUser";
 import { fetchFavouriteMovies } from "@/lib/favourite-movies-service";
 import { fetchMovieDetails, type Movie } from "@/lib/tmdb-api-helper";
 import Spinner from "@/components/ui/spinner";
 import { Typography } from "@/components/ui/typography";
-import { reorderFavouriteMovies } from "@/lib/favourite-movies-service";
-import { Trash2 } from "lucide-react";
 import { removeFavouriteMovie } from "@/lib/favourite-movies-service";
+import { reorderFavouriteMovies } from "@/lib/favourite-movies-service";
+
+import { Trash2 } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowLeft } from "lucide-react";
+
 
 const Rankings = () => {
   const { id } = useParams<{ id: string }>();
@@ -92,12 +95,20 @@ const Rankings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-start py-10">
-      <div className="w-full max-w-2xl">
-        <Typography size="h1" align="center" className="mb-8 text-gray-800">
-          My Favourites
-        </Typography>
+    <div className="min-h-fullbg-gray-50 flex justify-center items-start py-10">
+      <div className="w-[100%] max-w-2xl">
+        <div className="flex items-center justify-between mx-auto mb-8 w-full max-w-4xl">
+          <Link
+            to={`/profile/${user.user_id}`}
+            className="inline-block rounded-xl bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-gray-700 hover:shadow-lg transition-all duration-200"
+          >
+            <ArrowLeft/>
+          </Link>
 
+          <Typography size="h2" align="center" className="text-gray-800 absolute left-1/2 transform -translate-x-1/2">
+            My Favourites
+          </Typography>
+        </div>
         <div className="space-y-4">
           {rankings.map((movie, index) => (
             <div
@@ -126,16 +137,16 @@ const Rankings = () => {
                 <button
                   onClick={() => moveUp(index)}
                   disabled={index === 0}
-                  className="px-3 py-1 border border-gray-300 rounded-lg bg-white shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  className="px-3 py-1 border border-gray-300 rounded-lg bg-white shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-default disabled:hover:bg-white transition cursor-pointer"
                 >
-                  ↑
+                  <ArrowUp size={18} />
                 </button>
                 <button
                   onClick={() => moveDown(index)}
                   disabled={index === rankings.length - 1}
-                  className="px-3 py-1 border border-gray-300 rounded-lg bg-white shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  className="px-3 py-1 border border-gray-300 rounded-lg bg-white shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-default disabled:hover:bg-white transition cursor-pointer"
                 >
-                  ↓
+                  <ArrowDown size={18} />
                 </button>
                 <button
                   onClick={() => {handleRemoveFromFavourites(movie.id, index)}}

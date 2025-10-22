@@ -154,7 +154,7 @@ const ProfilePage = () => {
   if (!profile) return <p>Profile does not exist</p>;
 
   return (
-    <div className="flex flex-col px-6 space-y-4 h-[90%]">
+    <div className="flex flex-col px-6 space-y-4 min-h-full">
       <div className="flex items-center gap-2">
         <InfoLine
           text={display_name}
