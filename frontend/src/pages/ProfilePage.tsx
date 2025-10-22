@@ -231,7 +231,7 @@ const ProfilePage = () => {
           <Card className="flex flex-col flex-1">
             <CardHeader className="flex items-center gap-2">
               <Typography size="h2">Favourites</Typography>
-                {isCurrentUser && (
+                {isCurrentUser && !noFavourites && (
                   <Link to={`/Rankings/${profile.user_id}`}>
                     <Button className="w-7 h-7">
                         <PenLine/>

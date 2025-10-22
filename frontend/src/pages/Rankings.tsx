@@ -94,6 +94,30 @@ const Rankings = () => {
     });
   };
 
+  if (rankings.length === 0) {
+    return (
+      <div className="min-h-fullbg-gray-50 flex justify-center items-start py-10">
+        <div className="w-[100%] max-w-2xl">
+          <div className="flex items-center justify-between mx-auto mb-8 w-full max-w-4xl">
+            <Link
+              to={`/profile/${user.user_id}`}
+              className="inline-block rounded-xl bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-gray-700 hover:shadow-lg transition-all duration-200"
+            >
+              <ArrowLeft/>
+            </Link>
+
+            <Typography size="h2" align="center" className="text-gray-800 absolute left-1/2 transform -translate-x-1/2">
+              My Favourites
+            </Typography>
+          </div>
+          <div className="flex justify-center items-center">
+            <p>No favourites yet!</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-fullbg-gray-50 flex justify-center items-start py-10">
       <div className="w-[100%] max-w-2xl">
