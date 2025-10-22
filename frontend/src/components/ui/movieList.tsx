@@ -48,13 +48,17 @@ export default function MovieList({ movies, editMode = false }: MovieListProps) 
             {user && (
               <div>
                   {editMode && (
-                    <div className="w-[20%] h-auto absolute left-1.5 top-7.5 flex items-center justify-center bg-white rounded-md px-1 py-1 z-10">
-                    <HeartRating
-                    value={true}
-                    onChange={() => handleRemoveFromFavourites(movie.id, index)}
-                    />
+                    <div className="w-[17.5%] aspect-square absolute right-1.5 top-7.5 flex items-center justify-center bg-white rounded-md px-1 py-1 z-10">
+                      <HeartRating
+                        value={true}
+                        onChange={() => handleRemoveFromFavourites(movie.id, index)}
+                      />
                     </div>
                   )}
+
+                  <div className="w-[17.5%] aspect-square absolute left-1.5 top-7.5 flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold rounded-full text-lg shadow-md z-10">
+                    {index + 1}
+                  </div>
                   
               </div>
             )}
