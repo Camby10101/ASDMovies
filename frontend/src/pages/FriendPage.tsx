@@ -10,7 +10,8 @@ const Friends: React.FC = () => {
   const [newFriendEmail, setNewFriendEmail] = useState<string>("");
 
   const backendUrl = useMemo(() => {
-    return import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8000";
+    // return import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8000";
+    return "https://movielily.azurewebsites.net";
   }, []);
 
   useEffect(() => {
