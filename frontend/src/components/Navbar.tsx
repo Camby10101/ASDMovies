@@ -1,7 +1,6 @@
 // src/components/Navbar.tsx
-import { Link } from "react-router-dom"
 import { useEffect, useRef, useState, type FormEvent } from "react"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, NavLink, useLocation } from "react-router-dom";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,6 +11,8 @@ import {
 import { supabase } from "@/lib/supabase"
 import { api } from "@/lib/api"
 import { useUser } from "@/hooks/useUser"
+import Spinner from "./ui/spinner";
+import { Typography } from "./ui/typography";
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
@@ -78,55 +79,150 @@ export function Navbar() {
   const handleSignOut = async () => { await supabase.auth.signOut() }
   const navigate = useNavigate();
   const { user } = useUser();
+  const location = useLocation();
+
+  const pathToLabel: Record<string, string> = {
+    "/profile": "Profile",
+    "/friend": "Friends",
+    "/groups": "Groups",
+    "/privacy": "Privacy",
+  };
+
+  const accountLabel = Object.entries(pathToLabel).find(([path]) =>
+    location.pathname.startsWith(path)
+  )?.[1] ?? "Account";
 
   return (
-    <header className="pl-4 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-6 flex items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="font-bold inline-block">ASD Movies</span>
-          </Link>
-        </div>
-
-        <nav className="flex items-center space-x-6 text-sm font-medium">
-          <Link to="/trendingMovies" className="transition-colors hover:text-foreground/80 text-foreground/60">Trending</Link>
-          <Link to="/movies" className="transition-colors hover:text-foreground/80 text-foreground/60">Movies</Link>
-          <Link to="/friend" className="transition-colors hover:text-foreground/80 text-foreground/60">Friends</Link>
-          <Link to="/groups" className="transition-colors hover:text-foreground/80 text-foreground/60">Groups</Link>
-          <Link to="/account" className="transition-colors hover:text-foreground/80 text-foreground/60">Account</Link>
-          <Link to="/privacy" className="transition-colors hover:text-foreground/80 text-foreground/60">Privacy &amp; Controls</Link>
-          <Link to="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">About</Link>
+    <header className="grid grid-cols-[20%_60%_20%] items-center h-18 sticky top-0 z-50 w-[40%] mx-auto border-l border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="ml-5">
+        <Link to="/">
+          <Typography size="h3" className="font-extrabold italic tracking-widest text-purple-600 drop-shadow-lg">
+            movielily
+          </Typography>
+        </Link>
+      </div>
+      <div className="flex justify-center items-center gap-10 text-base font-semibold tracking-wide whitespace-nowrap">
+        <nav className="flex items-center gap-10 text-base font-semibold tracking-wide">
+          {[
+            { name: "Trending", path: "/trendingMovies" },
+            { name: "Movies", path: "/movies" },
+            // { name: "Friends", path: "/friend" },
+            // { name: "Groups", path: "/groups" },
+            // { name: "Privacy & Controls", path: "/privacy" },
+            { name: "About Us", path: "/about" },
+          ].map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={() => {setOpen(false)}}
+              className={({ isActive }) =>
+                `relative transition-all duration-300 ${
+                  isActive
+                    ? "text-black after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-full after:h-[2px] after:bg-black after:rounded-full"
+                    : "text-gray-500 hover:text-black after:content-[''] after:absolute after:left-1/2 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full"
+                }`
+              }
+            >
+              {item.name}
+            </NavLink>
+          ))}
         </nav>
+      </div>
+      <div className="flex justify-end items-center mr-5 gap-2">
+        {isAuthenticated ? (
+          user ? (
+            <div className="">
+              {/* Account Button */}
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setOpen(prev => !prev)}
+              >
+                <Typography align="center">{accountLabel} ▾</Typography>
+              </Button>
 
-        <div className="ml-auto flex items-center">
-          {isAuthenticated ? (
-            <>
-            {user && (
-              <Button className="mr-2 cursor-pointer" size="sm" variant="secondary" onClick={() => navigate(`/profile/${user.user_id}`)}>My Profile</Button>
-            )}
-
-            <Button className="cursor-pointer" size="sm" variant="secondary" onClick={handleSignOut}>Sign Out</Button>
-            </>
+              {/* Dropdown Menu */}
+              {open && (
+                <div className="absolute -right-2.5 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      navigate(`/profile/${user.user_id}`);
+                      setOpen(false);
+                    }}
+                  >
+                    <Typography align="center">Profile</Typography>
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    onClick={async () => {
+                      navigate(`/friend`);
+                      setOpen(false);
+                    }}
+                  >
+                    <Typography align="center">Friends</Typography>
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    onClick={async () => {
+                      navigate(`/groups`);
+                      setOpen(false);
+                    }}
+                  >
+                    <Typography align="center">Groups</Typography>
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    onClick={async () => {
+                      navigate(`/privacy`);
+                      setOpen(false);
+                    }}
+                  >
+                    <Typography align="center">Privacy</Typography>
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    onClick={async () => {
+                      await handleSignOut();
+                      setOpen(false);
+                    }}
+                  >
+                    <Typography align="center">Sign Out</Typography>
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild><Button size="sm">Sign In</Button></DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Sign in</DialogTitle>
-                  <DialogDescription>Enter your email to continue.</DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="grid gap-4 py-2">
-                  <Input type="email" placeholder="you@example.com" value={email}
-                         onChange={(e) => setEmail(e.target.value)} required disabled={isSubmitting} />
-                  {statusMessage && <p className="text-sm text-muted-foreground">{statusMessage}</p>}
-                  <DialogFooter>
-                    <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending…" : "Send Magic Link"}</Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-          )}
-        </div>
+            <Spinner />
+          )) : (
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="secondary" size="sm"><Typography align="center">Sign In</Typography></Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Sign in</DialogTitle>
+                <DialogDescription>Enter your email to continue.</DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="grid gap-4 py-2">
+                <Input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                />
+                {statusMessage && <p className="text-sm text-muted-foreground">{statusMessage}</p>}
+                <DialogFooter>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Sending…" : "Send Magic Link"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </header>
   )

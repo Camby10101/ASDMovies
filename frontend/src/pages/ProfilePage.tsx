@@ -166,8 +166,6 @@ const ProfilePage = () => {
         </Typography>
       </div>
 
-      <hr />
-
       <div className="flex flex-1 gap-2">
         {/* Left column */}
         <div className="w-[50%] flex flex-col gap-2">
@@ -177,7 +175,7 @@ const ProfilePage = () => {
             text={bio}
             onChange={setBio}
             isEditable={isCurrentUser}
-            maxLength={160}
+            maxLength={230}
           />
 
           {/* Newest Ratings */} 
@@ -203,7 +201,7 @@ const ProfilePage = () => {
                 <div className="flex flex-1 overflow-x-auto gap-3">
                   { /* Map through each rated movie and display as a small card */}
                   {ratedMovies.map(({ movie, userRating }) => (
-                    <div key={movie.id} className={"flex-shrink-0 w-[23.4%]"}>
+                    <div key={movie.id} className={"flex-shrink-0 w-[22.5%]"}>
                       {/* Subset of a movie card just displaying minimal information */}
                       <SmallMovieCard
                         id={movie.id}
@@ -242,7 +240,7 @@ const ProfilePage = () => {
             </CardHeader>
             <CardContent>
               {!noFavourites ? (
-                <div className="h-[75vh] flex-1 overflow-y-auto">
+                <div className="h-[65vh] flex-1 overflow-y-auto">
                   <MovieList movies={movies} editMode={isCurrentUser} />
                 </div>
               ) : (

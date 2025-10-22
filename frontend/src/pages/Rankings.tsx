@@ -107,14 +107,14 @@ const Rankings = () => {
                 <button
                   onClick={() => moveUp(index)}
                   disabled={index === 0}
-                  className="px-3 py-1 border border-gray-300 rounded-lg bg-white shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="px-3 py-1 border border-gray-300 rounded-lg bg-white shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
                 >
                   ↑
                 </button>
                 <button
                   onClick={() => moveDown(index)}
                   disabled={index === rankings.length - 1}
-                  className="px-3 py-1 border border-gray-300 rounded-lg bg-white shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="px-3 py-1 border border-gray-300 rounded-lg bg-white shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
                 >
                   ↓
                 </button>
