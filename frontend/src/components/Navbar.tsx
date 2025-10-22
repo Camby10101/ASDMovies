@@ -93,136 +93,139 @@ export function Navbar() {
   )?.[1] ?? "Account";
 
   return (
-    <header className="grid grid-cols-[20%_60%_20%] items-center h-18 sticky top-0 z-50 w-[40%] mx-auto border-l border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="ml-5">
-        <Link to="/">
-          <Typography size="h3" className="font-extrabold italic tracking-widest text-purple-600 drop-shadow-lg">
-            movielily
-          </Typography>
-        </Link>
-      </div>
-      <div className="flex justify-center items-center gap-10 text-base font-semibold tracking-wide whitespace-nowrap">
-        <nav className="flex items-center gap-10 text-base font-semibold tracking-wide">
-          {[
-            { name: "Trending", path: "/trendingMovies" },
-            { name: "Movies", path: "/movies" },
-            // { name: "Friends", path: "/friend" },
-            // { name: "Groups", path: "/groups" },
-            // { name: "Privacy & Controls", path: "/privacy" },
-            { name: "About Us", path: "/about" },
-          ].map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={() => {setOpen(false)}}
-              className={({ isActive }) =>
-                `relative transition-all duration-300 ${
-                  isActive
-                    ? "text-black after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-full after:h-[2px] after:bg-black after:rounded-full"
-                    : "text-gray-500 hover:text-black after:content-[''] after:absolute after:left-1/2 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full"
-                }`
-              }
-            >
-              {item.name}
-            </NavLink>
-          ))}
-        </nav>
-      </div>
-      <div className="flex justify-end items-center mr-5 gap-2">
-        {isAuthenticated ? (
-          user ? (
-            <div className="">
-              {/* Account Button */}
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => setOpen(prev => !prev)}
+    <header className="flex justify-center items-center h-18 sticky top-0 z-50 w-[100%] bg-background/95 backdrop-blur">
+      <div className="grid grid-cols-[20%_60%_20%] items-center w-[40%] h-[100%] mx-auto border-l border-r supports-[backdrop-filter]:bg-background/60">
+        <div className="ml-5">
+          <Link to="/">
+            <Typography size="h3" className="font-extrabold italic tracking-widest text-purple-600 drop-shadow-lg">
+              movielily
+            </Typography>
+          </Link>
+        </div>
+        
+        <div className="flex justify-center items-center gap-10 text-base font-semibold tracking-wide whitespace-nowrap">
+          <nav className="flex items-center gap-10 text-base font-semibold tracking-wide">
+            {[
+              { name: "Trending", path: "/trendingMovies" },
+              { name: "Movies", path: "/movies" },
+              // { name: "Friends", path: "/friend" },
+              // { name: "Groups", path: "/groups" },
+              // { name: "Privacy & Controls", path: "/privacy" },
+              { name: "About Us", path: "/about" },
+            ].map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => {setOpen(false)}}
+                className={({ isActive }) =>
+                  `relative transition-all duration-300 ${
+                    isActive
+                      ? "text-black after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-full after:h-[2px] after:bg-black after:rounded-full"
+                      : "text-gray-500 hover:text-black after:content-[''] after:absolute after:left-1/2 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full"
+                  }`
+                }
               >
-                <Typography align="center">{accountLabel} ▾</Typography>
-              </Button>
+                {item.name}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+        <div className="flex justify-end items-center mr-5 gap-2">
+          {isAuthenticated ? (
+            user ? (
+              <div className="relative inline-block">
+                {/* Account Button */}
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => setOpen(prev => !prev)}
+                >
+                  <Typography align="center">{accountLabel} ▾</Typography>
+                </Button>
 
-              {/* Dropdown Menu */}
-              {open && (
-                <div className="absolute -right-2.5 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                  <button
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      navigate(`/profile/${user.user_id}`);
-                      setOpen(false);
-                    }}
-                  >
-                    <Typography align="center">Profile</Typography>
-                  </button>
-                  <button
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                    onClick={async () => {
-                      navigate(`/friend`);
-                      setOpen(false);
-                    }}
-                  >
-                    <Typography align="center">Friends</Typography>
-                  </button>
-                  <button
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                    onClick={async () => {
-                      navigate(`/groups`);
-                      setOpen(false);
-                    }}
-                  >
-                    <Typography align="center">Groups</Typography>
-                  </button>
-                  <button
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                    onClick={async () => {
-                      navigate(`/privacy`);
-                      setOpen(false);
-                    }}
-                  >
-                    <Typography align="center">Privacy</Typography>
-                  </button>
-                  <button
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                    onClick={async () => {
-                      await handleSignOut();
-                      setOpen(false);
-                    }}
-                  >
-                    <Typography align="center">Sign Out</Typography>
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Spinner />
-          )) : (
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button variant="secondary" size="sm"><Typography align="center">Sign In</Typography></Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Sign in</DialogTitle>
-                <DialogDescription>Enter your email to continue.</DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="grid gap-4 py-2">
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isSubmitting}
-                />
-                {statusMessage && <p className="text-sm text-muted-foreground">{statusMessage}</p>}
-                <DialogFooter>
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Sending…" : "Send Magic Link"}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        )}
+                {/* Dropdown Menu */}
+                {open && (
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        navigate(`/profile/${user.user_id}`);
+                        setOpen(false);
+                      }}
+                    >
+                      <Typography align="center">Profile</Typography>
+                    </button>
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={async () => {
+                        navigate(`/friend`);
+                        setOpen(false);
+                      }}
+                    >
+                      <Typography align="center">Friends</Typography>
+                    </button>
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={async () => {
+                        navigate(`/groups`);
+                        setOpen(false);
+                      }}
+                    >
+                      <Typography align="center">Groups</Typography>
+                    </button>
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={async () => {
+                        navigate(`/privacy`);
+                        setOpen(false);
+                      }}
+                    >
+                      <Typography align="center">Privacy</Typography>
+                    </button>
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={async () => {
+                        await handleSignOut();
+                        setOpen(false);
+                      }}
+                    >
+                      <Typography align="center">Sign Out</Typography>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Spinner />
+            )) : (
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button variant="secondary" size="sm"><Typography align="center">Sign In</Typography></Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Sign in</DialogTitle>
+                  <DialogDescription>Enter your email to continue.</DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="grid gap-4 py-2">
+                  <Input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isSubmitting}
+                  />
+                  {statusMessage && <p className="text-sm text-muted-foreground">{statusMessage}</p>}
+                  <DialogFooter>
+                    <Button type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? "Sending…" : "Send Magic Link"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </div>
     </header>
   )

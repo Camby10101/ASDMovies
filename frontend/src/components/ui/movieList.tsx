@@ -2,66 +2,28 @@ import { useState, useEffect } from "react";
 import { type Movie } from "@/lib/tmdb-api-helper"
 import { Typography } from "@/components/ui/typography";
 import SmallMovieCard from "@/components/ui/smallMovieCard";
-import { removeFavouriteMovie } from "@/lib/favourite-movies-service";
-import { useUser } from "@/hooks/useUser"
-import { HeartRating } from "@/components/ui/heart"
 
 interface MovieListProps {
   movies: Movie[]
-  editMode?: boolean;
 }
 
-export default function MovieList({ movies, editMode = false }: MovieListProps) {
-  const { user } = useUser();
+export default function MovieList({ movies }: MovieListProps) {
   const [movieList, setMovieList] = useState<Movie[]>(movies);
-  const [isMovieListEmpty, setIsMovieListEmpty] = useState(false);
-
-  const handleRemoveFromFavourites = async (movieId: number, index: number) => {
-    if (!user) return;
-
-    try {
-      setMovieList(prev => {
-        const newList = [...prev];
-        newList.splice(index, 1);
-        if (newList.length === 0) setIsMovieListEmpty(true);
-        return newList;
-      });
-
-      await removeFavouriteMovie(user.user_id, movieId);
-    } catch (e) {
-      console.error("Favourite toggle failed", e);
-    }
-  };
 
   useEffect(() => {
     setMovieList(movies);
   }, [movies]);
 
-  if (movieList.length === 0 && isMovieListEmpty) return <Typography>No favourites yet!</Typography>;
-  if (movieList.length === 0) return <Typography>Loading...</Typography>;
+  if (movieList.length === 0) return <Typography>No favourites yet!</Typography>;
 
   return (
     <div className="gap-[0.5vw] grid grid-cols-4">
       {movieList.map((movie, index) => (
         <div key={movie.id} className="relative">
           <div>
-            {user && (
-              <div>
-                  {editMode && (
-                    <div className="w-[17.5%] aspect-square absolute right-1.5 top-7.5 flex items-center justify-center bg-white rounded-md px-1 py-1 z-10">
-                      <HeartRating
-                        value={true}
-                        onChange={() => handleRemoveFromFavourites(movie.id, index)}
-                      />
-                    </div>
-                  )}
-
-                  <div className="w-[17.5%] aspect-square absolute left-1.5 top-7.5 flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold rounded-full text-lg shadow-md z-10">
-                    {index + 1}
-                  </div>
-                  
-              </div>
-            )}
+            <div className="w-[17.5%] aspect-square absolute left-1.5 top-7.5 flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold rounded-full text-lg shadow-md z-10">
+              {index + 1}
+            </div>
             <SmallMovieCard 
               id={movie.id}
               title={movie.title}

@@ -9,6 +9,7 @@ import Spinner from "@/components/ui/spinner";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import MovieList from "@/components/ui/movieList";
 import SmallMovieCard from "@/components/ui/smallMovieCard";
+import { PenLine } from "lucide-react"
 
 import { useUser } from "@/hooks/useUser";
 import { useProfile } from "@/hooks/useProfile";
@@ -153,7 +154,7 @@ const ProfilePage = () => {
   if (!profile) return <p>Profile does not exist</p>;
 
   return (
-    <div className="flex flex-col p-6 space-y-4 h-[90%]">
+    <div className="flex flex-col px-6 space-y-4 h-[90%]">
       <div className="flex items-center gap-2">
         <InfoLine
           text={display_name}
@@ -228,20 +229,20 @@ const ProfilePage = () => {
         {/* Right column */}
         <div className="w-[50%] flex flex-col">
           <Card className="flex flex-col flex-1">
-            <CardHeader className="flex items-center justify-between">
+            <CardHeader className="flex items-center gap-2">
               <Typography size="h2">Favourites</Typography>
-              {isCurrentUser && (
-              <Link to={`/Rankings/${profile.user_id}`}
-                className="inline-block rounded-xl bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-gray-700 hover:shadow-lg transition-all duration-200"
-              >
-                Edit Rankings →
-              </Link>
-              )}
+                {isCurrentUser && (
+                  <Link to={`/Rankings/${profile.user_id}`}>
+                    <Button className="w-7 h-7">
+                        <PenLine/>
+                    </Button>
+                  </Link>
+                )}
             </CardHeader>
             <CardContent>
               {!noFavourites ? (
                 <div className="h-[65vh] flex-1 overflow-y-auto">
-                  <MovieList movies={movies} editMode={isCurrentUser} />
+                  <MovieList movies={movies} />
                 </div>
               ) : (
                   <Typography>No favourites yet!</Typography>
