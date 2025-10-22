@@ -97,8 +97,8 @@ export function Navbar() {
       <div className="grid grid-cols-[20%_60%_20%] items-center w-[40%] h-[100%] mx-auto border-l border-r supports-[backdrop-filter]:bg-background/60">
         <div className="ml-5">
           <Link to="/">
-            <Typography size="h3" className="font-extrabold italic tracking-widest text-purple-600 drop-shadow-lg">
-              movielily
+            <Typography size="h3" weight="medium" className="font-extrabold tracking-widest text-blue-600 drop-shadow-lg">
+              ASDMovies
             </Typography>
           </Link>
         </div>
