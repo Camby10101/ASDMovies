@@ -81,22 +81,31 @@ async def reorder_favourite_movies(user_id: str, movie_ids: list[int] = Body(...
     The first movie in the array will have rank 1, second rank 2, etc.
     """
     try:
-        updates = [{"movie_id": movie_id, "rank": movie_idx + 1} for movie_idx, movie_id in enumerate(movie_ids)]
-
-        for update in updates:
+        # Add temporary offset to avoid unique constraint conflicts
+        temp_offset = 1000
+        for idx, movie_id in enumerate(movie_ids):
+            # Step 1: assign temporary rank
             supabase_admin.table("favourite_movies")\
-                .update({"rank": update["rank"]})\
+                .update({"rank": idx + 1 + temp_offset})\
                 .eq("user_id", user_id)\
-                .eq("movie_id", update["movie_id"])\
+                .eq("movie_id", movie_id)\
                 .execute()
-            
+
+        # Step 2: remove the offset to finalize ranks
+        for idx, movie_id in enumerate(movie_ids):
+            supabase_admin.table("favourite_movies")\
+                .update({"rank": idx + 1})\
+                .eq("user_id", user_id)\
+                .eq("movie_id", movie_id)\
+                .execute()
+
         return {"message": "Favourites reordered successfully", "user": user_id}
 
     except Exception as e:
         print(f"Error in reorder_favourite_movies: {str(e)}")
         print(f"Full traceback: {traceback.format_exc()}")
         raise HTTPException(
-            status_code=404,
+            status_code=400,
             detail={"error": str(e), "message": "An error occurred while reordering favourite movies."}
         )
 
