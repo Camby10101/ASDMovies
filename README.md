@@ -24,21 +24,19 @@ cd backend/tmdb-api
 python -m venv .venv
 
 # API Keys Setup
+
 Ask Team lead for key values
 create frontend/.env.development
----
 VITE_SUPABASE_URL=https://mcpzbvznxmkbvaeajwua.supabase.co
 VITE_SUPABASE_ANON_KEY=ASK TEAM LEAD
----
 create backend/.env
----
 SUPABASE_URL=https://mcpzbvznxmkbvaeajwua.supabase.co
 SUPABASE_ANON_KEY=ASK TEAM LEAD
 SUPABASE_SERVICE_ROLE_KEY=ASK TEAM LEAD
 TMDB_KEY=ASK TEAM LEAD (This is the TMDB Bearer Token, not API Key)
----
 
 ## Activate and run
+
 # TO RUN Frontend
 
 cd frontend
@@ -70,8 +68,8 @@ cd backend/tmdb-api
 python batch_uploader.py
 
 # By default, this will upload 200 popular movies to your database
-# You can modify the number of movies by editing the script's last line:
-# uploader.run(total_movies=500)  # Upload 500 movies instead
+You can modify the number of movies by editing the script's last line:
+uploader.run(total_movies=500)  # Upload 500 movies instead
 
 # Notes:
 - The script uses the SERVICE_ROLE_KEY (not ANON_KEY) to bypass Row-Level Security (RLS) policies
