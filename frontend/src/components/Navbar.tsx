@@ -94,7 +94,7 @@ export function Navbar() {
 
   return (
     <header className="flex justify-center items-center h-18 sticky top-0 z-50 w-[100%] bg-background/95 backdrop-blur">
-      <div className="grid grid-cols-[20%_60%_20%] items-center w-[40%] h-[100%] mx-auto border-l border-r supports-[backdrop-filter]:bg-background/60">
+      <div className="grid grid-cols-[20%_60%_20%] items-center w-[50%] min-w-[650px] h-[100%] mx-auto border-l border-r supports-[backdrop-filter]:bg-background/60">
         <div className="ml-5">
           <Link to="/">
             <Typography size="h3" weight="medium" className="font-extrabold tracking-widest text-blue-600 drop-shadow-lg">
