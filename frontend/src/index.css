@@ -1,5 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Use to add more CSS from Tweaken if needed */
+/* @import url('tweaken/tweaken.css'); */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -77,6 +83,7 @@
 }
 
 .dark {
+  --radius: 0.625rem;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

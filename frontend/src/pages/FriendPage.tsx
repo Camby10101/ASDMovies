@@ -74,7 +74,7 @@ const Friends: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6" style={{ backgroundColor: "var(--color-background)", color: "var(--color-foreground)" }}>
       <h1 className="text-3xl font-bold mb-6">Friends</h1>
 
       <form onSubmit={handleAddFriend} className="mb-6 flex gap-2">
@@ -101,13 +101,12 @@ const Friends: React.FC = () => {
           {friends.map((friend) => (
             <div
               key={friend.user_id}
-              className="bg-white shadow-md rounded-2xl p-4 flex flex-col items-center text-center hover:shadow-lg transition"
-            >
-              <div className="w-20 h-20 rounded-full mb-4 bg-gray-200 flex items-center justify-center">
+              className="shadow-md rounded-2xl p-4 flex flex-col items-center text-center hover:shadow-lg transition" style={{ backgroundColor: "var(--color-card)", color: "var(--color-card-foreground)" }}>
+              <div className="w-20 h-20 rounded-full mb-4 flex items-center justify-center" style={{ backgroundColor: "var(--color-muted)" }}>
                 <span className="text-xl">👤</span>
               </div>
               <h2 className="text-xl font-semibold">{friend.email ?? friend.user_id}</h2>
-              <p className="text-gray-600 text-sm mt-2 break-all">{friend.user_id}</p>
+              <p className="text-sm mt-2 break-all" style={{ color: "var(--color-muted-foreground)" }}>{friend.user_id}</p>
             </div>
           ))}
         </div>
