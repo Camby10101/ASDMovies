@@ -162,7 +162,7 @@ const ProfilePage = () => {
           isEditable={isCurrentUser}
           maxLength={20}
         />
-        <Typography size="h1" color="gray">
+        <Typography size="h1" style={{ color: "var(--color-foreground)" }}>
           {"@" + profile.handle}
         </Typography>
       </div>
@@ -219,7 +219,7 @@ const ProfilePage = () => {
                   // Show a message if the user hasn't rated any movies yet
                   !loadingRated &&
                     !errRated && (
-                      <p className="text-muted-foreground">No rated movies yet!</p>
+                      <p style={{ color: "var(--color-foreground)" }}>No rated movies yet!</p>
                     )
                 )}
             </CardContent>

@@ -22,6 +22,30 @@ export function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const isSyncingProfileRef = useRef(false)
 
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark");
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setIsDarkMode(true);
+    }
+  }, []);
+
   const syncProfile = async (session: Session | null) => {
     if (!session || isSyncingProfileRef.current) return
     isSyncingProfileRef.current = true
@@ -97,11 +121,9 @@ export function Navbar() {
       <div className="grid grid-cols-[20%_60%_20%] items-center w-[40%] h-[100%] mx-auto border-l border-r supports-[backdrop-filter]:bg-background/60">
         <div className="ml-5">
           <Link to="/">
-            <img
-              src="/MovieLily.png"
-              alt="ASDMovies Logo"
-              className="h-10 w-auto drop-shadow-lg"
-            />
+            <h1 className="text-2xl font-extrabold tracking-tight text-primary drop-shadow-sm">
+              MovieLily
+            </h1>
           </Link>
         </div>
         
@@ -133,6 +155,16 @@ export function Navbar() {
           </nav>
         </div>
         <div className="flex justify-end items-center mr-5 gap-2">
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className="transition-colors"
+          >
+            {isDarkMode ? "Dark" : "Light"}
+          </Button>
+
           {isAuthenticated ? (
             user ? (
               <div className="relative inline-block">
